@@ -12,6 +12,7 @@ import {
   Clock,
 } from 'lucide-react';
 import { Language } from '../types';
+import vtLogo from '../assets/VT_web.png';
 
 interface FooterProps {
   language: Language;
@@ -85,12 +86,13 @@ export const Footer: React.FC<FooterProps> = ({
           {/* Brand Col (2 cols) */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="w-10 h-10 rounded-xl bg-[#12bbba] text-white flex items-center justify-center shadow-md shadow-[#12bbba]/30">
-                <Compass className="w-6 h-6" />
+              <div className="bg-white rounded-xl px-3 py-1.5 shadow-sm inline-flex items-center">
+                <img
+                  src={vtLogo}
+                  alt="Voyra Tours"
+                  className="h-8 sm:h-9 w-auto object-contain"
+                />
               </div>
-              <span className="font-serif-luxury text-2xl font-bold tracking-wider text-white">
-                VOYRA<span className="text-[#5ce6e6] font-sans font-light">.TOURS</span>
-              </span>
             </div>
 
             <p className="text-xs sm:text-sm text-teal-100/80 leading-relaxed max-w-md font-light">
