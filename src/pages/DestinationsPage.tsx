@@ -1,0 +1,257 @@
+import React from 'react';
+import { Link, useNavigate } from 'react-router-dom';
+import { Language } from '../types';
+import { ChevronRight, Sparkles, MapPin, Calendar, Compass, ArrowRight } from 'lucide-react';
+
+interface DestinationsPageProps {
+  language: Language;
+}
+
+export const DestinationsPage: React.FC<DestinationsPageProps> = ({ language }) => {
+  const navigate = useNavigate();
+  const isTr = language === 'tr';
+
+  const extendedDestinations = [
+    {
+      id: 'cappadocia',
+      nameEn: 'Cappadocia',
+      nameTr: 'Kapadokya',
+      taglineEn: 'Surreal Fairy Chimneys & Hot Air Balloons',
+      taglineTr: 'Peri Bacaları & Sıcak Hava Balonları',
+      image: 'https://images.unsplash.com/photo-1570939274717-7eda259b50ed?auto=format&fit=crop&w=1200&q=80',
+      descriptionEn:
+        'A magical wonderland sculpted by volcanic erosion and early Christian history. Drift in hot air balloons at sunrise over Goreme Valley, sleep in centuries-old authentic cave suites, and explore subterranean underground cities.',
+      descriptionTr:
+        'Volkanik tüflerin rüzgar ve yağmurla şekillendiği masalsı bir coğrafya. Göreme üzerinde gün doğumu sıcak hava balonlarıyla süzülün, lüks mağara otellerinde konaklayın ve Derinkuyu yeraltı şehirlerini keşfedin.',
+      bestTime: isTr ? 'Nisan - Kasım' : 'April - November',
+      highlights: isTr
+        ? ['Gün Doğumu Balon Uçuşu', 'Göreme Açık Hava Müzesi', 'Derinkuyu Yeraltı Şehri', 'Paşabağ Peri Bacaları']
+        : ['Sunrise Hot Air Ballooning', 'Goreme Open-Air Museum', 'Derinkuyu Underground City', 'Pasabag Fairy Chimneys'],
+      toursCount: '4 Paket',
+    },
+    {
+      id: 'aegean-ephesus',
+      nameEn: 'Ephesus & Pamukkale',
+      nameTr: 'Efes & Pamukkale',
+      taglineEn: 'Greco-Roman Splendor & White Travertines',
+      taglineTr: 'Antik Roma İhtişamı & Beyaz Travertenler',
+      image: 'https://images.unsplash.com/photo-1635166045025-b078ac986d77?auto=format&fit=crop&w=1200&q=80',
+      descriptionEn:
+        'Walk the marble streets where Cleopatra and Mark Antony once strolled. Marvel at the grand Library of Celsus, the Great Theatre, and visit the serene House of Virgin Mary before bathing in the ancient thermal pools of Pamukkale Hierapolis.',
+      descriptionTr:
+        'Antik dünyanın en görkemli metropollerinden Efes’te mermer caddelerde yürüyün. Celsus Kütüphanesi ve Meryem Ana Evi’ni ziyaret ettikten sonra Pamukkale’nin kalsiyum zengini beyaz travertenlerinde Hierapolis antik havuzunun keyfini çıkarın.',
+      bestTime: isTr ? 'Mart - Aralık' : 'March - December',
+      highlights: isTr
+        ? ['Celsus Kütüphanesi', 'Pamukkale Travertenleri', 'Meryem Ana Evi', 'Hierapolis Antik Havuzu']
+        : ['Library of Celsus', 'Pamukkale Travertine Terraces', 'House of Virgin Mary', 'Cleopatra Antique Pool'],
+      toursCount: '3 Paket',
+    },
+    {
+      id: 'istanbul',
+      nameEn: 'Istanbul',
+      nameTr: 'İstanbul',
+      taglineEn: 'Where East Meets West Across the Bosphorus',
+      taglineTr: 'Boğaz’ın İki Yakasında Doğu ve Batı',
+      image: 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&w=1200&q=80',
+      descriptionEn:
+        'The historic imperial capital connecting Europe and Asia. Explore Hagia Sophia, the Blue Mosque, Topkapi Palace, private Bosphorus yacht cruises at sunset, and the bustling spice scents of the centuries-old Grand Bazaar.',
+      descriptionTr:
+        'Asya ile Avrupa’nın buluştuğu kadim imparatorluk başkenti. Ayasofya, Sultanahmet, Topkapı Sarayı, gün batımında özel Boğaz yat turu ve Kapalıçarşı’nın otantik labirentlerinde unutulmaz bir seyahat.',
+      bestTime: isTr ? 'Tüm Yıl' : 'Year-Round',
+      highlights: isTr
+        ? ['Ayasofya-i Kebir Camii', 'Topkapı Sarayı', 'Özel Boğaz Yat Turu', 'Tarihi Kapalıçarşı']
+        : ['Hagia Sophia', 'Topkapi Palace', 'Private Bosphorus Cruise', 'Grand Bazaar'],
+      toursCount: '5 Paket',
+    },
+    {
+      id: 'gallipoli',
+      nameEn: 'Gallipoli & Troy',
+      nameTr: 'Çanakkale & Truva',
+      taglineEn: 'Homeric Legends & World War I Battlefields',
+      taglineTr: 'Homeros Destanları & Çanakkale Zaferi',
+      image: 'https://images.unsplash.com/photo-1572025442646-866d16c84a54?auto=format&fit=crop&w=1200&q=80',
+      descriptionEn:
+        'A deeply moving historic crossing from the legendary wooden horse of Homer’s Iliad at Troy to the poignant memorial sites of Anzac Cove, Lone Pine, and Chunuk Bair along the Dardanelles Strait.',
+      descriptionTr:
+        'Homeros’un İlyada destanına konu olan 4000 yıllık efsanevi Truva Atı’ndan, Çanakkale Boğazı boyunca uzanan Anzak Koyu, Conkbayırı ve Şehitler Abidesi’ne uzanan duygu yüklü bir tarih yolculuğu.',
+      bestTime: isTr ? 'Nisan - Kasım' : 'April - November',
+      highlights: isTr
+        ? ['Truva Antik Kenti & Tahta At', 'Anzak Koyu', 'Conkbayırı', 'Çanakkale Boğazı']
+        : ['Ancient City of Troy', 'ANZAC Cove Memorial', 'Chunuk Bair', 'Dardanelles Strait'],
+      toursCount: '2 Paket',
+    },
+    {
+      id: 'mediterranean',
+      nameEn: 'Antalya & Turquoise Coast',
+      nameTr: 'Antalya & Turkuaz Sahil',
+      taglineEn: 'Azure Mediterranean Waters & Ancient Lycia',
+      taglineTr: 'Akdeniz’in Berrak Suları & Antik Likya',
+      image: 'https://images.unsplash.com/photo-1549880338-65ddcdfd017b?auto=format&fit=crop&w=1200&q=80',
+      descriptionEn:
+        'Known as the Turkish Riviera, where pine-forested Taurus Mountains plunge into crystal-clear turquoise waters. Discover Roman theatres at Aspendos, cascading Duden waterfalls, and ancient sunken cities by private yacht.',
+      descriptionTr:
+        'Toros Dağları’nın masmavi Akdeniz’e kavuştuğu Türk Rivierası. Aspendos Antik Tiyatrosu, Düden Şelaleleri, Kaleiçi tarihi sokakları ve Kekova batık şehrinde özel gulet turları.',
+      bestTime: isTr ? 'Mayıs - Ekim' : 'May - October',
+      highlights: isTr
+        ? ['Aspendos Roma Tiyatrosu', 'Kaleiçi Tarihi Merkez', 'Düden Şelaleleri', 'Özel Gulet Koyu Turları']
+        : ['Aspendos Roman Theatre', 'Historic Kaleici Old Town', 'Duden Waterfalls', 'Private Gulet Cruises'],
+      toursCount: '3 Paket',
+    },
+    {
+      id: 'multi-region',
+      nameEn: 'Grand Turkey Loops',
+      nameTr: 'Büyük Türkiye Rotaları',
+      taglineEn: 'Multi-Region Seamless Comprehensive Odysseys',
+      taglineTr: 'Çok Bölgeli Kapsamlı Türkiye Turu',
+      image: 'https://images.unsplash.com/photo-1527838832700-5059252407fa?auto=format&fit=crop&w=1200&q=80',
+      descriptionEn:
+        'The ultimate Turkey discovery combining Istanbul, Cappadocia, Ephesus, and Pamukkale into one seamless, stress-free route connected by domestic flights and premier boutique lodgings.',
+      descriptionTr:
+        'İstanbul’un ihtişamı, Kapadokya’nın masalsı vadileri ve Ege’nin antik kentlerini iç hat uçuşlarıyla birleştiren eksiksiz, yorulmadan gezilen büyük Türkiye seyahati.',
+      bestTime: isTr ? 'Tüm Yıl' : 'Year-Round',
+      highlights: isTr
+        ? ['İstanbul + Kapadokya + Efes', 'Tüm İç Hat Uçuşları Dahil', 'Özel Havalimanı Transferleri', '10-12 Kişilik Butik Grup']
+        : ['Istanbul + Cappadocia + Ephesus', 'All Domestic Flights Included', 'VIP Airport Chauffeur', 'Small Boutique Group (Max 12)'],
+      toursCount: '2 Paket',
+    },
+  ];
+
+  return (
+    <div className="min-h-screen bg-[#f8fbfb] pb-24">
+      {/* Header */}
+      <div className="bg-gradient-to-b from-[#004d53] to-[#003c41] text-white pt-12 pb-16 px-4 sm:px-8 border-b border-[#009999]/40">
+        <div className="max-w-7xl mx-auto">
+          {/* Breadcrumb */}
+          <div className="flex items-center gap-2 text-xs text-teal-200/80 mb-6 font-medium">
+            <Link to="/" className="hover:text-white transition">
+              {isTr ? 'Ana Sayfa' : 'Home'}
+            </Link>
+            <ChevronRight className="w-3.5 h-3.5 text-teal-400" />
+            <span className="text-white font-semibold">
+              {isTr ? 'Destinasyonlar' : 'Destinations'}
+            </span>
+          </div>
+
+          <div className="max-w-3xl">
+            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-white/15 backdrop-blur-md text-[#5ce6e6] text-xs font-bold uppercase tracking-wider mb-4 border border-white/25">
+              <Sparkles className="w-3.5 h-3.5 text-[#5ce6e6]" />
+              <span>{isTr ? 'TÜRKİYE BÖLGELERİ' : 'ICONIC REGIONS'}</span>
+            </div>
+            <h1 className="text-3xl sm:text-5xl font-serif-luxury font-bold text-white mb-4 tracking-tight leading-tight">
+              {isTr ? 'Bölgelere Göre Keşfedin' : 'Discover Turkey by Destination'}
+            </h1>
+            <p className="text-teal-100/90 text-sm sm:text-base leading-relaxed font-light">
+              {isTr
+                ? 'Peri bacalarının gün doğumu renginden Ege’nin mermer antik kentlerine; her bölgenin kendine has ruhunu seçkin butik detaylarla yaşayın.'
+                : 'From sunlit hot air balloons soaring over volcanic fairy chimneys to ancient marble capitals and turquoise Mediterranean coastlines.'}
+            </p>
+          </div>
+        </div>
+      </div>
+
+      {/* Main Grid */}
+      <div className="max-w-7xl mx-auto px-4 sm:px-8 -mt-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+          {extendedDestinations.map((dest) => (
+            <div
+              key={dest.id}
+              className="bg-white rounded-2xl overflow-hidden border border-slate-200/90 shadow-xs hover:shadow-lg hover:border-[#009999]/60 transition-all duration-300 flex flex-col group"
+            >
+              {/* Image Banner */}
+              <div className="relative h-52 overflow-hidden bg-slate-100">
+                <img
+                  src={dest.image}
+                  alt={isTr ? dest.nameTr : dest.nameEn}
+                  className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
+                  loading="lazy"
+                />
+                <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-black/20 to-transparent" />
+
+                {/* Badges on image */}
+                <div className="absolute top-3 left-3 right-3 flex items-center justify-between">
+                  <span className="px-2.5 py-0.5 rounded-full bg-[#009999] text-white text-[11px] font-bold shadow-xs">
+                    {dest.toursCount}
+                  </span>
+                  <span className="px-2.5 py-0.5 rounded-full bg-black/60 backdrop-blur-md text-white text-[11px] font-medium flex items-center gap-1">
+                    <Calendar className="w-3 h-3 text-[#5ce6e6]" />
+                    <span>{dest.bestTime}</span>
+                  </span>
+                </div>
+
+                <div className="absolute bottom-3 left-3 right-3 text-white">
+                  <h3 className="text-xl font-bold font-serif-luxury text-white mb-0.5">
+                    {isTr ? dest.nameTr : dest.nameEn}
+                  </h3>
+                  <p className="text-xs text-teal-200 font-medium">
+                    {isTr ? dest.taglineTr : dest.taglineEn}
+                  </p>
+                </div>
+              </div>
+
+              {/* Card Body */}
+              <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between space-y-4">
+                <p className="text-slate-600 text-xs leading-relaxed font-light line-clamp-3">
+                  {isTr ? dest.descriptionTr : dest.descriptionEn}
+                </p>
+
+                {/* Highlights */}
+                <div>
+                  <h4 className="text-[10px] font-bold uppercase tracking-wider text-slate-400 mb-1.5">
+                    {isTr ? 'Öne Çıkan Deneyimler' : 'Key Experiences'}
+                  </h4>
+                  <div className="flex flex-wrap gap-1">
+                    {dest.highlights.map((hl, i) => (
+                      <span
+                        key={i}
+                        className="px-2 py-0.5 bg-slate-100 rounded-md text-[11px] font-medium text-slate-700"
+                      >
+                        {hl}
+                      </span>
+                    ))}
+                  </div>
+                </div>
+
+                {/* Action CTA */}
+                <div className="pt-3 border-t border-slate-100">
+                  <button
+                    onClick={() => navigate(`/tours?dest=${dest.id}`)}
+                    className="w-full py-2.5 px-3.5 rounded-xl bg-[#009999] hover:bg-[#008080] text-white text-xs font-semibold tracking-wide transition flex items-center justify-center gap-1.5 shadow-xs shadow-[#009999]/20 cursor-pointer"
+                  >
+                    <span>{isTr ? `${dest.nameTr} Turlarını İncele` : `Browse ${dest.nameEn} Tours`}</span>
+                    <ArrowRight className="w-3.5 h-3.5" />
+                  </button>
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Tailor-Made Banner */}
+        <div className="mt-20 rounded-3xl bg-gradient-to-r from-[#004d53] via-[#005a61] to-[#004d53] text-white p-8 sm:p-12 shadow-xl flex flex-col md:flex-row items-center justify-between gap-8 border border-[#009999]/40">
+          <div className="space-y-3 max-w-xl">
+            <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-[#5ce6e6] uppercase">
+              <Compass className="w-4 h-4" />
+              <span>{isTr ? 'ÖZEL SEYAHAT TASARIMI' : 'BESPOKE ITINERARY'}</span>
+            </div>
+            <h3 className="text-2xl sm:text-3xl font-serif-luxury font-bold text-white">
+              {isTr ? 'Birden Fazla Bölgeyi Birleştirmek İster Misiniz?' : 'Combine Multiple Regions in One Private Journey'}
+            </h3>
+            <p className="text-teal-100/90 text-xs sm:text-sm leading-relaxed font-light">
+              {isTr
+                ? 'Kapadokya balon uçuşunu Efes antik kenti ve Boğaz yat gezisiyle kusursuz bir iç hat uçuş planlamasıyla birleştiriyoruz.'
+                : 'Combine Cappadocia hot air balloons with ancient Ephesus and sunset Bosphorus yacht cruises in one seamlessly connected private journey.'}
+            </p>
+          </div>
+
+          <button
+            onClick={() => navigate('/tailor-made')}
+            className="px-8 py-4 rounded-xl bg-[#009999] hover:bg-[#008080] text-white font-bold text-xs tracking-wider transition shadow-lg shadow-[#009999]/30 shrink-0 flex items-center gap-2 cursor-pointer"
+          >
+            <span>{isTr ? 'Özel Tur Planlayın' : 'Design Bespoke Trip'}</span>
+            <ArrowRight className="w-4 h-4" />
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};

@@ -1,0 +1,6 @@
+{
+  "name": "Voyra Tours",
+  "description": "Curated boutique Turkey travel packages, cave hotels in Cappadocia, and licensed private guided tours across Turkey.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
