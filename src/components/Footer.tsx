@@ -79,7 +79,7 @@ export const Footer: React.FC<FooterProps> = ({
   };
 
   return (
-    <footer id="contact" className="bg-gradient-to-b from-[#004d53] via-[#004247] to-[#00383d] text-teal-100/90 pt-16 pb-12 border-t border-[#009999]/40">
+    <footer id="contact" className="bg-gradient-to-b from-[#007373] via-[#008b8f] to-[#006a6e] text-teal-100/90 pt-16 pb-12 border-t border-[#009999]/40">
       <div className="max-w-7xl mx-auto px-4 sm:px-8">
         {/* Main Footer Grid */}
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-10 pb-12 border-b border-[#009999]/40">

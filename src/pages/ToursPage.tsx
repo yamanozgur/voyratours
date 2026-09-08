@@ -107,7 +107,7 @@ export const ToursPage: React.FC<ToursPageProps> = ({
   return (
     <div className="min-h-screen bg-[#f8fbfb] pb-24">
       {/* Page Hero Header */}
-      <div className="bg-gradient-to-b from-[#004d53] to-[#003c41] text-white pt-12 pb-16 px-4 sm:px-8 border-b border-[#009999]/40">
+      <div className="bg-gradient-to-b from-[#007373] via-[#008b8f] to-[#006a6e] text-white pt-12 pb-16 px-4 sm:px-8 border-b border-[#009999]/40">
         <div className="max-w-7xl mx-auto">
           {/* Breadcrumb */}
           <div className="flex items-center gap-2 text-xs text-teal-200/80 mb-6 font-medium">
@@ -265,7 +265,7 @@ export const ToursPage: React.FC<ToursPageProps> = ({
         )}
 
         {/* Tailor-Made Bottom Callout */}
-        <div className="mt-20 rounded-3xl bg-gradient-to-r from-[#004d53] via-[#005a61] to-[#004d53] text-white p-8 sm:p-12 shadow-xl flex flex-col md:flex-row items-center justify-between gap-8 border border-[#009999]/40">
+        <div className="mt-20 rounded-3xl bg-gradient-to-r from-[#007373] via-[#008b8f] to-[#006a6e] text-white p-8 sm:p-12 shadow-xl flex flex-col md:flex-row items-center justify-between gap-8 border border-[#009999]/40">
           <div className="space-y-3 max-w-xl">
             <div className="inline-flex items-center gap-2 text-xs font-bold tracking-widest text-[#5ce6e6] uppercase">
               <Compass className="w-4 h-4" />

@@ -145,7 +145,7 @@ export const HomePage: React.FC<HomePageProps> = ({
 
       {/* Tailor-Made Custom Trip Banner Callout */}
       <section className="max-w-7xl mx-auto px-4 sm:px-8 py-14">
-        <div className="rounded-2xl bg-gradient-to-r from-[#004d53] via-[#005a61] to-[#004d53] text-white p-7 sm:p-10 shadow-lg flex flex-col md:flex-row items-center justify-between gap-6 border border-[#009999]/50">
+        <div className="rounded-2xl bg-gradient-to-r from-[#007373] via-[#008b8f] to-[#006a6e] text-white p-7 sm:p-10 shadow-lg flex flex-col md:flex-row items-center justify-between gap-6 border border-[#009999]/50">
           <div className="space-y-2 max-w-xl">
             <div className="inline-flex items-center gap-1.5 text-xs font-bold tracking-widest text-[#5ce6e6] uppercase">
               <Compass className="w-4 h-4" />
