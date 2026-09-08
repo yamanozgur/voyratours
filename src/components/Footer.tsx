@@ -12,7 +12,7 @@ import {
   Clock,
 } from 'lucide-react';
 import { Language } from '../types';
-import vtLogo from '../assets/VT_web.png';
+import vtFooterLogo from '../assets/VT_footer.png';
 
 interface FooterProps {
   language: Language;
@@ -86,13 +86,13 @@ export const Footer: React.FC<FooterProps> = ({
           {/* Brand Col (2 cols) */}
           <div className="lg:col-span-2 space-y-4">
             <div className="flex items-center gap-3">
-              <div className="bg-white rounded-xl px-3 py-1.5 shadow-sm inline-flex items-center">
+              <Link to="/" className="inline-block focus:outline-none focus:ring-2 focus:ring-[#5ce6e6]/50 rounded-lg">
                 <img
-                  src={vtLogo}
+                  src={vtFooterLogo}
                   alt="Voyra Tours"
-                  className="h-8 sm:h-9 w-auto object-contain"
+                  className="h-10 sm:h-12 w-auto object-contain brightness-0 invert opacity-95 hover:opacity-100 transition-opacity"
                 />
-              </div>
+              </Link>
             </div>
 
             <p className="text-xs sm:text-sm text-teal-100/80 leading-relaxed max-w-md font-light">
