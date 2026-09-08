@@ -897,3 +897,36 @@ export function updateToursData(newList: TourPackage[]) {
   }
 }
 
+export const HERO_STORAGE_KEY = 'voyra_hero_slides_v1';
+export const INITIAL_HERO_SLIDES = [
+  'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/hero.webp',
+  'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/main1.jpg',
+  'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/main2.jpg',
+  'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/main3.jpg',
+  'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/main4.jpg',
+];
+
+export let HERO_SLIDES: string[] = (() => {
+  try {
+    const saved = localStorage.getItem(HERO_STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (e) {
+    console.error(e);
+  }
+  return INITIAL_HERO_SLIDES;
+})();
+
+export function updateHeroSlides(newSlides: string[]) {
+  HERO_SLIDES = newSlides;
+  try {
+    localStorage.setItem(HERO_STORAGE_KEY, JSON.stringify(newSlides));
+  } catch (e) {
+    console.error(e);
+  }
+}
+

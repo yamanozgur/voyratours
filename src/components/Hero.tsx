@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, MapPin, Calendar, Users, ShieldCheck, ArrowRight, Sparkles, Plane, IdCard, CircleUserRound, Clock, MessageCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Language } from '../types';
+import { HERO_SLIDES } from '../data/toursData';
 
 interface HeroProps {
   language: Language;
@@ -13,14 +14,6 @@ interface HeroProps {
   onSearch: () => void;
   onOpenPlanner: () => void;
 }
-
-const HERO_SLIDES = [
-  'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/hero.webp',
-  'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/main1.jpg',
-  'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/main2.jpg',
-  'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/main3.jpg',
-  'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/main4.jpg',
-];
 
 export const Hero: React.FC<HeroProps> = ({
   language,
