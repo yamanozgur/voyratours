@@ -282,6 +282,7 @@ export const Footer: React.FC<FooterProps> = ({
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-teal-200/70 gap-4">
           <p>© {new Date().getFullYear()} Voyra Tours. {t.rights}</p>
           <div className="flex items-center gap-6">
+            <Link to="/admin" className="hover:text-white transition font-bold text-[#5ce6e6]">⚙️ Admin Panel</Link>
             <a href="#" className="hover:text-white transition">{t.privacy}</a>
             <a href="#" className="hover:text-white transition">{t.terms}</a>
             <a href="#" className="hover:text-white transition">{t.cancellationPolicy}</a>

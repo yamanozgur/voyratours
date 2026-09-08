@@ -1,6 +1,8 @@
 import { TourPackage } from '../types';
 
-export const TOURS_DATA: TourPackage[] = [
+const STORAGE_KEY = 'voyra_admin_tours_v1';
+
+const INITIAL_TOURS_DATA: TourPackage[] = [
   {
     id: 'cappadocia-2-day',
     slug: '2-day-cappadocia-escape',
@@ -870,3 +872,28 @@ export const DESTINATIONS_DATA = [
     popularHighlightsTr: ['Kekova Batık Şehir', 'Ölüdeniz Lagünü', 'Aspendos Tiyatrosu', 'Kaş Limanı'],
   },
 ];
+
+export let TOURS_DATA: TourPackage[] = (() => {
+  try {
+    const saved = localStorage.getItem(STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (e) {
+    console.error(e);
+  }
+  return INITIAL_TOURS_DATA;
+})();
+
+export function updateToursData(newList: TourPackage[]) {
+  TOURS_DATA = newList;
+  try {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(newList));
+  } catch (e) {
+    console.error(e);
+  }
+}
+

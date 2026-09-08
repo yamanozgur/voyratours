@@ -49,8 +49,8 @@ export const TourCard: React.FC<TourCardProps> = ({
       id={`tour-card-${tour.id}`}
       className="group bg-white rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-lg hover:border-[#009999]/60 transition-all duration-300 flex flex-col overflow-hidden"
     >
-      {/* Image Container - Compact & Sleek */}
-      <div className="relative h-44 sm:h-48 w-full overflow-hidden bg-slate-100">
+      {/* Image Container - Story Portrait Proportion */}
+      <div className="relative h-64 sm:h-72 w-full overflow-hidden bg-slate-100">
         <img
           src={tour.heroImage}
           alt={title}

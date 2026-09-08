@@ -1,5 +1,5 @@
-import React from 'react';
-import { Search, MapPin, Calendar, Users, ShieldCheck, ArrowRight, Sparkles, Plane, IdCard, CircleUserRound, Clock, MessageCircle } from 'lucide-react';
+import React, { useState, useEffect } from 'react';
+import { Search, MapPin, Calendar, Users, ShieldCheck, ArrowRight, Sparkles, Plane, IdCard, CircleUserRound, Clock, MessageCircle, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Language } from '../types';
 
 interface HeroProps {
@@ -14,6 +14,14 @@ interface HeroProps {
   onOpenPlanner: () => void;
 }
 
+const HERO_SLIDES = [
+  'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/hero.webp',
+  'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/main1.jpg',
+  'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/main2.jpg',
+  'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/main3.jpg',
+  'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/main4.jpg',
+];
+
 export const Hero: React.FC<HeroProps> = ({
   language,
   selectedDestination,
@@ -25,6 +33,24 @@ export const Hero: React.FC<HeroProps> = ({
   onSearch,
   onOpenPlanner,
 }) => {
+  const [currentSlide, setCurrentSlide] = useState(0);
+
+  // Auto-play slider every 6 seconds
+  useEffect(() => {
+    const timer = setInterval(() => {
+      setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+    }, 6000);
+    return () => clearInterval(timer);
+  }, []);
+
+  const nextSlide = () => {
+    setCurrentSlide((prev) => (prev + 1) % HERO_SLIDES.length);
+  };
+
+  const prevSlide = () => {
+    setCurrentSlide((prev) => (prev - 1 + HERO_SLIDES.length) % HERO_SLIDES.length);
+  };
+
   const t = {
     en: {
       badge: 'PREMIER TURKEY TRAVEL EXPERIENCES & BOUTIQUE TOURS',
@@ -52,7 +78,7 @@ export const Hero: React.FC<HeroProps> = ({
       feature3Line2: 'Flight Included',
       feature4Line1: 'Free',
       feature4Line2: 'Cancellation',
-      feature5Line1: '24/7',
+      feature5Line1: '7/24',
       feature5Line2: 'WhatsApp Support',
     },
     tr: {
@@ -88,17 +114,38 @@ export const Hero: React.FC<HeroProps> = ({
 
   return (
     <div className="relative min-h-[88vh] flex flex-col justify-between bg-slate-100 text-white overflow-hidden">
-      {/* Background Image: Bright, sunlit Cappadocia hot air balloons soaring in brilliant morning sunshine */}
-      <div
-        className="absolute inset-0 z-0 bg-cover bg-center transition-all duration-1000 transform scale-105"
-        style={{
-          backgroundImage: `url('https://images.unsplash.com/photo-1570939274717-7eda259b50ed?auto=format&fit=crop&w=2400&q=85')`,
-        }}
+      {/* Background Slider Images with Fade Transition */}
+      {HERO_SLIDES.map((slideUrl, idx) => (
+        <div
+          key={idx}
+          className={`absolute inset-0 z-0 bg-cover bg-center transition-opacity duration-1000 transform scale-105 ${
+            idx === currentSlide ? 'opacity-100' : 'opacity-0 pointer-events-none'
+          }`}
+          style={{
+            backgroundImage: `url('${slideUrl}')`,
+          }}
+        >
+          {/* Luminous overlay */}
+          <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/20 to-transparent" />
+          <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
+        </div>
+      ))}
+
+      {/* Slider Navigation Buttons */}
+      <button
+        onClick={prevSlide}
+        className="absolute left-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-black/30 hover:bg-black/60 text-white backdrop-blur-md transition cursor-pointer hidden sm:flex items-center justify-center border border-white/20"
+        title="Previous Slide"
       >
-        {/* Very light, sun-friendly luminous overlay - bright daylight shines through */}
-        <div className="absolute inset-0 bg-gradient-to-r from-black/45 via-black/15 to-transparent" />
-        <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
-      </div>
+        <ChevronLeft className="w-5 h-5" />
+      </button>
+      <button
+        onClick={nextSlide}
+        className="absolute right-4 top-1/2 -translate-y-1/2 z-20 p-3 rounded-full bg-black/30 hover:bg-black/60 text-white backdrop-blur-md transition cursor-pointer hidden sm:flex items-center justify-center border border-white/20"
+        title="Next Slide"
+      >
+        <ChevronRight className="w-5 h-5" />
+      </button>
 
       {/* Main Content Area */}
       <div className="relative z-10 max-w-7xl mx-auto px-4 sm:px-8 pt-12 sm:pt-20 pb-12 flex-1 flex flex-col justify-center">
@@ -137,6 +184,20 @@ export const Hero: React.FC<HeroProps> = ({
               <span>{t.customBtn}</span>
             </button>
           </div>
+        </div>
+
+        {/* Slide Indicator Dots */}
+        <div className="flex items-center justify-center sm:justify-start gap-2 mb-6 z-20">
+          {HERO_SLIDES.map((_, idx) => (
+            <button
+              key={idx}
+              onClick={() => setCurrentSlide(idx)}
+              className={`h-2 rounded-full transition-all duration-300 cursor-pointer ${
+                idx === currentSlide ? 'w-8 bg-[#5ce6e6]' : 'w-2 bg-white/50 hover:bg-white'
+              }`}
+              title={`Slide ${idx + 1}`}
+            />
+          ))}
         </div>
 
         {/* Interactive Quick Search / Filter Bar - Crisp luminous card */}

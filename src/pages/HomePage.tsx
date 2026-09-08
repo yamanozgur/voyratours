@@ -1,11 +1,11 @@
-import React, { useState, useMemo } from 'react';
+import React, { useState, useMemo, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Hero } from '../components/Hero';
 import { TourCard } from '../components/TourCard';
 import { DestinationsSection } from '../components/DestinationsSection';
 import { TOURS_DATA } from '../data/toursData';
 import { Currency, Language, TourPackage } from '../types';
-import { ArrowRight, Compass, Sparkles, SlidersHorizontal } from 'lucide-react';
+import { ArrowRight, Compass, Sparkles, SlidersHorizontal, ChevronLeft, ChevronRight } from 'lucide-react';
 
 interface HomePageProps {
   language: Language;
@@ -25,6 +25,18 @@ export const HomePage: React.FC<HomePageProps> = ({
   const [selectedDuration, setSelectedDuration] = useState('all');
   const [selectedGroupType, setSelectedGroupType] = useState('all');
   const [popularTab, setPopularTab] = useState<string>('all');
+  const popularScrollRef = useRef<HTMLDivElement>(null);
+
+  const scrollPopular = (direction: 'left' | 'right') => {
+    if (popularScrollRef.current) {
+      const { scrollLeft, clientWidth } = popularScrollRef.current;
+      const scrollAmount = clientWidth * 0.75;
+      popularScrollRef.current.scrollTo({
+        left: direction === 'left' ? scrollLeft - scrollAmount : scrollLeft + scrollAmount,
+        behavior: 'smooth',
+      });
+    }
+  };
 
   const isTr = language === 'tr';
 
@@ -50,7 +62,7 @@ export const HomePage: React.FC<HomePageProps> = ({
     );
 
     if (popularTab === 'all') {
-      return bestsellers.slice(0, 6);
+      return bestsellers.slice(0, 8);
     }
     return bestsellers.filter((t) => t.region === popularTab);
   }, [popularTab]);
@@ -97,42 +109,66 @@ export const HomePage: React.FC<HomePageProps> = ({
           </button>
         </div>
 
-        {/* Category Filter Pills for Popular Section */}
-        <div className="flex items-center gap-2 overflow-x-auto pb-3 mb-6 scrollbar-none">
-          {[
-            { id: 'all', label: isTr ? 'Tüm Popüler Turlar' : 'All Bestsellers' },
-            { id: 'cappadocia', label: isTr ? 'Kapadokya' : 'Cappadocia' },
-            { id: 'aegean-ephesus', label: isTr ? 'Efes & Pamukkale' : 'Ephesus & Aegean' },
-            { id: 'multi-region', label: isTr ? 'Büyük Türkiye Turu' : 'Grand Turkey Loop' },
-            { id: 'istanbul', label: isTr ? 'İstanbul' : 'Istanbul' },
-          ].map((tab) => {
-            const isActive = popularTab === tab.id;
-            return (
-              <button
-                key={tab.id}
-                onClick={() => setPopularTab(tab.id)}
-                className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition cursor-pointer ${
-                  isActive
-                    ? 'bg-[#009999] text-white shadow-xs'
-                    : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
-                }`}
-              >
-                {tab.label}
-              </button>
-            );
-          })}
+        {/* Category Filter Pills & Carousel Controls */}
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+            {[
+              { id: 'all', label: isTr ? 'Tüm Popüler Turlar' : 'All Bestsellers' },
+              { id: 'cappadocia', label: isTr ? 'Kapadokya' : 'Cappadocia' },
+              { id: 'aegean-ephesus', label: isTr ? 'Efes & Pamukkale' : 'Ephesus & Aegean' },
+              { id: 'multi-region', label: isTr ? 'Büyük Türkiye Turu' : 'Grand Turkey Loop' },
+              { id: 'istanbul', label: isTr ? 'İstanbul' : 'Istanbul' },
+            ].map((tab) => {
+              const isActive = popularTab === tab.id;
+              return (
+                <button
+                  key={tab.id}
+                  onClick={() => setPopularTab(tab.id)}
+                  className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition cursor-pointer ${
+                    isActive
+                      ? 'bg-[#009999] text-white shadow-xs'
+                      : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
+                  }`}
+                >
+                  {tab.label}
+                </button>
+              );
+            })}
+          </div>
+
+          {/* Carousel Arrows */}
+          <div className="hidden sm:flex items-center gap-2 shrink-0">
+            <button
+              onClick={() => scrollPopular('left')}
+              className="p-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 transition cursor-pointer shadow-xs"
+              title="Previous"
+            >
+              <ChevronLeft className="w-4 h-4" />
+            </button>
+            <button
+              onClick={() => scrollPopular('right')}
+              className="p-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 transition cursor-pointer shadow-xs"
+              title="Next"
+            >
+              <ChevronRight className="w-4 h-4" />
+            </button>
+          </div>
         </div>
 
-        {/* Compact Tour Cards Grid */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+        {/* Compact Tour Cards Horizontal Carousel */}
+        <div
+          ref={popularScrollRef}
+          className="flex overflow-x-auto gap-6 snap-x snap-mandatory scrollbar-none pb-4 items-stretch"
+        >
           {popularTours.map((tour) => (
-            <TourCard
-              key={tour.id}
-              tour={tour}
-              language={language}
-              currency={currency}
-              onSelectTour={onSelectTour}
-            />
+            <div key={tour.id} className="snap-start shrink-0 w-[280px] sm:w-[320px] lg:w-[calc(25%-18px)]">
+              <TourCard
+                tour={tour}
+                language={language}
+                currency={currency}
+                onSelectTour={onSelectTour}
+              />
+            </div>
           ))}
         </div>
       </section>

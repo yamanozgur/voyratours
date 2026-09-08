@@ -15,6 +15,7 @@ import { TailorMadePage } from './pages/TailorMadePage';
 import { WhyVoyraPage } from './pages/WhyVoyraPage';
 import { FAQPage } from './pages/FAQPage';
 import { ContactPage } from './pages/ContactPage';
+import { AdminPage } from './pages/AdminPage';
 
 import { Currency, Language, TourPackage } from './types';
 
@@ -88,6 +89,10 @@ export default function App() {
           <Route
             path="/contact"
             element={<ContactPage language={language} />}
+          />
+          <Route
+            path="/admin"
+            element={<AdminPage language={language} currency={currency} onSelectTour={setActiveTour} />}
           />
           {/* Fallback */}
           <Route path="*" element={<Navigate to="/" replace />} />
