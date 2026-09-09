@@ -3,6 +3,8 @@ import { useNavigate } from 'react-router-dom';
 import { Hero } from '../components/Hero';
 import { TourCard } from '../components/TourCard';
 import { DestinationsSection } from '../components/DestinationsSection';
+import { WhyVoyra } from '../components/WhyVoyra';
+import { FAQSection } from '../components/FAQSection';
 import { TOURS_DATA } from '../data/toursData';
 import { Currency, Language, TourPackage } from '../types';
 import { ArrowRight, Compass, Sparkles, SlidersHorizontal, ChevronLeft, ChevronRight } from 'lucide-react';
@@ -209,6 +211,10 @@ export const HomePage: React.FC<HomePageProps> = ({
           </button>
         </div>
       </section>
+
+      {/* Why Voyra & FAQ Section directly on Homepage above footer */}
+      <WhyVoyra language={language} />
+      <FAQSection language={language} />
     </div>
   );
 };

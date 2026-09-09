@@ -79,14 +79,6 @@ export default function App() {
             element={<TailorMadePage language={language} />}
           />
           <Route
-            path="/why-voyra"
-            element={<WhyVoyraPage language={language} />}
-          />
-          <Route
-            path="/faq"
-            element={<FAQPage language={language} />}
-          />
-          <Route
             path="/contact"
             element={<ContactPage language={language} />}
           />

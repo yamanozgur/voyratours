@@ -40,8 +40,6 @@ export const Navbar: React.FC<NavbarProps> = ({
       tours: 'Tours & Packages',
       destinations: 'Destinations',
       planner: 'Tailor-Made Trip',
-      whyVoyra: 'Why Voyra',
-      faq: 'FAQ',
       contact: 'Contact',
       licensed: 'TÜRSAB A-Grade Certified Agency',
       tagline: 'TURKEY TRAVEL SPECIALIST',
@@ -50,8 +48,6 @@ export const Navbar: React.FC<NavbarProps> = ({
       tours: 'Turlar & Paketler',
       destinations: 'Destinasyonlar',
       planner: 'Kişiye Özel Tur',
-      whyVoyra: 'Neden Voyra',
-      faq: 'SSS',
       contact: 'İletişim',
       licensed: 'TÜRSAB A-Grubu Belgeli Acente',
       tagline: 'TÜRKİYE SEYAHAT UZMANI',
@@ -205,26 +201,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               </span>
             </Link>
             <Link
-              to="/why-voyra"
-              className={`py-1 transition ${
-                isActive('/why-voyra')
-                  ? 'text-[#009999] font-bold border-b-2 border-[#009999]'
-                  : 'text-slate-700 hover:text-[#009999]'
-              }`}
-            >
-              {t.whyVoyra}
-            </Link>
-            <Link
-              to="/faq"
-              className={`py-1 transition ${
-                isActive('/faq')
-                  ? 'text-[#009999] font-bold border-b-2 border-[#009999]'
-                  : 'text-slate-700 hover:text-[#009999]'
-              }`}
-            >
-              {t.faq}
-            </Link>
-            <Link
               to="/contact"
               className={`py-1 transition ${
                 isActive('/contact')
@@ -281,24 +257,6 @@ export const Navbar: React.FC<NavbarProps> = ({
               <span className="bg-[#e6f8f8] text-[#009999] text-xs px-2 py-0.5 rounded-full font-bold">
                 VIP
               </span>
-            </Link>
-            <Link
-              to="/why-voyra"
-              onClick={() => setMobileMenuOpen(false)}
-              className={`block py-2 text-base font-medium border-b border-slate-100 ${
-                isActive('/why-voyra') ? 'text-[#009999] font-bold' : 'text-slate-800'
-              }`}
-            >
-              {t.whyVoyra}
-            </Link>
-            <Link
-              to="/faq"
-              onClick={() => setMobileMenuOpen(false)}
-              className={`block py-2 text-base font-medium border-b border-slate-100 ${
-                isActive('/faq') ? 'text-[#009999] font-bold' : 'text-slate-800'
-              }`}
-            >
-              {t.faq}
             </Link>
             <Link
               to="/contact"
