@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import mammoth from 'mammoth';
 import { TOURS_DATA, updateToursData, HERO_SLIDES, updateHeroSlides } from '../data/toursData';
 import { TourPackage, Language, Currency } from '../types';
 import { Plus, Edit, Trash2, Shield, Lock, ArrowLeft, Save, X, Eye, CheckCircle2, AlertCircle, Image as ImageIcon, Calendar, ListChecks, Sparkles } from 'lucide-react';
@@ -129,6 +130,50 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
       }
     };
     reader.readAsDataURL(file);
+  };
+
+  const handleWordUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    try {
+      showToast('Word dosyası okunuyor ve AI ile tura dönüştürülüyor...');
+      const arrayBuffer = await file.arrayBuffer();
+      const result = await mammoth.extractRawText({ arrayBuffer });
+      const text = result.value;
+
+      if (!text || text.trim().length === 0) {
+        alert('Word dosyası boş veya metin okunamadı.');
+        return;
+      }
+
+      const res = await fetch('/api/parse-tour-word', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ text }),
+      });
+
+      const data = await res.json();
+      if (!res.ok || !data.success) {
+        throw new Error(data.error || 'Word dosyası işlenirken bir hata oluştu');
+      }
+
+      const newTour: TourPackage = data.tour;
+      if (tours.some((t) => t.id === newTour.id)) {
+        newTour.id = `${newTour.id}-${Date.now().toString().slice(-4)}`;
+        newTour.slug = newTour.id;
+      }
+
+      const updated = [newTour, ...tours];
+      setTours(updated);
+      updateToursData(updated);
+      showToast(`"${newTour.title}" başarıyla Word dosyasından eklendi!`);
+    } catch (err: any) {
+      console.error(err);
+      alert(`Word yükleme hatası: ${err.message || 'Bilinmeyen hata'}`);
+    } finally {
+      e.target.value = '';
+    }
   };
 
   const handleCreateNew = () => {
@@ -299,6 +344,15 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Siteye Dön</span>
             </Link>
+            <label className="px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs transition shadow-lg shadow-teal-700/30 flex items-center gap-2 cursor-pointer">
+              <span>📄 Word (.docx) Dosyasından Tur Yükle</span>
+              <input
+                type="file"
+                accept=".docx"
+                onChange={handleWordUpload}
+                className="hidden"
+              />
+            </label>
             <button
               onClick={handleCreateNew}
               className="px-5 py-2.5 rounded-xl bg-[#009999] hover:bg-[#008080] text-white font-bold text-xs transition shadow-lg shadow-[#009999]/30 flex items-center gap-2 cursor-pointer"
