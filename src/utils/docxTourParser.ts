@@ -107,32 +107,46 @@ export function parseVoyraTourDocument(rawText: string, fileName?: string): Tour
     });
   }
 
-  // 3. EXTRACT MAIN TOUR TITLE (Usually prominent after Day 2 / near pricing, e.g. "2-Day Cappadocia Tour from Istanbul | Fairy Chimneys...")
+  // 3. EXTRACT MAIN TOUR TITLE
+  // If file name is provided (e.g. "2 - day Cappadocia Tour.docx"), use it directly as the primary Tour Title!
   let tourTitle = '';
-  for (let i = 0; i < lines.length; i++) {
-    const line = lines[i];
-    if (
-      (line.match(/\d+[\-\s]Day.*Tour/i) ||
-       line.includes('Cappadocia Tour') ||
-       line.includes('Pamukkale') ||
-       line.includes('Ephesus') ||
-       line.includes('Istanbul Tour') ||
-       line.includes('Turkey Tour') ||
-       (line.includes('|') && line.length > 15)) &&
-      !isAgentLine(line)
-    ) {
-      tourTitle = line;
-      break;
+  if (fileName && fileName.trim().length > 0) {
+    // Strip file extension (.docx, .doc, .pdf)
+    let cleanName = fileName.replace(/\.[^/.]+$/, '').trim();
+    // Normalize dashes and extra spaces: e.g. "2 - day Cappadocia Tour" -> "2-Day Cappadocia Tour"
+    cleanName = cleanName.replace(/\s*-\s*/g, '-').replace(/[-_]/g, ' ');
+    // Capitalize words nicely
+    tourTitle = cleanName
+      .split(' ')
+      .filter(Boolean)
+      .map(w => w.charAt(0).toUpperCase() + w.slice(1))
+      .join(' ');
+  }
+
+  // If no fileName was provided, scan document for prominent title
+  if (!tourTitle) {
+    for (let i = 0; i < lines.length; i++) {
+      const line = lines[i];
+      if (
+        (line.match(/\d+[\-\s]Day.*Tour/i) ||
+         line.includes('Cappadocia Tour') ||
+         line.includes('Pamukkale') ||
+         line.includes('Ephesus') ||
+         line.includes('Istanbul Tour') ||
+         line.includes('Turkey Tour') ||
+         (line.includes('|') && line.length > 15 && line.length < 120)) &&
+        !isAgentLine(line) &&
+        !line.startsWith('Day ') &&
+        !line.startsWith('Your journey begins')
+      ) {
+        tourTitle = line;
+        break;
+      }
     }
   }
 
-  // Fallback title if not found above
   if (!tourTitle) {
-    if (fileName) {
-      tourTitle = fileName.replace(/\.[^/.]+$/, '').replace(/[-_]/g, ' ');
-    } else {
-      tourTitle = '2-Day Cappadocia Tour from Istanbul | Fairy Chimneys, Underground Cities & Local Experiences';
-    }
+    tourTitle = '2-Day Cappadocia Tour';
   }
 
   // Clean title from special symbols

@@ -21,7 +21,7 @@ function getGenAI() {
 // API endpoint to parse a tour from Word document text using Gemini
 app.post("/api/parse-tour-word", async (req, res) => {
   try {
-    const { text } = req.body;
+    const { text, fileName } = req.body;
     if (!text || typeof text !== "string") {
       return res.status(400).json({ error: "Document text is required" });
     }
@@ -30,10 +30,13 @@ app.post("/api/parse-tour-word", async (req, res) => {
     const prompt = `
 You are an expert AI tour parser for Voyra Tours (a boutique travel agency in Turkey).
 Analyze the following raw text extracted from a Word document (.docx) containing tour details.
+
+Document File Name: "${fileName || ''}"
+
 Follow these strict rules:
-1. Ignore and skip any top Travel Agent metadata tables (e.g., Name & Surname, Travel Agent, Guest count, Phone, Email, Emergency Contact).
-2. Extract all tour days starting with "Day 1", "Day 2", etc., into the itinerary array with titles and descriptions.
-3. Find the main tour title from the prominent highlighted/bold title section (e.g., "2-Day Cappadocia Tour from Istanbul...").
+1. Tour Title: Use the document file name without extension as the primary Tour Title (e.g. if fileName is "2 - day Cappadocia Tour.docx", title MUST BE "2-Day Cappadocia Tour"). If not available, use the main highlighted title in the text. NEVER use itinerary paragraphs or day 1 text as the tour title!
+2. Ignore and skip any top Travel Agent metadata tables (e.g., Name & Surname, Travel Agent, Guest count, Phone, Email, Emergency Contact).
+3. Extract all tour days starting with "Day 1", "Day 2", etc., into the itinerary array with titles and descriptions.
 4. Extract pricing, Important Info (such as Optional Experiences like Hot Air Balloon, ATV Safari), and hotel options.
 5. Extract Included and Excluded services accurately.
 6. Extract Travel Recommendations and include them in the tour details or overview.

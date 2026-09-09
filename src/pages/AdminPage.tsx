@@ -156,7 +156,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
         const res = await fetch('/api/parse-tour-word', {
           method: 'POST',
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ text }),
+          body: JSON.stringify({ text, fileName: file.name }),
         });
         const contentType = res.headers.get("content-type");
         if (res.ok && contentType && contentType.includes("application/json")) {
@@ -172,6 +172,30 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
       // 2. Fallback smart client-side parser (tailored directly for Voyra Tour Document templates)
       if (!newTour) {
         newTour = parseVoyraTourDocument(text, file.name);
+      }
+
+      // Always guarantee clean title from file name if title is too long or contains paragraph text
+      if (newTour && file.name) {
+        const cleanFileNameTitle = file.name
+          .replace(/\.[^/.]+$/, '')
+          .replace(/\s*-\s*/g, '-')
+          .replace(/[-_]/g, ' ')
+          .trim()
+          .split(' ')
+          .filter(Boolean)
+          .map((w: string) => w.charAt(0).toUpperCase() + w.slice(1))
+          .join(' ');
+
+        if (
+          !newTour.title ||
+          newTour.title.length > 70 ||
+          newTour.title.toLowerCase().includes('your journey begins') ||
+          newTour.title.toLowerCase().includes('day 1') ||
+          newTour.title.toLowerCase().includes('number of guests')
+        ) {
+          newTour.title = cleanFileNameTitle;
+          newTour.titleTr = cleanFileNameTitle;
+        }
       }
 
       if (newTour) {
