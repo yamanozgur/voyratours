@@ -85,7 +85,7 @@ ${text}
 `;
 
     const response = await ai.models.generateContent({
-      model: "gemini-2.5-flash",
+      model: "gemini-3.8-flash",
       contents: prompt,
     });
 
@@ -93,7 +93,19 @@ ${text}
     // Clean up markdown code blocks if present
     jsonStr = jsonStr.replace(/```json/g, "").replace(/```/g, "").trim();
     
-    const parsedTour = JSON.parse(jsonStr);
+    // Attempt parsing, if invalid JSON try to find JSON substring
+    let parsedTour;
+    try {
+      parsedTour = JSON.parse(jsonStr);
+    } catch (e) {
+      const match = jsonStr.match(/\{[\s\S]*\}/);
+      if (match) {
+        parsedTour = JSON.parse(match[0]);
+      } else {
+        throw new Error("Could not parse JSON response from AI");
+      }
+    }
+    
     res.json({ success: true, tour: parsedTour });
   } catch (error: any) {
     console.error("Error parsing tour from Word doc:", error);

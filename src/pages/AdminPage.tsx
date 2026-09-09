@@ -171,7 +171,30 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
       // 2. Fallback smart client-side parser (works on 100% static hosting like cPanel/FTP without Node.js)
       if (!newTour) {
         const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
-        const title = lines[0] || 'Özel Tur Programı';
+        
+        // Find a real title line, skipping form labels like Name & Surname
+        let title = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, ' ');
+        for (const line of lines) {
+          const lower = line.toLowerCase();
+          if (
+            line.length > 3 &&
+            !lower.includes('name & surname') &&
+            !lower.includes('ad soyad') &&
+            !lower.includes('tarih') &&
+            !lower.includes('date') &&
+            !lower.includes('e-mail') &&
+            !lower.includes('telefon') &&
+            !lower.includes('phone') &&
+            !lower.includes('imza')
+          ) {
+            title = line;
+            break;
+          }
+        }
+        if (!title || title.length < 3) {
+          title = 'Boutique Turkey Cultural Tour';
+        }
+        
         const titleTr = title;
         const id = `tour-${Date.now()}`;
         
