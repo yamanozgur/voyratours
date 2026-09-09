@@ -47,6 +47,8 @@ export const TourDetailModal: React.FC<TourDetailModalProps> = ({
   const excluded = isTr ? tour.excludedTr : tour.excluded;
   const hotelType = isTr ? tour.hotelTypeTr : tour.hotelType;
   const departure = isTr ? tour.departureTr : tour.departure;
+  const importantInfo = isTr ? (tour.importantInfoTr || tour.importantInfo) : tour.importantInfo;
+  const travelRecommendations = isTr ? (tour.travelRecommendationsTr || tour.travelRecommendations) : tour.travelRecommendations;
 
   // Gallery state
   const [selectedImage, setSelectedImage] = useState<string>(tour.heroImage);
@@ -378,6 +380,37 @@ Could you please confirm availability and provide details?`
                   </ul>
                 </div>
               </div>
+
+              {/* Important Info / Optional Experiences Section */}
+              {importantInfo && (
+                <div className="bg-amber-50/70 border border-amber-200/70 rounded-2xl p-5">
+                  <h4 className="font-bold text-amber-950 font-serif-luxury text-base mb-2 flex items-center gap-2">
+                    <Sparkles className="w-4 h-4 text-amber-600" />
+                    <span>{isTr ? 'Önemli Bilgiler & Opsiyonel Deneyimler' : 'Important Information & Optional Experiences'}</span>
+                  </h4>
+                  <p className="text-stone-700 text-xs sm:text-sm leading-relaxed whitespace-pre-line">
+                    {importantInfo}
+                  </p>
+                </div>
+              )}
+
+              {/* Travel Recommendations Section */}
+              {travelRecommendations && travelRecommendations.length > 0 && (
+                <div className="bg-stone-50 border border-stone-200 rounded-2xl p-5">
+                  <h4 className="font-bold text-stone-900 font-serif-luxury text-base mb-3 flex items-center gap-2">
+                    <CheckCircle2 className="w-4 h-4 text-[#12bbba]" />
+                    <span>{isTr ? 'Seyahat & Konfor Önerileri' : 'Travel Recommendations'}</span>
+                  </h4>
+                  <ul className="grid grid-cols-1 sm:grid-cols-2 gap-2 text-xs sm:text-sm text-stone-700">
+                    {travelRecommendations.map((tip, idx) => (
+                      <li key={idx} className="flex items-start gap-2">
+                        <span className="text-[#12bbba] font-bold">•</span>
+                        <span>{tip}</span>
+                      </li>
+                    ))}
+                  </ul>
+                </div>
+              )}
             </div>
 
             {/* Right Column: Interactive Booking Calculator & Instant Quote */}

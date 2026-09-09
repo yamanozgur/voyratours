@@ -51,6 +51,10 @@ export interface TourPackage {
   hotelTypeTr: string;
   departure: string;
   departureTr: string;
+  importantInfo?: string;
+  importantInfoTr?: string;
+  travelRecommendations?: string[];
+  travelRecommendationsTr?: string[];
 }
 
 export interface DestinationInfo {

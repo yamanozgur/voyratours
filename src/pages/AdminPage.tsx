@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import mammoth from 'mammoth';
 import { TOURS_DATA, updateToursData, HERO_SLIDES, updateHeroSlides } from '../data/toursData';
 import { TourPackage, Language, Currency } from '../types';
+import { parseVoyraTourDocument } from '../utils/docxTourParser';
 import { Plus, Edit, Trash2, Shield, Lock, ArrowLeft, Save, X, Eye, CheckCircle2, AlertCircle, Image as ImageIcon, Calendar, ListChecks, Sparkles } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
@@ -168,102 +169,9 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
         console.log('Server API not reachable, using smart client-side parser for static hosting...');
       }
 
-      // 2. Fallback smart client-side parser (works on 100% static hosting like cPanel/FTP without Node.js)
+      // 2. Fallback smart client-side parser (tailored directly for Voyra Tour Document templates)
       if (!newTour) {
-        const lines = text.split('\n').map(l => l.trim()).filter(Boolean);
-        
-        // Find a real title line, skipping form labels like Name & Surname
-        let title = file.name.replace(/\.[^/.]+$/, "").replace(/[-_]/g, ' ');
-        for (const line of lines) {
-          const lower = line.toLowerCase();
-          if (
-            line.length > 3 &&
-            !lower.includes('name & surname') &&
-            !lower.includes('ad soyad') &&
-            !lower.includes('tarih') &&
-            !lower.includes('date') &&
-            !lower.includes('e-mail') &&
-            !lower.includes('telefon') &&
-            !lower.includes('phone') &&
-            !lower.includes('imza')
-          ) {
-            title = line;
-            break;
-          }
-        }
-        if (!title || title.length < 3) {
-          title = 'Boutique Turkey Cultural Tour';
-        }
-        
-        const titleTr = title;
-        const id = `tour-${Date.now()}`;
-        
-        // Extract price if any
-        let price = 790;
-        for (const line of lines) {
-          const match = line.match(/(\d+[\.,]?\d*)\s*(EUR|€|USD|\$|TL|TRY)/i);
-          if (match) {
-            price = parseFloat(match[1].replace(',', ''));
-            break;
-          }
-        }
-
-        // Extract days
-        let days = 3;
-        for (const line of lines) {
-          const match = line.match(/(\d+)\s*(gün|day|night|gece)/i);
-          if (match) {
-            days = parseInt(match[1]);
-            break;
-          }
-        }
-
-        newTour = {
-          id,
-          slug: id,
-          title,
-          titleTr,
-          subtitle: 'Boutique Curated Experience from Document',
-          subtitleTr: 'Belgeden Aktarılan Özel Tasarım Deneyim',
-          destination: 'Turkey',
-          destinationTr: 'Türkiye',
-          region: 'cappadocia',
-          durationDays: days,
-          durationNights: Math.max(1, days - 1),
-          priceEUR: price,
-          originalPriceEUR: Math.round(price * 1.2),
-          rating: 5.0,
-          reviewsCount: 1,
-          groupType: 'Private / Small Group',
-          groupTypeTr: 'Özel / Küçük Grup',
-          heroImage: 'https://images.unsplash.com/photo-1578637387939-43c5257f00d4?auto=format&fit=crop&w=1200&q=85',
-          galleryImages: [
-            'https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?auto=format&fit=crop&w=800&q=85',
-            'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&w=800&q=85'
-          ],
-          badge: 'Word Import',
-          badgeTr: 'Word Belgesi',
-          featured: true,
-          overview: text.slice(0, 600) + '...',
-          overviewTr: text.slice(0, 600) + '...',
-          highlights: ['Professional Guide', 'Boutique Accommodation', 'Airport Transfers'],
-          highlightsTr: ['Profesyonel Rehber', 'Butik Konaklama', 'Havalimanı Transferleri'],
-          included: ['Accommodations', 'Guided Tours', 'Daily Breakfasts'],
-          includedTr: ['Konaklamalar', 'Rehberli Turlar', 'Günlük Kahvaltılar'],
-          excluded: ['International Flights', 'Personal Expenses'],
-          excludedTr: ['Uluslararası Uçuşlar', 'Kişisel Harcamalar'],
-          itinerary: Array.from({ length: days }, (_, i) => ({
-            day: i + 1,
-            title: `Day ${i + 1} Program`,
-            titleTr: `${i + 1}. Gün Programı`,
-            description: lines[i + 1] || text.slice(0, 200) || `Day ${i + 1} guided exploration.`,
-            descriptionTr: lines[i + 1] || text.slice(0, 200) || `${i + 1}. gün rehberli keşif turu.`,
-            meals: ['Breakfast', 'Dinner'],
-            mealsTr: ['Kahvaltı', 'Akşam Yemeği'],
-            highlights: [`Day ${i + 1} highlights`],
-            highlightsTr: [`${i + 1}. gün öne çıkanlar`]
-          }))
-        };
+        newTour = parseVoyraTourDocument(text, file.name);
       }
 
       if (newTour) {
