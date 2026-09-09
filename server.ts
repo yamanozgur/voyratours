@@ -25,69 +25,104 @@ function getGenAI() {
   });
 }
 
+// Resilient helper to call Gemini with automatic fallback for high-demand 503 / 429 spikes
+async function generateWithFallback(
+  ai: GoogleGenAI,
+  params: {
+    contents: any;
+    systemInstruction?: string;
+    temperature?: number;
+  }
+) {
+  // Primary model: gemini-3.8-flash, Secondary fallback: gemini-3.1-flash-lite
+  const models = ["gemini-3.8-flash", "gemini-3.1-flash-lite"];
+  let lastError: any = null;
+
+  for (const model of models) {
+    try {
+      const config: any = {};
+      if (params.systemInstruction) config.systemInstruction = params.systemInstruction;
+      if (params.temperature !== undefined) config.temperature = params.temperature;
+
+      const response = await ai.models.generateContent({
+        model,
+        contents: params.contents,
+        config: Object.keys(config).length > 0 ? config : undefined,
+      });
+
+      if (response && response.text) {
+        return response;
+      }
+    } catch (err: any) {
+      lastError = err;
+      console.warn(`[Gemini API] Model ${model} encountered an issue (${err?.status || err?.message || 'Error'}). Trying fallback...`);
+    }
+  }
+
+  throw lastError || new Error("All AI models currently unavailable.");
+}
+
 // API endpoint for Voyra AI Travel Concierge chat
 app.post("/api/ai-chat", async (req, res) => {
-  try {
-    const { messages, userLanguage = "tr", tourContext } = req.body;
+  const { messages, userLanguage = "tr", tourContext } = req.body || {};
+  const isTr = userLanguage === "tr";
 
+  const defaultWelcomeFallback = isTr
+    ? "Merhaba! Voyra Tours Seyahat Danışmanına hoş geldiniz. Şu anda sistemimizde kısa süreli bir yoğunluk yaşanıyor, ancak seyahat uzmanlarımıza doğrudan WhatsApp (+90 532 000 0000) üzerinden dilediğiniz an yazabilir veya tur detaylarını inceleyebilirsiniz. Size nasıl yardımcı olabilirim?"
+    : "Hello! Welcome to Voyra Tours Travel Concierge. Our travel specialists are also readily available on WhatsApp (+90 532 000 0000) to assist you with custom quotes, balloon flights, and tour packages. How may I help you today?";
+
+  try {
     if (!Array.isArray(messages) || messages.length === 0) {
       return res.status(400).json({ error: "Messages array is required" });
     }
 
     const apiKey = process.env.GEMINI_API_KEY;
     if (!apiKey) {
-      // Fallback graceful response if API key is not yet set
-      const isTr = userLanguage === "tr";
-      const fallbackReply = isTr
-        ? "Merhaba! Voyra Tours Seyahat Danışmanına hoş geldiniz. Şu anda sistemimiz aktif ancak seyahat uzmanlarımızla WhatsApp üzerinden de anında görüşebilirsiniz (+90 532 000 0000). Kapadokya balon turları, 2-9 günlük paketlerimiz ve özel rotalarımız için size nasıl yardımcı olabilirim?"
-        : "Hello! Welcome to Voyra Tours Travel Concierge. You can also chat with our travel designers directly on WhatsApp (+90 532 000 0000). How can I assist you with your Turkey travel plans today?";
-      return res.json({ reply: fallbackReply });
+      return res.json({ reply: defaultWelcomeFallback, isFallback: true });
     }
 
     const ai = getGenAI();
 
     const systemInstruction = `
-You are "Voyra AI", the warm, sophisticated, and expert Travel Concierge for Voyra Tours (a premier boutique Turkish travel agency).
-Your mission is to warmly welcome visitors, inspire them, and provide helpful, accurate, and detailed answers to all their questions regarding Turkey tours, custom travel planning, destinations, pricing, logistics, and experiences.
+You are "Voyra AI", the warm, sophisticated, and consultative Travel Concierge for Voyra Tours (a premier boutique Turkish travel agency, TURSAB certified).
 
-About Voyra Tours:
-- Official boutique travel agency in Turkey (TURSAB member).
-- Core promise: Seamless journeys with boutique 4*/5* cave hotels in Cappadocia and authentic boutique heritage hotels in Istanbul, Ephesus, and Antalya.
-- Every package includes:
-  * Private VIP airport transfers with Mercedes Vito/Sprinter vehicles.
-  * Licensed professional English/multilingual tour guides (historians & locals).
-  * Domestic flight tickets within Turkey (Istanbul - Cappadocia - Izmir/Ephesus - Antalya).
-  * Museum & heritage site entrance fees.
-  * Delicious authentic local lunches on full-day tour days.
-  * Daily artisan breakfast at hotels.
-- Exclusions: International flights to/from Turkey, dinners (unless specified), personal shopping/expenses, and optional adventure activities.
-- Optional Signature Activities:
-  * Cappadocia Sunrise Hot Air Balloon Flight (one of Turkey's greatest highlights! Operated early morning at sunrise, 100% weather-dependent. If cancelled by civil aviation due to wind, guests receive a 100% full refund).
-  * Cappadocia Sunset ATV / Quad Safari across Swords & Red Valleys.
-  * Traditional Whirling Dervishes Sema ceremony.
-  * Turkish Night dinner & cultural show in a rock-carved cave restaurant.
-  * Private Bosphorus Yacht Cruise in Istanbul.
-- Tour Packages by Duration (2 to 9 Days):
-  * 2 Days: Cappadocia Express, Ephesus & Pamukkale Express, Gallipoli & Troy, Istanbul Essentials.
-  * 3 Days: Imperial Istanbul & Bosphorus Yachting, Cappadocia In-Depth.
-  * 4 Days: Best of Istanbul & Cappadocia Highlights.
-  * 5 Days: The Golden Triangle Circuit (Cappadocia, Pamukkale, Ephesus).
-  * 6 Days: Grand Classic Turkey (Istanbul, Cappadocia, Pamukkale, Ephesus).
-  * 7 Days: Turquoise Coast & Lycian Wonders (Antalya, Kekova Sunken City, Kas, Oludeniz).
-  * 8 Days: Grand Anatolian & Aegean Journey (Istanbul, Cappadocia, Pamukkale, Ephesus).
-  * 9 Days: Ultimate Grand Turkey Loop (Comprehensive round-trip of Turkey's finest jewels).
-- 100% Bespoke / Tailor-Made Planning:
-  * If a guest wants a custom duration (e.g. 10 days, 12 days, honeymoon, family with young kids, luxury private tour), Voyra crafts 100% tailor-made itineraries within 24 hours.
-- WhatsApp Direct Assistance:
-  * Guests can also talk directly to a human travel specialist via WhatsApp (+90 532 000 0000) or email (info@voyratours.com) for fast reservations or custom quote requests.
+CRITICAL CONSULTATIVE ROLE & DIRECTIVE:
+When a visitor asks for information about a destination (especially Cappadocia / Kapadokya, Ephesus, Antalya, Istanbul, etc.) or generally inquires about tours (e.g., "Kapadokya turları hakkında bilgi almak istiyorum", "bana tur önerin", "turlarınız neler?"):
+1. DO NOT dump an encyclopedic, overwhelming wall of text.
+2. ALWAYS ACT AS A PROACTIVE CONSULTANT: Guide the traveler step-by-step by presenting clear duration/budget options and asking qualifying questions to pinpoint the perfect journey:
+   - 📅 **Duration (Gün Sayısı):** Ask how many days they have available, while presenting our concrete options:
+     * **2 Gün / 1 Gece (€555/kişi):** Hızlı Kapadokya Kaçamağı (Göreme Açık Hava Müzesi, Paşabağ, Uçhisar, Yeraltı Şehri, gün doğumu balon penceresi).
+     * **3 Gün / 2 Gece (€690/kişi):** Derinlemesine Kapadokya (Ihlara Vadisi, Selime Manastırı ve vadi keşifleri dahil en çok tercih edilen rota).
+     * **4-5+ Gün (€930 - €1.280):** İstanbul veya Pamukkale & Efes ile birleşik Altın Üçgen rotaları.
+   - 💰 **Budget & Hotel Style (Bütçe ve Konaklama Tarzı):** Ask if they prefer an authentic boutique cave hotel (comfortable & authentic) or a luxury panoramic cave suite with private jacuzzi and balloon-view terrace.
+   - 🎈 **Must-Have Experiences (Öncelikli Deneyimler):** Mention signature optional activities (Gün doğumu sıcak hava balon uçuşu - %100 hava muhalefeti iade garantili, gün batımı ATV safari, Türk Gecesi veya çömlek atölyesi).
+   - 👥 **Group / Style (Kişi Sayısı ve Seyahat Tipi):** Inquire if this is a romantic honeymoon/couples trip, family with children, or friends.
+3. If the user replies with their duration, budget, or dates, immediately recommend the tailored package, clearly outline inclusions (iç hat uçak biletleri, VIP Mercedes transferler, butik otel, lisanslı rehber, müze biletleri), and provide clear next steps or WhatsApp assistance (+90 532 000 0000).
 
+Core Inclusions in All Voyra Packages:
+- All domestic flight tickets within Turkey.
+- Private Mercedes Vito/Sprinter airport & tour VIP transfers.
+- Boutique 4*/5* cave hotels (Cappadocia) and historic heritage hotels.
+- Licensed professional tour guides (historians & locals).
+- Museum & heritage entrance fees (skip-the-line).
+- Artisan daily breakfasts and authentic local lunches on touring days.
+(Exclusions: International flights, dinners, personal shopping, optional balloon/ATV activities).
+
+Signature Packages by Duration:
+- 2 Days: Cappadocia Express (€555), Ephesus & Pamukkale Express (€490), Gallipoli & Troy (€460), Istanbul Essentials (€420).
+- 3 Days: Cappadocia In-Depth (€690), Imperial Istanbul & Bosphorus Yachting (€580).
+- 4 Days: Best of Istanbul & Cappadocia Highlights (€930).
+- 5 Days: The Golden Triangle (Cappadocia, Pamukkale, Ephesus - €1.280).
+- 6 Days: Grand Classic Turkey (Istanbul, Cappadocia, Pamukkale, Ephesus - €1.520).
+- 7 Days: Turquoise Coast & Lycian Wonders (Antalya, Kekova Sunken City, Kas, Oludeniz - €1.680).
+- 8 Days: Grand Anatolian & Aegean Journey (€1.890).
+- 9 Days: Ultimate Grand Turkey Loop (€2.150).
+- 100% Bespoke / Custom planning for any duration (1-20 days).
+
+Language & Tone:
+- ALWAYS reply in the exact language the user addresses you in (fluent, friendly, elegant Turkish if Turkish, polished English if English).
+- Welcoming, consultative, warm, and structured. Use clean bullet points, bold highlights, and friendly questions. Keep it inviting and easy to scan!
 ${tourContext ? `Current Tour Context: The user is currently browsing "${tourContext.title || ''}" (${tourContext.durationDays || ''} Days, Price: €${tourContext.priceEUR || ''}). Keep this in mind if they ask about "this tour".` : ""}
-
-Interaction Guidelines:
-- Language: ALWAYS reply in the language the user addresses you in. If they write in Turkish, reply in fluent, natural Turkish. If English, in polished English.
-- Tone: Welcoming, courteous, expert, and friendly. Avoid robotic repetition.
-- Formatting: Use concise paragraphs and clean bullet points for readability. Keep it engaging and avoid huge walls of text.
-- Encouragement: When relevant, warmly encourage them to check out our specific tour packages or connect with us on WhatsApp for custom booking assistance.
 `;
 
     // Format previous messages for Gemini contents
@@ -96,28 +131,20 @@ Interaction Guidelines:
       parts: [{ text: m.content }],
     }));
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.8-flash",
+    const response = await generateWithFallback(ai, {
       contents,
-      config: {
-        systemInstruction,
-        temperature: 0.7,
-      },
+      systemInstruction,
+      temperature: 0.7,
     });
 
-    const reply = response.text || (userLanguage === "tr"
-      ? "Üzgünüm, şu an yanıt oluşturulamadı. Lütfen tekrar deneyin veya WhatsApp üzerinden bize ulaşın."
-      : "I apologize, but I could not generate a response right now. Please try again or reach out on WhatsApp.");
-
+    const reply = response.text || defaultWelcomeFallback;
     res.json({ reply });
   } catch (error: any) {
-    console.error("Error in /api/ai-chat:", error);
-    const isTr = req.body?.userLanguage === "tr";
-    res.status(500).json({
-      error: error.message || "Failed to generate AI response",
-      fallbackReply: isTr
-        ? "Bağlantıda küçük bir aksaklık oldu. Lütfen tekrar sorabilir veya doğrudan WhatsApp hattımızdan (+90 532 000 0000) bize yazabilirsiniz."
-        : "There was a brief glitch connecting to the travel concierge. Please try again or message us on WhatsApp (+90 532 000 0000).",
+    console.warn("[/api/ai-chat] Graceful fallback activated due to:", error?.message || error);
+    // Return 200 with graceful assistant reply rather than 500 error
+    res.json({
+      reply: defaultWelcomeFallback,
+      isFallback: true,
     });
   }
 });
@@ -202,8 +229,7 @@ ${text}
 """
 `;
 
-    const response = await ai.models.generateContent({
-      model: "gemini-3.8-flash",
+    const response = await generateWithFallback(ai, {
       contents: prompt,
     });
 

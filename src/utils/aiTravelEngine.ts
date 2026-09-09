@@ -23,7 +23,189 @@ export function getSmartClientSideResponse(
   const findToursByDuration = (days: number) =>
     TOURS_DATA.filter((t) => t.durationDays === days);
 
-  // 1. Kapadokya & Balon (Hot Air Balloon)
+  // 1. Kapadokya Turları & Genel Tur Danışmanlığı (Cappadocia & Tour Guidance)
+  if (
+    q.includes('kapadokya') ||
+    q.includes('cappadocia') ||
+    q.includes('peri baca') ||
+    q.includes('fairy chimney')
+  ) {
+    // If specifically asking about balloon, give balloon details with duration tips
+    if (q.includes('balon') || q.includes('balloon') || q.includes('uçuş') || q.includes('flight')) {
+      if (isTr) {
+        return `🎈 **Kapadokya Sıcak Hava Balon Uçuşları & Paket Bilgisi:**
+
+• **Fiyata Dahil mi?** Standart paket turlarımızda balon turu **opsiyonel** bir etkinliktir. Dilerseniz rezervasyon aşamasında paketinize özel acente indirimli fiyatıyla ekleyebiliriz.
+• **Gündoğumu Uçuşu:** Uçuşlar sabah 05:00-06:00 civarında başlar ve peri bacaları üzerinde yaklaşık 1 saat sürer. Otel transferi ve uçuş sonrası şampanyalı kutlama dahildir.
+• **%100 Hava Durumu İade Garantisi:** Balon uçuşları Sivil Havacılık kontrolündedir. Rüzgar veya hava muhalefeti nedeniyle iptal olması durumunda balon ücreti **%100 kesintisiz iade edilir**!
+• **Önemli Tavsiye:** Kapadokya'da en az 2 veya 3 gün kalmak, ilk gün hava muhalefeti olsa bile ikinci gün uçma şansınızı garantiye alır.
+
+🗓️ **Kapadokya için kaç günlük bir seyahat düşünüyorsunuz?**
+• **2 Günlük Hızlı Kaçamak:** €555 / kişi başı (Uçak, mağara otel, rehberli turlar)
+• **3 Günlük Derinlemesine Tur:** €690 / kişi başı (Ihlara Vadisi ve Yeraltı Şehri dahil)`;
+      } else {
+        return `🎈 **Cappadocia Hot Air Balloon Flights & Packages:**
+
+• **Is it included?** On standard packages, the sunrise balloon flight is an **optional add-on** at exclusive agency rates.
+• **The Experience:** Launches at sunrise, offering a 60-minute flight over the fairy chimneys with boutique hotel pickup and champagne toast.
+• **100% Weather Refund Guarantee:** Flights are regulated by Turkish Civil Aviation. If cancelled due to wind, your balloon fee is **100% fully refunded immediately**!
+• **Pro Tip:** Staying at least 2 or 3 nights in Cappadocia gives you multiple sunrise flight windows.
+
+🗓️ **How many days are you planning for Cappadocia?**
+• **2-Day Quick Escape:** €555 / person (Flights, cave hotel, guided tours)
+• **3-Day In-Depth Journey:** €690 / person (Ihlara Valley & Underground Cities included)`;
+      }
+    }
+
+    // 2-Day Cappadocia Tour specific breakdown
+    if (q.includes('2 gün') || q.includes('2 gun') || q.includes('2-day') || q.includes('2 day') || (q.includes('iki') && q.includes('gün'))) {
+      if (isTr) {
+        return `🌟 **2 Günlük Büyülü Kapadokya Kaçamağı (€555 / Kişi Başı)**
+
+Zamanı kısıtlı olan misafirlerimiz için en popüler ve verimli Kapadokya programımızdır:
+
+• **1. Gün (Kırmızı Tur):** Sabah İstanbul'dan Kapadokya uçuşu. VIP araçla karşılama. Göreme Açık Hava Müzesi, Paşabağ (Keşişler Vadisi), Devrent Hayal Vadisi, Avanos çömlek atölyesi ve Uçhisar Kalesi panoraması. Akşam butik mağara otele yerleşme.
+• **2. Gün (Gün Doğumu & Vadi Keşfi):** Sabah gün doğumunda Kapadokya Sıcak Hava Balon Uçuşu (opsiyonel) veya balonları vadiden izleme. Güvercinlik Vadisi, Kaymaklı/Derinkuyu Yeraltı Şehri keşfi. Akşam üzeri havalimanı transferi ve İstanbul'a dönüş uçuşu.
+
+✅ **Fiyata Dahil Olanlar:**
+- İstanbul ⇄ Kapadokya gidiş-dönüş iç hat uçak biletleri
+- 1 Gece Seçkin Butik Mağara Otel konaklaması ve açık büfe artisan kahvaltı
+- Klimalı Mercedes VIP araçlarla tüm transferler
+- Lisanslı profesyonel tarihçi rehberlik hizmeti ve tüm müze giriş ücretleri
+- 2 gün boyunca yöresel öğle yemekleri
+
+💰 **Bütçe Seçenekleri:**
+- **Butik Standart Mağara:** €555 / kişi
+- **Balayı / Lüks Jakuzili Mağara Süiti:** Özel fiyat farkı ile rezerve edilebilir.
+
+👉 Tarihlerinize göre müsaitlik ve rezervasyon için doğrudan **WhatsApp (+90 532 000 0000)** hattımızdan bize yazabilirsiniz!`;
+      } else {
+        return `🌟 **2-Day Magical Cappadocia & Cave Suite Escape (€555 / Person)**
+
+Our top-rated express journey designed for travelers with limited time:
+
+• **Day 1 (Red Tour):** Morning flight from Istanbul to Cappadocia. VIP transfer. Göreme Open Air Museum, Paşabağ fairy chimneys, Devrent Imagination Valley, Avanos pottery masterclass & Uçhisar viewpoint. Check into your boutique cave hotel.
+• **Day 2 (Sunrise & Underground Cities):** Optional sunrise hot air balloon flight or scenic balloon watching. Pigeon Valley, Kaymaklı/Derinkuyu underground city. Afternoon VIP airport transfer and return flight to Istanbul.
+
+✅ **What is Included:**
+- Roundtrip domestic flights (Istanbul ⇄ Cappadocia)
+- 1 Night in a handpicked boutique cave hotel with artisan breakfast
+- Private Mercedes VIP airport & tour transfers
+- Licensed professional historian guide & skip-the-line museum tickets
+- Authentic local lunches on tour days
+
+💰 **Style & Budget:**
+- **Curated Cave Room:** €555 / person
+- **Honeymoon / Luxury Jacuzzi Cave Suite:** Available upon request.
+
+👉 Ready to check dates or reserve? Chat directly on **WhatsApp (+90 532 000 0000)**!`;
+      }
+    }
+
+    // 3-Day Cappadocia Tour specific breakdown
+    if (q.includes('3 gün') || q.includes('3 gun') || q.includes('3-day') || q.includes('3 day') || (q.includes('üç') && q.includes('gün'))) {
+      if (isTr) {
+        return `🌟 **3 Günlük Derinlemesine Kapadokya Turu (€690 / Kişi Başı)**
+
+Kapadokya'yı acele etmeden, vadileri yürüyerek ve 2 gün doğumu balon izleme şansıyla yaşamak isteyenlerin tercihi:
+
+• **1. Gün:** İstanbul - Kapadokya uçuşu. Göreme Açık Hava Müzesi, Aşk Vadisi, Çavuşin Köyü ve Paşabağ. Butik mağara otele yerleşme.
+• **2. Gün (Balon & Yeşil Tur):** Sabah erken gün doğumu balon uçuşu. Ardından Ihlara Vadisi kanyon yürüyüşü, Melendiz Çayı kenarında öğle yemeği, Selime Kaya Manastırı ve Derinkuyu Yeraltı Şehri.
+• **3. Gün:** Uçhisar Kalesi, Güvercinlik Vadisi, Kızılçukur gün batımı vadisi ve el sanatları atölyeleri. Akşam havalimanı transferi.
+
+✅ **Fiyata Dahil:** Tüm iç hat uçuşları, 2 gece butik mağara otel, Mercedes VIP transferler, rehberlik, müze biletleri ve öğle yemekleri.
+💰 **Fiyat:** €690 / kişi başı.
+
+👉 Rezervasyon ve müsaitlik için **WhatsApp (+90 532 000 0000)** hattımızdan anında bilgi alabilirsiniz!`;
+      } else {
+        return `🌟 **3-Day In-Depth Cappadocia & Underground Cities (€690 / Person)**
+
+The ideal pacing with 2 sunrise flight windows and deep valley exploration:
+
+• **Day 1:** Morning flight from Istanbul. Göreme Open Air Museum, Love Valley, Paşabağ. Cave hotel check-in.
+• **Day 2 (Green Tour & Balloons):** Sunrise hot air balloon flight. Ihlara Valley canyon hike, riverside lunch at Melendiz River, Selime Rock Monastery & Derinkuyu Underground City.
+• **Day 3:** Uçhisar Castle, Pigeon Valley, Red Valley viewpoints, artisan workshops and evening airport transfer.
+
+✅ **Included:** Roundtrip domestic flights, 2 nights boutique cave hotel, private Mercedes VIP transfers, expert guide, museum tickets & lunches.
+💰 **Price:** €690 / person.
+
+👉 Message us on **WhatsApp (+90 532 000 0000)** to confirm dates or customize!`;
+      }
+    }
+
+    // General Cappadocia inquiry - Guide with duration, budget, experiences, and group size!
+    if (isTr) {
+      return `✨ **Voyra Tours Kapadokya Seyahat Danışmanlığına Hoş Geldiniz!**
+
+Kapadokya'nın büyülü peri bacalarını, yeraltı şehirlerini ve gün doğumu balonlarını en konforlu şekilde deneyimlemeniz için size rehberlik etmekten mutluluk duyarım.
+
+Size en uygun turu belirleyebilmemiz için şu **4 temel özellik** üzerinden ilerleyebiliriz:
+
+---
+
+### 1. 📅 Gün Sayısı & Rota Seçeneklerimiz:
+• **2 Gün / 1 Gece (€555/kişi):** Zamanı kısıtlı olanlar için ideal hızlı kaçamak. Göreme Açık Hava Müzesi, Paşabağ, Devrent Vadisi, Uçhisar Kalesi ve 1 gün doğumu balon penceresi.
+• **3 Gün / 2 Gece (€690/kişi):** En popüler programımız! Kırmızı Tur + Yeşil Tur (Derinkuyu Yeraltı Şehri ve Ihlara Vadisi doğa yürüyüşü) ile 2 gün doğumu balon penceresi.
+• **4 Gün / 3 Gece (€930/kişi):** İstanbul ve Kapadokya İkilisi (Sultanahmet sarayları + Kapadokya peri bacaları).
+• **5 Gün / 4 Gece (€1.280/kişi):** Altın Üçgen (Kapadokya + Pamukkale Travertenleri + Efes Antik Kenti).
+
+---
+
+### 2. 💰 Konaklama ve Bütçe Tercihiniz:
+• **Otantik Butik Mağara Otel:** Geleneksel taş/kaya mimarili, konforlu standart paket.
+• **Panoramik Lüks Süit:** Özel jakuzili ve balkonundan gün doğumunda balonları izleyebileceğiniz premium süitler (özellikle balayı çiftleri için önerilir).
+
+---
+
+### 3. 🎈 Katılmak İstediğiniz Aktiviteler:
+• **Gün Doğumu Sıcak Hava Balon Uçuşu** (%100 hava muhalefeti iade garantili)
+• **Gün Batımı ATV / Quad Safari** (Kızıl Vadi & Kılıçlar Vadisi)
+• **Avanos Çömlek Yapımı & Geleneksel Türk Gecesi**
+
+---
+
+### 4. 👥 Seyahat Grubu:
+Kaç kişi seyahat edeceksiniz? (Çift, balayı, çocuklu aile veya arkadaş grubu?)
+
+👉 **Aklınızdaki gün sayısı ve bütçe tercihini paylaşabilir misiniz?** Size özel güncel programı ve fiyat teklifini anında paylaşabilirim. Dilerseniz **WhatsApp (+90 532 000 0000)** üzerinden uzmanlarımızla da anında görüşebilirsiniz!`;
+    } else {
+      return `✨ **Welcome to Voyra Tours Cappadocia Concierge!**
+
+We are thrilled to help you explore Cappadocia’s magical fairy chimneys, underground cities, and sunrise balloons in complete boutique comfort.
+
+To help you choose or customize the ideal journey, here are the key features to guide your decision:
+
+---
+
+### 1. 📅 Duration & Package Options:
+• **2 Days / 1 Night (€555/person):** Perfect short getaway. Göreme Open Air Museum, Paşabağ, Devrent Valley, Uçhisar Castle & 1 sunrise balloon window.
+• **3 Days / 2 Nights (€690/person):** Our most popular in-depth tour! Red Tour + Green Tour (Derinkuyu Underground City & Ihlara Valley hike) with 2 sunrise flight windows.
+• **4 Days / 3 Nights (€930/person):** Best of Istanbul & Cappadocia highlights.
+• **5 Days / 4 Nights (€1,280/person):** Golden Triangle (Cappadocia + Pamukkale + Ancient Ephesus).
+
+---
+
+### 2. 💰 Accommodation Style & Budget:
+• **Curated Boutique Cave Hotel:** Authentic rock-carved rooms with modern comfort.
+• **Panoramic Luxury Cave Suite:** With private jacuzzi and balloon-view terrace (ideal for honeymoons).
+
+---
+
+### 3. 🎈 Must-Have Experiences:
+• **Sunrise Hot Air Balloon Flight** (100% weather refund guarantee)
+• **Sunset ATV / Quad Safari** across Rose & Swords Valleys
+• **Avanos Pottery Workshop & Cave Turkish Night Show**
+
+---
+
+### 4. 👥 Travelers:
+How many guests will be traveling? (Couples/honeymoon, family with children, or private group?)
+
+👉 **How many days do you have in mind, and what is your preferred style?** Reply with your preferences and I will give you a tailored plan, or chat with our specialists on **WhatsApp (+90 532 000 0000)**!`;
+    }
+  }
+
+  // 2. Balon (Hot Air Balloon) - Genel
   if (
     q.includes('balon') ||
     q.includes('balloon') ||

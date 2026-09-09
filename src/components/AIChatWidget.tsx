@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useState, useRef, useEffect, useMemo } from 'react';
 import {
   Sparkles,
   X,
@@ -72,22 +72,95 @@ Feel free to ask me anything about routes, pricing, or travel tips. How may I as
 
   const [messages, setMessages] = useState<ChatMessage[]>([getWelcomeMessage()]);
 
-  // Suggested prompt chips
-  const suggestedPrompts = isTr
-    ? [
-        'Kapadokya balon turu fiyata dahil mi?',
-        'En popüler 4 ve 5 günlük turlar hangileri?',
-        'Paket turlara uçak ve transferler dahil mi?',
-        'Bana özel bir rota planlayabilir misiniz?',
-        'Efes & Pamukkale turu kaç gün sürer?',
-      ]
-    : [
-        'Is hot air balloon included in Cappadocia?',
-        'What are the most popular 4 & 5-day tours?',
-        'Are domestic flights & transfers included?',
-        'Can you design a custom itinerary for me?',
-        'How many days for Ephesus & Pamukkale?',
-      ];
+  // Dynamic suggested prompt chips that intelligently adapt to conversation context
+  const dynamicSuggestions = useMemo(() => {
+    const recentText = messages
+      .slice(-3)
+      .map((m) => m.content.toLowerCase())
+      .join(' ');
+
+    if (recentText.includes('kapadokya') || recentText.includes('cappadocia')) {
+      return isTr
+        ? [
+            '2 Günlük Kapadokya Turu (€555)',
+            '3 Günlük Kapadokya Turu (€690)',
+            'Balon turu fiyata dahil mi?',
+            'Bütçe ve lüks mağara süit seçenekleri',
+            'Paket turlara uçak ve transferler dahil mi?',
+          ]
+        : [
+            '2-Day Cappadocia Tour (€555)',
+            '3-Day Cappadocia Tour (€690)',
+            'Is hot air balloon included?',
+            'Budget & luxury cave suite options',
+            'Are domestic flights & transfers included?',
+          ];
+    }
+
+    if (
+      recentText.includes('gün') ||
+      recentText.includes('gun') ||
+      recentText.includes('day') ||
+      recentText.includes('süre') ||
+      recentText.includes('duration')
+    ) {
+      return isTr
+        ? [
+            '2 Günlük Turlar',
+            '3 Günlük Turlar',
+            '4 Günlük İstanbul & Kapadokya',
+            '5 Günlük Altın Üçgen Turu',
+            'Kişiye özel gün sayısı planlayabilir miyiz?',
+          ]
+        : [
+            '2-Day Tours',
+            '3-Day Tours',
+            '4-Day Istanbul & Cappadocia',
+            '5-Day Golden Triangle',
+            'Can we customize the duration?',
+          ];
+    }
+
+    if (
+      recentText.includes('fiyat') ||
+      recentText.includes('bütçe') ||
+      recentText.includes('butce') ||
+      recentText.includes('price') ||
+      recentText.includes('cost') ||
+      recentText.includes('ücret')
+    ) {
+      return isTr
+        ? [
+            'Paketlere dahil olan tüm hizmetler',
+            'Balon turu güncel fiyatı',
+            'Lüks süit ve balayı seçenekleri',
+            'WhatsApp üzerinden özel indirimli teklif',
+          ]
+        : [
+            'What is included in packages',
+            'Current balloon flight rates',
+            'Luxury cave suite & honeymoon options',
+            'Get custom quote on WhatsApp',
+          ];
+    }
+
+    // Default welcome suggestions
+    return isTr
+      ? [
+          'Kapadokya turları hakkında bilgi almak istiyorum',
+          'En popüler 4 ve 5 günlük turlar hangileri?',
+          'Kapadokya balon turu fiyata dahil mi?',
+          'Paket turlara uçak ve transferler dahil mi?',
+          'Bana özel bir rota planlayabilir misiniz?',
+        ]
+      : [
+          'Tell me about Cappadocia tours',
+          'What are the most popular 4 & 5-day tours?',
+          'Is hot air balloon included in Cappadocia?',
+          'Are domestic flights & transfers included?',
+          'Can you design a custom itinerary for me?',
+        ];
+  }, [messages, isTr]);
 
   // Auto scroll to bottom
   const scrollToBottom = () => {
@@ -137,7 +210,7 @@ Feel free to ask me anything about routes, pricing, or travel tips. How may I as
     try {
       // 1. First attempt: server-side API (works in full-stack dev / Cloud Run)
       const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 3500);
+      const timeoutId = setTimeout(() => controller.abort(), 12000);
 
       const apiMessages = newMessages.map((m) => ({
         role: m.role,
@@ -171,10 +244,14 @@ Feel free to ask me anything about routes, pricing, or travel tips. How may I as
         if (data && data.reply) {
           botReply = data.reply;
         }
+      } else {
+        const data = await response.json().catch(() => null);
+        if (data && data.fallbackReply) {
+          botReply = data.fallbackReply;
+        }
       }
-    } catch (error) {
-      // Endpoint unreachable (e.g. on GitHub Pages or static hosting)
-      console.log('Server endpoint unreachable or static hosting detected, falling back to client engine.');
+    } catch {
+      // Endpoint unreachable or timeout, fallback to instant client-side concierge
     }
 
     // 2. Second attempt / Fallback: Instant Intelligent Client-Side Travel Concierge
@@ -441,18 +518,18 @@ Feel free to ask me anything about routes, pricing, or travel tips. How may I as
             <div ref={messagesEndRef} />
           </div>
 
-          {/* Quick Prompts (Visible when only 1 or 2 messages exist) */}
-          {messages.length <= 3 && !isLoading && (
-            <div className="px-3 py-2 bg-white border-t border-slate-100 flex items-center gap-1.5 overflow-x-auto scrollbar-none">
+          {/* Quick Dynamic Prompts / Suggestion Chips */}
+          {!isLoading && dynamicSuggestions.length > 0 && (
+            <div className="px-3 py-2 bg-slate-50/80 border-t border-slate-100 flex items-center gap-1.5 overflow-x-auto scrollbar-none">
               <span className="text-[10px] font-bold text-slate-400 uppercase tracking-wider shrink-0 pl-1">
                 {isTr ? 'Öneriler:' : 'Suggestions:'}
               </span>
-              {suggestedPrompts.map((prompt, pIdx) => (
+              {dynamicSuggestions.map((prompt, pIdx) => (
                 <button
                   key={pIdx}
                   type="button"
                   onClick={() => handleSendMessage(prompt)}
-                  className="px-2.5 py-1 rounded-full bg-[#FAF8F5] hover:bg-[#F4EFE6] border border-[#E5DFD5] text-[11px] font-medium text-slate-700 hover:text-[#009999] transition shrink-0 cursor-pointer whitespace-nowrap"
+                  className="px-2.5 py-1 rounded-full bg-white hover:bg-[#FAF8F5] border border-slate-200 hover:border-[#009999] text-[11px] font-medium text-slate-700 hover:text-[#009999] transition shrink-0 cursor-pointer whitespace-nowrap shadow-2xs"
                 >
                   {prompt}
                 </button>
