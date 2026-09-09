@@ -30,10 +30,20 @@ app.post("/api/parse-tour-word", async (req, res) => {
     const prompt = `
 You are an expert AI tour parser for Voyra Tours (a boutique travel agency in Turkey).
 Analyze the following raw text extracted from a Word document (.docx) containing tour details.
+Follow these strict rules:
+1. Ignore and skip any top Travel Agent metadata tables (e.g., Name & Surname, Travel Agent, Guest count, Phone, Email, Emergency Contact).
+2. Extract all tour days starting with "Day 1", "Day 2", etc., into the itinerary array with titles and descriptions.
+3. Find the main tour title from the prominent highlighted/bold title section (e.g., "2-Day Cappadocia Tour from Istanbul...").
+4. Extract pricing, Important Info (such as Optional Experiences like Hot Air Balloon, ATV Safari), and hotel options.
+5. Extract Included and Excluded services accurately.
+6. Extract Travel Recommendations and include them in the tour details or overview.
+7. Generate a comprehensive "overview" summarizing the tour.
+8. Generate 5-6 bullet points for "highlights" and "highlightsTr".
+
 Extract and structure the tour into a valid JSON object matching this TypeScript TourPackage interface:
 
 export interface TourPackage {
-  id: string; // e.g. "cappadocia-deluxe-3d" (lowercase hyphenated)
+  id: string; // e.g. "cappadocia-deluxe-2d" (lowercase hyphenated)
   slug: string;
   title: string; // English title
   titleTr: string; // Turkish title
@@ -41,25 +51,26 @@ export interface TourPackage {
   subtitleTr: string; // Turkish subtitle
   destination: string; // English destination e.g. "Cappadocia"
   destinationTr: string; // Turkish destination e.g. "Kapadokya"
-  region: string; // e.g. "cappadocia", "aegean-ephesus", "istanbul", "antalya", etc.
+  region: string; // e.g. "cappadocia", "istanbul", etc.
   durationDays: number;
   durationNights: number;
   priceEUR: number;
   originalPriceEUR: number;
-  heroImage: string; // Use a stunning Unsplash image URL suitable for this tour if not present in text
-  gallery: string[]; // 3-4 stunning Unsplash image URLs
+  heroImage: string; // Unsplash URL
+  gallery: string[]; // 3-4 Unsplash URLs
   overview: string; // English overview
   overviewTr: string; // Turkish overview
-  highlights: string[]; // English highlights array
-  highlightsTr: string[]; // Turkish highlights array
-  included: string[]; // English included items array
-  includedTr: string[]; // Turkish included items array
-  excluded: string[]; // English excluded items array
-  excludedTr: string[]; // Turkish excluded items array
+  highlights: string[]; // 5-6 items
+  highlightsTr: string[]; // 5-6 items
+  included: string[];
+  includedTr: string[];
+  excluded: string[];
+  excludedTr: string[];
   hotelType: string;
   hotelTypeTr: string;
   departure: string;
   departureTr: string;
+  importantInfo?: string; // Important info & optional activities found in document
   featured?: boolean;
   itinerary: Array<{
     day: number;
@@ -75,7 +86,7 @@ export interface TourPackage {
 
 IMPORTANT: 
 - Return ONLY valid JSON (no markdown wrappers like \`\`\`json, just raw JSON).
-- If English or Turkish fields are not explicitly provided in the text, translate or generate professional professional travel agency descriptions in both languages.
+- If English or Turkish fields are not explicitly provided in the text, translate or generate professional travel agency descriptions in both languages.
 - Ensure all numeric fields are numbers, and array fields are arrays of strings.
 
 Raw Document Text:
