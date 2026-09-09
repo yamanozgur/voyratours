@@ -1,4 +1,4 @@
-import { TourPackage } from '../types';
+import { TourPackage, DestinationInfo } from '../types';
 
 const STORAGE_KEY = 'voyra_admin_tours_v1';
 
@@ -1469,7 +1469,9 @@ export const REVIEWS_DATA = [
   },
 ];
 
-export const DESTINATIONS_DATA = [
+export const DESTINATIONS_STORAGE_KEY = 'voyra_destinations_v1';
+
+export const INITIAL_DESTINATIONS_DATA: DestinationInfo[] = [
   {
     id: 'cappadocia',
     name: 'Cappadocia',
@@ -1527,6 +1529,46 @@ export const DESTINATIONS_DATA = [
   },
 ];
 
+export let DESTINATIONS_DATA: DestinationInfo[] = (() => {
+  try {
+    const saved = localStorage.getItem(DESTINATIONS_STORAGE_KEY);
+    if (saved) {
+      const parsed = JSON.parse(saved);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (e) {
+    console.error(e);
+  }
+  return INITIAL_DESTINATIONS_DATA;
+})();
+
+export function updateDestinationsData(newList: DestinationInfo[]) {
+  DESTINATIONS_DATA = newList;
+  try {
+    localStorage.setItem(DESTINATIONS_STORAGE_KEY, JSON.stringify(newList));
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('voyra_destinations_updated'));
+    }
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+export function resetDestinationsToDefault(): DestinationInfo[] {
+  DESTINATIONS_DATA = [...INITIAL_DESTINATIONS_DATA];
+  try {
+    localStorage.removeItem(DESTINATIONS_STORAGE_KEY);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('voyra_destinations_updated'));
+    }
+  } catch (e) {
+    console.error(e);
+  }
+  return DESTINATIONS_DATA;
+}
+
 export function isInvalidTourTitle(title?: string, badge?: string): boolean {
   if (!title) return true;
   const lower = title.toLowerCase().trim();
@@ -1576,6 +1618,9 @@ export function updateToursData(newList: TourPackage[]) {
   TOURS_DATA = newList;
   try {
     localStorage.setItem(STORAGE_KEY, JSON.stringify(newList));
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('voyra_tours_updated'));
+    }
   } catch (e) {
     console.error(e);
   }
@@ -1585,6 +1630,9 @@ export function resetToursToDefault(): TourPackage[] {
   TOURS_DATA = [...INITIAL_TOURS_DATA];
   try {
     localStorage.removeItem(STORAGE_KEY);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('voyra_tours_updated'));
+    }
   } catch (e) {
     console.error(e);
   }

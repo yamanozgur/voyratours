@@ -1,6 +1,7 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { Language } from '../types';
+import { Language, DestinationInfo } from '../types';
+import { DESTINATIONS_DATA } from '../data/toursData';
 import { ChevronRight, Sparkles, MapPin, Calendar, Compass, ArrowRight } from 'lucide-react';
 
 interface DestinationsPageProps {
@@ -10,6 +11,19 @@ interface DestinationsPageProps {
 export const DestinationsPage: React.FC<DestinationsPageProps> = ({ language }) => {
   const navigate = useNavigate();
   const isTr = language === 'tr';
+  const [destinationsData, setDestinationsData] = useState<DestinationInfo[]>(DESTINATIONS_DATA);
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setDestinationsData([...DESTINATIONS_DATA]);
+    };
+    window.addEventListener('voyra_destinations_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    return () => {
+      window.removeEventListener('voyra_destinations_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, []);
 
   const extendedDestinations = [
     {
@@ -116,6 +130,30 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({ language }) 
     },
   ];
 
+  // Map each item in destinationsData, merging with existing rich descriptions if present
+  const mergedDestinations = destinationsData.map((dest) => {
+    const matched = extendedDestinations.find((ext) => ext.id === dest.id);
+    return {
+      id: dest.id,
+      nameEn: dest.name,
+      nameTr: dest.nameTr,
+      taglineEn: dest.tagline,
+      taglineTr: dest.taglineTr,
+      image: dest.image,
+      descriptionEn:
+        matched?.descriptionEn ||
+        `${dest.name} invites you to experience breathtaking scenery, unique heritage, and hand-crafted boutique tour packages.`,
+      descriptionTr:
+        matched?.descriptionTr ||
+        `${dest.nameTr}, benzersiz tarihi ve kültürel zenginlikleri ile sizi unutulmaz bir seyahate davet ediyor.`,
+      bestTime: matched?.bestTime || (isTr ? 'Tüm Yıl' : 'Year-Round'),
+      highlights: isTr
+        ? (dest.popularHighlightsTr && dest.popularHighlightsTr.length > 0 ? dest.popularHighlightsTr : matched?.highlights || [])
+        : (dest.popularHighlights && dest.popularHighlights.length > 0 ? dest.popularHighlights : matched?.highlights || []),
+      toursCount: `${dest.toursCount} ${isTr ? 'Paket' : 'Tours'}`,
+    };
+  });
+
   return (
     <div className="min-h-screen bg-[#f8fbfb] pb-24">
       {/* Header */}
@@ -152,7 +190,7 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({ language }) 
       {/* Main Grid */}
       <div className="max-w-7xl mx-auto px-4 sm:px-8 -mt-6">
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
-          {extendedDestinations.map((dest) => (
+          {mergedDestinations.map((dest) => (
             <div
               key={dest.id}
               className="bg-white rounded-2xl overflow-hidden border border-slate-200/90 shadow-xs hover:shadow-lg hover:border-[#009999]/60 transition-all duration-300 flex flex-col group"

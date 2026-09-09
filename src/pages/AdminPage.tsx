@@ -1,9 +1,37 @@
 import React, { useState } from 'react';
 import mammoth from 'mammoth';
-import { TOURS_DATA, updateToursData, HERO_SLIDES, updateHeroSlides, resetToursToDefault } from '../data/toursData';
-import { TourPackage, Language, Currency } from '../types';
+import {
+  TOURS_DATA,
+  updateToursData,
+  HERO_SLIDES,
+  updateHeroSlides,
+  resetToursToDefault,
+  DESTINATIONS_DATA,
+  updateDestinationsData,
+  resetDestinationsToDefault,
+} from '../data/toursData';
+import { TourPackage, Language, Currency, DestinationInfo } from '../types';
 import { parseVoyraTourDocument } from '../utils/docxTourParser';
-import { Plus, Edit, Trash2, Shield, Lock, ArrowLeft, Save, X, Eye, CheckCircle2, AlertCircle, Image as ImageIcon, Calendar, ListChecks, Sparkles, RotateCcw } from 'lucide-react';
+import {
+  Plus,
+  Edit,
+  Trash2,
+  Shield,
+  Lock,
+  ArrowLeft,
+  Save,
+  X,
+  Eye,
+  CheckCircle2,
+  AlertCircle,
+  Image as ImageIcon,
+  Calendar,
+  ListChecks,
+  Sparkles,
+  RotateCcw,
+  MapPin,
+  Upload,
+} from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface AdminPageProps {
@@ -17,13 +45,21 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
   const [passwordInput, setPasswordInput] = useState<string>('');
   const [authError, setAuthError] = useState<boolean>(false);
 
-  const [activeTab, setActiveTab] = useState<'tours' | 'hero'>('tours');
+  const [activeTab, setActiveTab] = useState<'tours' | 'destinations' | 'hero'>('tours');
   const [heroSlides, setHeroSlides] = useState<string[]>(HERO_SLIDES);
   const [newHeroUrl, setNewHeroUrl] = useState<string>('');
 
   const [tours, setTours] = useState<TourPackage[]>(TOURS_DATA);
   const [searchTerm, setSearchTerm] = useState<string>('');
   const [selectedRegion, setSelectedRegion] = useState<string>('all');
+
+  // Destinations state
+  const [destinations, setDestinations] = useState<DestinationInfo[]>(DESTINATIONS_DATA);
+  const [destSearchTerm, setDestSearchTerm] = useState<string>('');
+  const [isDestModalOpen, setIsDestModalOpen] = useState<boolean>(false);
+  const [editingDestination, setEditingDestination] = useState<DestinationInfo | null>(null);
+  const [highlightsInputEn, setHighlightsInputEn] = useState<string>('');
+  const [highlightsInputTr, setHighlightsInputTr] = useState<string>('');
 
   // Edit / Add modal state
   const [isModalOpen, setIsModalOpen] = useState<boolean>(false);
@@ -63,6 +99,26 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
     setIsModalOpen(false);
     setEditingTour(null);
     showToast('Tur başarıyla kaydedildi ve tüm sitede güncellendi!');
+  };
+
+  const handleToggleFeatured = (tourId: string, e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation();
+    }
+    const updatedList = tours.map((t) => {
+      if (t.id === tourId) {
+        return { ...t, featured: !t.featured };
+      }
+      return t;
+    });
+    setTours(updatedList);
+    updateToursData(updatedList);
+    const targetTour = updatedList.find((t) => t.id === tourId);
+    showToast(
+      targetTour?.featured
+        ? `"${targetTour.titleTr || targetTour.title}" ana sayfa popüler turlara eklendi!`
+        : `"${targetTour?.titleTr || targetTour?.title}" ana sayfa popüler turlardan çıkarıldı.`
+    );
   };
 
   const handleDeleteTour = (tourId: string) => {
@@ -303,6 +359,120 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
     setIsModalOpen(true);
   };
 
+  // Destination Handlers
+  const handleCreateNewDestination = () => {
+    const newId = `dest-${Date.now()}`;
+    const newDest: DestinationInfo = {
+      id: newId,
+      name: '',
+      nameTr: '',
+      tagline: '',
+      taglineTr: '',
+      image: 'https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?auto=format&fit=crop&w=800&q=80',
+      toursCount: 1,
+      popularHighlights: ['Top Attraction 1', 'Top Attraction 2'],
+      popularHighlightsTr: ['Gezilecek Yer 1', 'Gezilecek Yer 2'],
+    };
+    setEditingDestination(newDest);
+    setHighlightsInputEn(newDest.popularHighlights.join(', '));
+    setHighlightsInputTr(newDest.popularHighlightsTr.join(', '));
+    setIsDestModalOpen(true);
+  };
+
+  const handleEditDestination = (dest: DestinationInfo) => {
+    setEditingDestination(JSON.parse(JSON.stringify(dest)));
+    setHighlightsInputEn(dest.popularHighlights.join(', '));
+    setHighlightsInputTr(dest.popularHighlightsTr.join(', '));
+    setIsDestModalOpen(true);
+  };
+
+  const handleSaveDestination = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (!editingDestination) return;
+
+    if (!editingDestination.name.trim() && !editingDestination.nameTr.trim()) {
+      alert('Lütfen destinasyon adını giriniz.');
+      return;
+    }
+
+    const highlightsEn = highlightsInputEn
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
+    const highlightsTr = highlightsInputTr
+      .split(',')
+      .map((s) => s.trim())
+      .filter(Boolean);
+
+    const destToSave: DestinationInfo = {
+      ...editingDestination,
+      id: editingDestination.id.trim() || `dest-${Date.now()}`,
+      name: editingDestination.name.trim() || editingDestination.nameTr.trim(),
+      nameTr: editingDestination.nameTr.trim() || editingDestination.name.trim(),
+      tagline: editingDestination.tagline.trim(),
+      taglineTr: editingDestination.taglineTr.trim(),
+      popularHighlights: highlightsEn.length > 0 ? highlightsEn : ['Tour Highlight'],
+      popularHighlightsTr: highlightsTr.length > 0 ? highlightsTr : ['Tur Noktası'],
+    };
+
+    let updatedList: DestinationInfo[];
+    const exists = destinations.some((d) => d.id === destToSave.id);
+    if (exists) {
+      updatedList = destinations.map((d) => (d.id === destToSave.id ? destToSave : d));
+    } else {
+      updatedList = [...destinations, destToSave];
+    }
+
+    setDestinations(updatedList);
+    updateDestinationsData(updatedList);
+    setIsDestModalOpen(false);
+    setEditingDestination(null);
+    showToast('Destinasyon başarıyla kaydedildi ve tüm sitede güncellendi!');
+  };
+
+  const handleDeleteDestination = (destId: string) => {
+    if (confirm('Bu destinasyonu silmek istediğinizden emin misiniz?')) {
+      const updatedList = destinations.filter((d) => d.id !== destId);
+      setDestinations(updatedList);
+      updateDestinationsData(updatedList);
+      showToast('Destinasyon silindi.');
+    }
+  };
+
+  const handleResetDestinations = () => {
+    if (confirm('Destinasyonları orijinal varsayılan listeye döndürmek istiyor musunuz?')) {
+      const fresh = resetDestinationsToDefault();
+      setDestinations(fresh);
+      showToast('Destinasyonlar varsayılana sıfırlandı.');
+    }
+  };
+
+  const handleDestImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file || !editingDestination) return;
+
+    const reader = new FileReader();
+    reader.onload = (uploadEvent) => {
+      const result = uploadEvent.target?.result as string;
+      if (result) {
+        setEditingDestination({ ...editingDestination, image: result });
+        showToast('Görsel başarıyla yüklendi!');
+      }
+    };
+    reader.readAsDataURL(file);
+  };
+
+  const filteredDestinations = destinations.filter((d) => {
+    const term = destSearchTerm.toLowerCase();
+    return (
+      d.name.toLowerCase().includes(term) ||
+      d.nameTr.toLowerCase().includes(term) ||
+      d.tagline.toLowerCase().includes(term) ||
+      d.taglineTr.toLowerCase().includes(term) ||
+      d.id.toLowerCase().includes(term)
+    );
+  });
+
   const filteredTours = tours.filter((tour) => {
     const matchesSearch =
       tour.title.toLowerCase().includes(searchTerm.toLowerCase()) ||
@@ -379,13 +549,21 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
               <Shield className="w-4 h-4" />
               <span>Voyra Tours Secure Dashboard</span>
             </div>
-            <h1 className="text-2xl sm:text-3xl font-serif-luxury font-bold">Gelişmiş Tur Yönetim Paneli</h1>
+            <h1 className="text-2xl sm:text-3xl font-serif-luxury font-bold">Gelişmiş Yönetim Paneli</h1>
             <p className="text-xs text-teal-100/80 mt-1">
-              Toplam kayıtlı tur: <span className="font-bold text-white">{tours.length}</span>. Tur görsellerini yükleyebilir, günleri ekleyebilir ve tüm detayları yönetebilirsiniz.
+              {activeTab === 'tours' && (
+                <>Toplam kayıtlı tur: <span className="font-bold text-white">{tours.length}</span>. Tur görsellerini yükleyebilir, günleri ekleyebilir ve tüm detayları yönetebilirsiniz.</>
+              )}
+              {activeTab === 'destinations' && (
+                <>Toplam kayıtlı destinasyon: <span className="font-bold text-white">{destinations.length}</span>. Ana sayfa ("Bölgelere Göre Keşfedin") ve Destinasyonlar sayfalarındaki bölgeleri yönetebilirsiniz.</>
+              )}
+              {activeTab === 'hero' && (
+                <>Toplam aktif hero slaytı: <span className="font-bold text-white">{heroSlides.length}</span>. Ana sayfanın tepe bölümündeki kayan görselleri yönetebilirsiniz.</>
+              )}
             </p>
           </div>
 
-          <div className="flex items-center gap-3">
+          <div className="flex flex-wrap items-center gap-3">
             <Link
               to="/"
               className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs transition border border-white/20 flex items-center gap-1.5"
@@ -393,37 +571,62 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Siteye Dön</span>
             </Link>
-            <button
-              onClick={handleResetToDefaultTours}
-              className="px-4 py-2.5 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-100 font-semibold text-xs transition border border-rose-400/40 flex items-center gap-1.5 cursor-pointer"
-              title="Hatalı veya taslak turları temizleyip orijinal listeye dön"
-            >
-              <RotateCcw className="w-3.5 h-3.5 text-rose-300" />
-              <span>Hatalı Turları Temizle</span>
-            </button>
-            <label className="px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs transition shadow-lg shadow-teal-700/30 flex items-center gap-2 cursor-pointer">
-              <span>📄 Word (.docx) Dosyasından Tur Yükle</span>
-              <input
-                type="file"
-                accept=".docx"
-                onChange={handleWordUpload}
-                className="hidden"
-              />
-            </label>
-            <button
-              onClick={handleCreateNew}
-              className="px-5 py-2.5 rounded-xl bg-[#009999] hover:bg-[#008080] text-white font-bold text-xs transition shadow-lg shadow-[#009999]/30 flex items-center gap-2 cursor-pointer"
-            >
-              <Plus className="w-4 h-4" />
-              <span>Yeni Tur Ekle</span>
-            </button>
+
+            {activeTab === 'tours' && (
+              <>
+                <button
+                  onClick={handleResetToDefaultTours}
+                  className="px-4 py-2.5 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-100 font-semibold text-xs transition border border-rose-400/40 flex items-center gap-1.5 cursor-pointer"
+                  title="Hatalı veya taslak turları temizleyip orijinal listeye dön"
+                >
+                  <RotateCcw className="w-3.5 h-3.5 text-rose-300" />
+                  <span>Hatalı Turları Temizle</span>
+                </button>
+                <label className="px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs transition shadow-lg shadow-teal-700/30 flex items-center gap-2 cursor-pointer">
+                  <span>📄 Word (.docx) Dosyasından Tur Yükle</span>
+                  <input
+                    type="file"
+                    accept=".docx"
+                    onChange={handleWordUpload}
+                    className="hidden"
+                  />
+                </label>
+                <button
+                  onClick={handleCreateNew}
+                  className="px-5 py-2.5 rounded-xl bg-[#009999] hover:bg-[#008080] text-white font-bold text-xs transition shadow-lg shadow-[#009999]/30 flex items-center gap-2 cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Yeni Tur Ekle</span>
+                </button>
+              </>
+            )}
+
+            {activeTab === 'destinations' && (
+              <>
+                <button
+                  onClick={handleResetDestinations}
+                  className="px-4 py-2.5 rounded-xl bg-white/10 hover:bg-white/20 text-white font-semibold text-xs transition border border-white/20 flex items-center gap-1.5 cursor-pointer"
+                  title="Varsayılan 5 destinasyona geri dön"
+                >
+                  <RotateCcw className="w-3.5 h-3.5 text-teal-300" />
+                  <span>Varsayılana Sıfırla</span>
+                </button>
+                <button
+                  onClick={handleCreateNewDestination}
+                  className="px-5 py-2.5 rounded-xl bg-[#009999] hover:bg-[#008080] text-white font-bold text-xs transition shadow-lg shadow-[#009999]/30 flex items-center gap-2 cursor-pointer"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Yeni Destinasyon Ekle</span>
+                </button>
+              </>
+            )}
           </div>
         </div>
       </div>
 
       {/* Tabs Bar */}
       <div className="max-w-7xl mx-auto px-4 sm:px-8 mt-6">
-        <div className="flex items-center gap-3 border-b border-slate-200 pb-4">
+        <div className="flex flex-wrap items-center gap-3 border-b border-slate-200 pb-4">
           <button
             onClick={() => setActiveTab('tours')}
             className={`px-5 py-2.5 rounded-xl font-bold text-xs transition cursor-pointer flex items-center gap-2 ${
@@ -433,6 +636,17 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
             }`}
           >
             🏔️ Tur ve Rota Yönetimi ({tours.length})
+          </button>
+          <button
+            onClick={() => setActiveTab('destinations')}
+            className={`px-5 py-2.5 rounded-xl font-bold text-xs transition cursor-pointer flex items-center gap-2 ${
+              activeTab === 'destinations'
+                ? 'bg-[#009999] text-white shadow-md shadow-[#009999]/20'
+                : 'bg-white text-slate-600 hover:bg-slate-100 border border-slate-200'
+            }`}
+          >
+            <MapPin className="w-4 h-4" />
+            <span>Destinasyon Yönetimi ({destinations.length})</span>
           </button>
           <button
             onClick={() => setActiveTab('hero')}
@@ -516,6 +730,144 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
             </div>
           </div>
         </div>
+      ) : activeTab === 'destinations' ? (
+        <div className="max-w-7xl mx-auto px-4 sm:px-8 mt-8">
+          {/* Header & Search */}
+          <div className="bg-white rounded-3xl p-6 sm:p-8 shadow-sm border border-slate-200 mb-8 space-y-6">
+            <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+              <div>
+                <h2 className="text-xl font-serif-luxury font-bold text-slate-900 flex items-center gap-2">
+                  <MapPin className="w-5 h-5 text-[#009999]" />
+                  <span>Destinasyon ve Bölge Yönetimi</span>
+                </h2>
+                <p className="text-xs text-slate-500 mt-1">
+                  Ana sayfa ("Bölgelere Göre Keşfedin") ve Destinasyonlar sayfasındaki tüm bölgeleri buradan yönetebilir, yeni bölge ekleyebilir veya silebilirsiniz.
+                </p>
+              </div>
+
+              <div className="flex items-center gap-2.5 shrink-0">
+                <button
+                  type="button"
+                  onClick={handleCreateNewDestination}
+                  className="px-5 py-2.5 bg-[#009999] hover:bg-[#008080] text-white font-bold rounded-xl text-xs whitespace-nowrap transition cursor-pointer shadow-md shadow-[#009999]/20 flex items-center gap-2"
+                >
+                  <Plus className="w-4 h-4" />
+                  <span>Yeni Destinasyon Ekle</span>
+                </button>
+              </div>
+            </div>
+
+            {/* Search Bar */}
+            <div className="w-full sm:w-96">
+              <input
+                type="text"
+                value={destSearchTerm}
+                onChange={(e) => setDestSearchTerm(e.target.value)}
+                placeholder="Destinasyon adı veya etiketine göre ara..."
+                className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-[#009999]"
+              />
+            </div>
+          </div>
+
+          {/* Destinations Grid */}
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {filteredDestinations.map((dest) => (
+              <div
+                key={dest.id}
+                className="bg-white rounded-2xl border border-slate-200 shadow-sm overflow-hidden flex flex-col hover:shadow-md transition group"
+              >
+                {/* Photo Preview */}
+                <div className="relative h-48 w-full bg-slate-100 overflow-hidden">
+                  <img
+                    src={dest.image}
+                    alt={dest.name}
+                    className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                  />
+                  <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+                  <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-md text-white text-[11px] font-bold px-3 py-1 rounded-full border border-white/20">
+                    {dest.toursCount} Tur
+                  </div>
+                  <div className="absolute bottom-3 left-3 text-white">
+                    <span className="text-[10px] uppercase font-bold text-teal-300 tracking-wider">
+                      Bölge Kodu: {dest.id}
+                    </span>
+                    <h3 className="text-lg font-serif-luxury font-bold leading-tight">
+                      {dest.name} <span className="text-sm font-sans font-normal opacity-90">({dest.nameTr})</span>
+                    </h3>
+                  </div>
+                </div>
+
+                {/* Content */}
+                <div className="p-5 flex-1 flex flex-col justify-between space-y-4">
+                  <div>
+                    <div className="text-xs font-medium text-slate-700 mb-1 line-clamp-1" title={dest.tagline}>
+                      🇬🇧 {dest.tagline}
+                    </div>
+                    <div className="text-xs font-medium text-slate-500 line-clamp-1" title={dest.taglineTr}>
+                      🇹🇷 {dest.taglineTr}
+                    </div>
+
+                    {/* Highlights tags */}
+                    <div className="mt-3 pt-3 border-t border-slate-100">
+                      <span className="text-[10px] font-bold uppercase tracking-wider text-slate-400 block mb-1.5">
+                        Öne Çıkan Noktalar
+                      </span>
+                      <div className="flex flex-wrap gap-1.5">
+                        {dest.popularHighlightsTr && dest.popularHighlightsTr.length > 0 ? (
+                          dest.popularHighlightsTr.slice(0, 4).map((tag, i) => (
+                            <span
+                              key={i}
+                              className="text-[11px] px-2.5 py-0.5 rounded-md bg-teal-50 text-teal-800 border border-teal-200/60 font-medium"
+                            >
+                              {tag}
+                            </span>
+                          ))
+                        ) : (
+                          <span className="text-xs text-slate-400 italic">Belirtilmedi</span>
+                        )}
+                      </div>
+                    </div>
+                  </div>
+
+                  {/* Actions */}
+                  <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                    <button
+                      type="button"
+                      onClick={() => handleEditDestination(dest)}
+                      className="flex-1 py-2 px-3 rounded-xl bg-teal-50 hover:bg-teal-100 text-[#009999] text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
+                    >
+                      <Edit className="w-3.5 h-3.5" />
+                      <span>Düzenle</span>
+                    </button>
+                    <button
+                      type="button"
+                      onClick={() => handleDeleteDestination(dest.id)}
+                      className="py-2 px-3 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
+                      title="Destinasyonu Sil"
+                    >
+                      <Trash2 className="w-3.5 h-3.5" />
+                      <span>Sil</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            ))}
+
+            {/* Quick Add Card */}
+            <div
+              onClick={handleCreateNewDestination}
+              className="border-2 border-dashed border-slate-300 hover:border-[#009999] rounded-2xl p-8 flex flex-col items-center justify-center text-center cursor-pointer transition min-h-[320px] bg-slate-50/50 hover:bg-teal-50/20 group"
+            >
+              <div className="w-12 h-12 rounded-2xl bg-teal-100 text-[#009999] flex items-center justify-center mb-3 group-hover:scale-110 transition">
+                <Plus className="w-6 h-6" />
+              </div>
+              <h3 className="font-bold text-sm text-slate-800">Yeni Destinasyon Ekle</h3>
+              <p className="text-xs text-slate-500 mt-1 max-w-xs">
+                Kapadokya, Efes, İstanbul gibi popüler seyahat bölgelerinden bir yenisini listeye dahil edin.
+              </p>
+            </div>
+          </div>
+        </div>
       ) : (
       <div className="max-w-7xl mx-auto px-4 sm:px-8 mt-8">
         {/* Filters and Search */}
@@ -588,15 +940,34 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
                       )}
                     </td>
                     <td className="p-4">
-                      {tour.featured ? (
-                        <span className="px-2.5 py-1 rounded-full bg-emerald-50 text-emerald-700 font-bold text-[10px] border border-emerald-200 inline-flex items-center gap-1">
-                          <Sparkles className="w-3 h-3" /> Popülerde Gösteriliyor
-                        </span>
-                      ) : (
-                        <span className="px-2.5 py-1 rounded-full bg-slate-100 text-slate-500 font-medium text-[10px]">
-                          Normal Liste
-                        </span>
-                      )}
+                      <button
+                        type="button"
+                        onClick={(e) => handleToggleFeatured(tour.id, e)}
+                        className={`group px-3 py-1.5 rounded-full text-xs font-semibold inline-flex items-center gap-1.5 transition-all duration-200 cursor-pointer shadow-xs active:scale-95 whitespace-nowrap ${
+                          tour.featured
+                            ? 'bg-emerald-50 hover:bg-rose-50 text-emerald-700 hover:text-rose-700 border border-emerald-300 hover:border-rose-300'
+                            : 'bg-slate-50 hover:bg-emerald-50 text-slate-500 hover:text-emerald-700 border border-dashed border-slate-300 hover:border-emerald-400'
+                        }`}
+                        title={
+                          tour.featured
+                            ? 'Tıklayarak ana sayfa popüler turlarından kaldırın'
+                            : 'Tıklayarak bu turu ana sayfa popüler turlarına ekleyin'
+                        }
+                      >
+                        {tour.featured ? (
+                          <>
+                            <Sparkles className="w-3.5 h-3.5 text-emerald-600 group-hover:hidden shrink-0" />
+                            <X className="w-3.5 h-3.5 text-rose-600 hidden group-hover:inline shrink-0" />
+                            <span className="group-hover:hidden font-bold">Popülerde Gösteriliyor</span>
+                            <span className="hidden group-hover:inline font-bold">Popülerden Kaldır</span>
+                          </>
+                        ) : (
+                          <>
+                            <Plus className="w-3.5 h-3.5 text-slate-400 group-hover:text-emerald-600 shrink-0" />
+                            <span>Popülere Ekle</span>
+                          </>
+                        )}
+                      </button>
                     </td>
                     <td className="p-4 text-right">
                       <div className="flex items-center justify-end gap-1.5">
@@ -1180,6 +1551,220 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
                 >
                   <Save className="w-4 h-4" />
                   <span>Turu ve Tüm Değişkenleri Kaydet</span>
+                </button>
+              </div>
+            </form>
+          </div>
+        </div>
+      )}
+
+      {/* Destination Edit / Create Modal */}
+      {isDestModalOpen && editingDestination && (
+        <div className="fixed inset-0 z-50 bg-black/60 backdrop-blur-xs flex items-center justify-center p-4 overflow-y-auto">
+          <div className="bg-white rounded-3xl max-w-2xl w-full max-h-[90vh] overflow-y-auto shadow-2xl border border-slate-200">
+            {/* Modal Header */}
+            <div className="flex items-center justify-between p-6 border-b border-slate-100 sticky top-0 bg-white z-10">
+              <div>
+                <h3 className="text-xl font-serif-luxury font-bold text-slate-900 flex items-center gap-2">
+                  <MapPin className="w-5 h-5 text-[#009999]" />
+                  <span>
+                    {editingDestination.id.startsWith('dest-') && !destinations.some((d) => d.id === editingDestination.id)
+                      ? 'Yeni Destinasyon Ekle'
+                      : 'Destinasyonu Düzenle'}
+                  </span>
+                </h3>
+                <p className="text-xs text-slate-500 mt-0.5">
+                  Bölge adı, fotoğrafı, sloganı ve gezilecek noktalarını buradan güncelleyin.
+                </p>
+              </div>
+              <button
+                type="button"
+                onClick={() => setIsDestModalOpen(false)}
+                className="w-9 h-9 rounded-full bg-slate-100 hover:bg-slate-200 text-slate-600 flex items-center justify-center transition cursor-pointer"
+              >
+                <X className="w-5 h-5" />
+              </button>
+            </div>
+
+            {/* Modal Form */}
+            <form onSubmit={handleSaveDestination} className="p-6 space-y-5 text-xs">
+              {/* ID & Tour count */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1.5 uppercase tracking-wider text-[11px]">
+                    Destinasyon Kodu / ID
+                  </label>
+                  <input
+                    type="text"
+                    value={editingDestination.id}
+                    onChange={(e) => setEditingDestination({ ...editingDestination, id: e.target.value })}
+                    placeholder="Örn: cappadocia, istanbul, pamukkale"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 font-mono focus:outline-none focus:border-[#009999]"
+                    required
+                  />
+                  <span className="text-[10px] text-slate-400 mt-1 block">
+                    Küçük harfler ve tire (-) kullanın (URL ve filtreleme için).
+                  </span>
+                </div>
+
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1.5 uppercase tracking-wider text-[11px]">
+                    Tur Sayısı (Rozet)
+                  </label>
+                  <input
+                    type="number"
+                    min="0"
+                    value={editingDestination.toursCount}
+                    onChange={(e) =>
+                      setEditingDestination({
+                        ...editingDestination,
+                        toursCount: parseInt(e.target.value) || 0,
+                      })
+                    }
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-[#009999]"
+                    required
+                  />
+                  <span className="text-[10px] text-slate-400 mt-1 block">
+                    Bölge kartının üzerinde görünecek tur sayısı.
+                  </span>
+                </div>
+              </div>
+
+              {/* Names EN & TR */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1.5 uppercase tracking-wider text-[11px]">
+                    Bölge Adı (İngilizce)
+                  </label>
+                  <input
+                    type="text"
+                    value={editingDestination.name}
+                    onChange={(e) => setEditingDestination({ ...editingDestination, name: e.target.value })}
+                    placeholder="Örn: Cappadocia"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-[#009999]"
+                    required
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1.5 uppercase tracking-wider text-[11px]">
+                    Bölge Adı (Türkçe)
+                  </label>
+                  <input
+                    type="text"
+                    value={editingDestination.nameTr}
+                    onChange={(e) => setEditingDestination({ ...editingDestination, nameTr: e.target.value })}
+                    placeholder="Örn: Kapadokya"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-[#009999]"
+                    required
+                  />
+                </div>
+              </div>
+
+              {/* Taglines EN & TR */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1.5 uppercase tracking-wider text-[11px]">
+                    Slogan / Açıklama (İngilizce)
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={editingDestination.tagline}
+                    onChange={(e) => setEditingDestination({ ...editingDestination, tagline: e.target.value })}
+                    placeholder="Örn: Fairy Chimneys, Cave Suites & Hot Air Balloons"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-[#009999]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1.5 uppercase tracking-wider text-[11px]">
+                    Slogan / Açıklama (Türkçe)
+                  </label>
+                  <textarea
+                    rows={2}
+                    value={editingDestination.taglineTr}
+                    onChange={(e) => setEditingDestination({ ...editingDestination, taglineTr: e.target.value })}
+                    placeholder="Örn: Peri Bacaları, Mağara Oteller ve Sıcak Hava Balonları"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-[#009999]"
+                  />
+                </div>
+              </div>
+
+              {/* Image upload & preview */}
+              <div className="space-y-2 bg-slate-50 p-4 rounded-2xl border border-slate-200">
+                <label className="block font-bold text-slate-700 uppercase tracking-wider text-[11px]">
+                  Destinasyon Görseli
+                </label>
+                {editingDestination.image && (
+                  <div className="relative h-44 w-full rounded-xl overflow-hidden border border-slate-200 bg-slate-200">
+                    <img
+                      src={editingDestination.image}
+                      alt="Önizleme"
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                )}
+                <div className="flex flex-col sm:flex-row items-center gap-3 pt-2">
+                  <input
+                    type="text"
+                    value={editingDestination.image}
+                    onChange={(e) => setEditingDestination({ ...editingDestination, image: e.target.value })}
+                    placeholder="Görsel URL yapıştırın (https://...)"
+                    className="w-full px-4 py-2 bg-white border border-slate-200 rounded-xl text-xs text-slate-900 focus:outline-none focus:border-[#009999]"
+                  />
+                  <label className="px-4 py-2 bg-teal-50 hover:bg-teal-100 text-[#009999] rounded-xl font-bold border border-teal-200 cursor-pointer whitespace-nowrap transition inline-flex items-center gap-1.5 shrink-0 text-xs">
+                    <Upload className="w-3.5 h-3.5" /> Bilgisayardan Yükle
+                    <input
+                      type="file"
+                      accept="image/*"
+                      onChange={handleDestImageUpload}
+                      className="hidden"
+                    />
+                  </label>
+                </div>
+              </div>
+
+              {/* Highlights EN & TR */}
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1.5 uppercase tracking-wider text-[11px]">
+                    Öne Çıkan Noktalar (İngilizce - Virgülle Ayırın)
+                  </label>
+                  <input
+                    type="text"
+                    value={highlightsInputEn}
+                    onChange={(e) => setHighlightsInputEn(e.target.value)}
+                    placeholder="Örn: Hot Air Balloon, Goreme Museum, Underground City"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-[#009999]"
+                  />
+                </div>
+                <div>
+                  <label className="block font-bold text-slate-700 mb-1.5 uppercase tracking-wider text-[11px]">
+                    Öne Çıkan Noktalar (Türkçe - Virgülle Ayırın)
+                  </label>
+                  <input
+                    type="text"
+                    value={highlightsInputTr}
+                    onChange={(e) => setHighlightsInputTr(e.target.value)}
+                    placeholder="Örn: Sıcak Hava Balonu, Göreme Müzesi, Yeraltı Şehri"
+                    className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-[#009999]"
+                  />
+                </div>
+              </div>
+
+              {/* Action Buttons */}
+              <div className="flex items-center justify-end gap-3 pt-5 border-t border-slate-200">
+                <button
+                  type="button"
+                  onClick={() => setIsDestModalOpen(false)}
+                  className="px-5 py-2.5 rounded-xl bg-slate-100 hover:bg-slate-200 text-slate-700 font-semibold transition cursor-pointer"
+                >
+                  İptal
+                </button>
+                <button
+                  type="submit"
+                  className="px-6 py-2.5 rounded-xl bg-[#009999] hover:bg-[#008080] text-white font-bold transition shadow-lg shadow-[#009999]/30 flex items-center gap-2 cursor-pointer"
+                >
+                  <Save className="w-4 h-4" />
+                  <span>Destinasyonu Kaydet</span>
                 </button>
               </div>
             </form>

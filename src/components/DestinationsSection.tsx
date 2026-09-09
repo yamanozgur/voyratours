@@ -1,6 +1,6 @@
-import React, { useRef } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import { ArrowRight, MapPin, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Language } from '../types';
+import { Language, DestinationInfo } from '../types';
 import { DESTINATIONS_DATA } from '../data/toursData';
 
 interface DestinationsSectionProps {
@@ -14,6 +14,19 @@ export const DestinationsSection: React.FC<DestinationsSectionProps> = ({
 }) => {
   const isTr = language === 'tr';
   const scrollRef = useRef<HTMLDivElement>(null);
+  const [destinationsList, setDestinationsList] = useState<DestinationInfo[]>(DESTINATIONS_DATA);
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setDestinationsList([...DESTINATIONS_DATA]);
+    };
+    window.addEventListener('voyra_destinations_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    return () => {
+      window.removeEventListener('voyra_destinations_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, []);
 
   const scroll = (direction: 'left' | 'right') => {
     if (scrollRef.current) {
@@ -91,7 +104,7 @@ export const DestinationsSection: React.FC<DestinationsSectionProps> = ({
           ref={scrollRef}
           className="flex overflow-x-auto gap-6 snap-x snap-mandatory scrollbar-none pb-4 items-stretch"
         >
-          {DESTINATIONS_DATA.map((dest) => {
+          {destinationsList.map((dest) => {
             const name = isTr ? dest.nameTr : dest.name;
             const tagline = isTr ? dest.taglineTr : dest.tagline;
             const highlights = isTr ? dest.popularHighlightsTr : dest.popularHighlights;

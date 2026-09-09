@@ -1,4 +1,4 @@
-import React, { useState, useMemo, useRef } from 'react';
+import React, { useState, useMemo, useRef, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Hero } from '../components/Hero';
 import { TourCard } from '../components/TourCard';
@@ -23,11 +23,24 @@ export const HomePage: React.FC<HomePageProps> = ({
   onOpenPlanner,
 }) => {
   const navigate = useNavigate();
+  const [toursList, setToursList] = useState<TourPackage[]>(TOURS_DATA);
   const [selectedDestination, setSelectedDestination] = useState('all');
   const [selectedDuration, setSelectedDuration] = useState('all');
   const [selectedGroupType, setSelectedGroupType] = useState('all');
   const [popularTab, setPopularTab] = useState<string>('all');
   const popularScrollRef = useRef<HTMLDivElement>(null);
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setToursList([...TOURS_DATA]);
+    };
+    window.addEventListener('voyra_tours_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    return () => {
+      window.removeEventListener('voyra_tours_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, []);
 
   const scrollPopular = (direction: 'left' | 'right') => {
     if (popularScrollRef.current) {
@@ -53,7 +66,7 @@ export const HomePage: React.FC<HomePageProps> = ({
 
   // Popular Bestselling Tours (Top curated tours with domestic flights and boutique stays)
   const popularTours = useMemo(() => {
-    const bestsellers = TOURS_DATA.filter((tour) => {
+    const bestsellers = toursList.filter((tour) => {
       const lower = tour.title.toLowerCase();
       if (
         lower.startsWith('number of guests') ||
@@ -64,21 +77,14 @@ export const HomePage: React.FC<HomePageProps> = ({
         return false;
       }
 
-      return (
-        tour.id === 'cappadocia-2-day' ||
-        tour.id === 'ephesus-pamukkale-2-day' ||
-        tour.id === 'grand-turkey-6-day' ||
-        tour.id === 'istanbul-3-day' ||
-        tour.id === 'gallipoli-troy-2-day' ||
-        tour.featured === true
-      );
+      return tour.featured === true;
     });
 
     if (popularTab === 'all') {
       return bestsellers.slice(0, 8);
     }
     return bestsellers.filter((t) => t.region === popularTab);
-  }, [popularTab]);
+  }, [toursList, popularTab]);
 
   return (
     <div>
