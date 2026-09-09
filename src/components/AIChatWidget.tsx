@@ -14,6 +14,7 @@ import {
   ChevronDown
 } from 'lucide-react';
 import { Language, TourPackage } from '../types';
+import { getSmartClientSideResponse } from '../utils/aiTravelEngine';
 
 interface AIChatWidgetProps {
   language: Language;
@@ -123,8 +124,21 @@ Feel free to ask me anything about routes, pricing, or travel tips. How may I as
     setInput('');
     setIsLoading(true);
 
+    // Auto-detect if user is writing in Turkish or English
+    const containsTurkish =
+      /[çğışöüÇĞİŞÖÜ]/.test(messageContent) ||
+      /\b(merhaba|selam|tur|balon|fiyat|kaç|gun|gün|nedir|nerede|dahil|otel|rezervasyon|burası|çalışmıyor|calismiyor|istiyorum|var mı|yok mu)\b/i.test(
+        messageContent
+      );
+    const effectiveLanguage: Language = containsTurkish ? 'tr' : language;
+
+    let botReply = '';
+
     try {
-      // Build API payload
+      // 1. First attempt: server-side API (works in full-stack dev / Cloud Run)
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 3500);
+
       const apiMessages = newMessages.map((m) => ({
         role: m.role,
         content: m.content,
@@ -132,15 +146,16 @@ Feel free to ask me anything about routes, pricing, or travel tips. How may I as
 
       const response = await fetch('/api/ai-chat', {
         method: 'POST',
+        signal: controller.signal,
         headers: {
           'Content-Type': 'application/json',
         },
         body: JSON.stringify({
           messages: apiMessages,
-          userLanguage: language,
+          userLanguage: effectiveLanguage,
           tourContext: activeTour
             ? {
-                title: isTr ? activeTour.titleTr : activeTour.title,
+                title: effectiveLanguage === 'tr' ? activeTour.titleTr : activeTour.title,
                 durationDays: activeTour.durationDays,
                 priceEUR: activeTour.priceEUR,
                 region: activeTour.region,
@@ -149,40 +164,42 @@ Feel free to ask me anything about routes, pricing, or travel tips. How may I as
         }),
       });
 
-      if (!response.ok) {
-        throw new Error('API response was not ok');
+      clearTimeout(timeoutId);
+
+      if (response.ok) {
+        const data = await response.json();
+        if (data && data.reply) {
+          botReply = data.reply;
+        }
       }
-
-      const data = await response.json();
-      const botReply = data.reply || (isTr
-        ? 'Yanıt alınamadı, lütfen tekrar deneyin veya WhatsApp hattımızdan bize yazın.'
-        : 'Could not receive a response, please try again or contact us via WhatsApp.');
-
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `bot-${Date.now()}`,
-          role: 'assistant',
-          content: botReply,
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        },
-      ]);
     } catch (error) {
-      console.error('Chat error:', error);
-      setMessages((prev) => [
-        ...prev,
-        {
-          id: `bot-err-${Date.now()}`,
-          role: 'assistant',
-          content: isTr
-            ? 'Şu anda sistem bağlantısında kısa bir yoğunluk yaşanıyor. Dilerseniz hemen WhatsApp üzerinden seyahat uzmanımızla konuşabilirsiniz: **+90 532 000 0000**'
-            : 'We are experiencing a brief connection delay. Feel free to chat with our human travel specialists directly on WhatsApp: **+90 532 000 0000**',
-          timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
-        },
-      ]);
-    } finally {
-      setIsLoading(false);
+      // Endpoint unreachable (e.g. on GitHub Pages or static hosting)
+      console.log('Server endpoint unreachable or static hosting detected, falling back to client engine.');
     }
+
+    // 2. Second attempt / Fallback: Instant Intelligent Client-Side Travel Concierge
+    // This ensures chat ALWAYS works 100% on GitHub Pages, offline, or static export!
+    if (!botReply) {
+      // Brief organic delay for realistic concierge response
+      await new Promise((resolve) => setTimeout(resolve, 350));
+      botReply = getSmartClientSideResponse(
+        messageContent,
+        effectiveLanguage,
+        newMessages,
+        activeTour
+      );
+    }
+
+    setMessages((prev) => [
+      ...prev,
+      {
+        id: `bot-${Date.now()}`,
+        role: 'assistant',
+        content: botReply,
+        timestamp: new Date().toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+      },
+    ]);
+    setIsLoading(false);
   };
 
   const handleResetChat = () => {
