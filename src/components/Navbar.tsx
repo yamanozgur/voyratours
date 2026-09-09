@@ -20,8 +20,21 @@ export const Navbar: React.FC<NavbarProps> = ({
 }) => {
   const [isScrolled, setIsScrolled] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
+  const [mobileToursOpen, setMobileToursOpen] = useState(true);
+  const [toursDropdownOpen, setToursDropdownOpen] = useState(false);
   const [currencyDropdownOpen, setCurrencyDropdownOpen] = useState(false);
   const location = useLocation();
+
+  const durationList = [
+    { days: 2, slug: '2-days', labelEn: '2-Day Tours', labelTr: '2 Günlük Turlar', descEn: 'Cappadocia, Ephesus & Troy', descTr: 'Kapadokya, Efes & Truva' },
+    { days: 3, slug: '3-days', labelEn: '3-Day Tours', labelTr: '3 Günlük Turlar', descEn: 'Istanbul Imperial & Bosphorus', descTr: 'İstanbul Tarihi & Boğaz' },
+    { days: 4, slug: '4-days', labelEn: '4-Day Tours', labelTr: '4 Günlük Turlar', descEn: 'Istanbul & Cappadocia Best', descTr: 'İstanbul & Kapadokya Klasikleri' },
+    { days: 5, slug: '5-days', labelEn: '5-Day Tours', labelTr: '5 Günlük Turlar', descEn: 'Golden Triangle Circuit', descTr: 'Kapadokya, Efes & Pamukkale' },
+    { days: 6, slug: '6-days', labelEn: '6-Day Tours', labelTr: '6 Günlük Turlar', descEn: 'Grand Turkey Classic Loop', descTr: 'Klasik Türkiye Büyük Turu' },
+    { days: 7, slug: '7-days', labelEn: '7-Day Tours', labelTr: '7 Günlük Turlar', descEn: 'Turquoise Coast & Lycia', descTr: 'Turkuaz Kıyı & Likya Cenneti' },
+    { days: 8, slug: '8-days', labelEn: '8-Day Tours', labelTr: '8 Günlük Turlar', descEn: 'Grand Anatolian & Aegean', descTr: 'Büyük Anadolu & Ege Mirası' },
+    { days: 9, slug: '9-days', labelEn: '9-Day Tours', labelTr: '9 Günlük Turlar', descEn: 'Ultimate Turkey Loop', descTr: 'Baştan Başa Türkiye Turu' },
+  ];
 
   useEffect(() => {
     const handleScroll = () => {
@@ -167,16 +180,90 @@ export const Navbar: React.FC<NavbarProps> = ({
 
           {/* Desktop Navigation Links */}
           <div className="hidden lg:flex items-center gap-8 xl:gap-9 text-sm font-medium">
-            <Link
-              to="/tours"
-              className={`py-1 transition ${
-                isActive('/tours')
-                  ? 'text-[#009999] font-bold border-b-2 border-[#009999]'
-                  : 'text-slate-700 hover:text-[#009999]'
-              }`}
+            {/* Tours & Packages with Duration Dropdown */}
+            <div
+              className="relative"
+              onMouseEnter={() => setToursDropdownOpen(true)}
+              onMouseLeave={() => setToursDropdownOpen(false)}
             >
-              {t.tours}
-            </Link>
+              <div className="flex items-center">
+                <Link
+                  to="/tours"
+                  className={`py-1 inline-flex items-center gap-1.5 transition ${
+                    isActive('/tours')
+                      ? 'text-[#009999] font-bold border-b-2 border-[#009999]'
+                      : 'text-slate-700 hover:text-[#009999]'
+                  }`}
+                >
+                  <span>{t.tours}</span>
+                  <ChevronDown
+                    className={`w-3.5 h-3.5 transition-transform duration-200 ${
+                      toursDropdownOpen ? 'rotate-180 text-[#009999]' : 'text-slate-400'
+                    }`}
+                  />
+                </Link>
+              </div>
+
+              {/* Dropdown Menu */}
+              {toursDropdownOpen && (
+                <div className="absolute top-full left-0 mt-1 w-[460px] bg-white/98 backdrop-blur-md rounded-2xl shadow-2xl border border-[#E5DFD5] p-4 z-50 animate-fadeIn">
+                  {/* All Tours top link */}
+                  <Link
+                    to="/tours"
+                    onClick={() => setToursDropdownOpen(false)}
+                    className="flex items-center justify-between p-3 rounded-xl bg-gradient-to-r from-[#009999]/10 to-[#00b0b5]/5 hover:from-[#009999]/20 hover:to-[#00b0b5]/10 border border-[#009999]/20 transition group mb-3"
+                  >
+                    <div className="flex items-center gap-2.5">
+                      <div className="w-8 h-8 rounded-lg bg-[#009999] text-white flex items-center justify-center font-bold text-xs shadow-sm">
+                        <Compass className="w-4 h-4" />
+                      </div>
+                      <div>
+                        <div className="text-xs font-bold text-slate-900 group-hover:text-[#009999] transition">
+                          {currentLanguage === 'en' ? 'All Tours & Packages' : 'Tüm Turlar & Paketler'}
+                        </div>
+                        <div className="text-[11px] text-slate-500">
+                          {currentLanguage === 'en' ? 'Explore our complete signature portfolio' : 'Tüm seçkin Türkiye rotalarını inceleyin'}
+                        </div>
+                      </div>
+                    </div>
+                    <span className="text-[11px] font-semibold text-[#009999] bg-white px-2 py-0.5 rounded-full border border-[#009999]/30">
+                      {currentLanguage === 'en' ? 'View All' : 'Tümü'}
+                    </span>
+                  </Link>
+
+                  {/* Section Label */}
+                  <div className="text-[10px] font-bold uppercase tracking-wider text-slate-400 px-2 mb-2 flex items-center justify-between">
+                    <span>{currentLanguage === 'en' ? 'Browse by Duration' : 'Gün Sayısına Göre Turlar'}</span>
+                    <span className="text-[10px] text-[#009999] font-medium">2 – 9 {currentLanguage === 'en' ? 'Days' : 'Gün'}</span>
+                  </div>
+
+                  {/* 2-column Grid of Days */}
+                  <div className="grid grid-cols-2 gap-1.5">
+                    {durationList.map((item) => (
+                      <Link
+                        key={item.days}
+                        to={`/tours/${item.slug}`}
+                        onClick={() => setToursDropdownOpen(false)}
+                        className="p-2.5 rounded-xl hover:bg-[#F4EFE6]/70 border border-transparent hover:border-[#DCD5C8] transition group flex items-start gap-2.5"
+                      >
+                        <div className="w-7 h-7 rounded-lg bg-[#FAF8F5] border border-[#E5DFD5] group-hover:border-[#009999] group-hover:bg-[#009999] text-slate-700 group-hover:text-white flex items-center justify-center font-bold text-xs shrink-0 transition">
+                          {item.days}D
+                        </div>
+                        <div className="min-w-0">
+                          <div className="text-xs font-bold text-slate-800 group-hover:text-[#009999] transition truncate">
+                            {currentLanguage === 'en' ? item.labelEn : item.labelTr}
+                          </div>
+                          <div className="text-[10.5px] text-slate-400 truncate">
+                            {currentLanguage === 'en' ? item.descEn : item.descTr}
+                          </div>
+                        </div>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
             <Link
               to="/destinations"
               className={`py-1 transition ${
@@ -228,15 +315,67 @@ export const Navbar: React.FC<NavbarProps> = ({
         {/* Mobile Navigation Drawer */}
         {mobileMenuOpen && (
           <div className="lg:hidden bg-white border-b border-slate-200 px-4 pt-3 pb-6 shadow-xl space-y-3 animate-fadeIn">
-            <Link
-              to="/tours"
-              onClick={() => setMobileMenuOpen(false)}
-              className={`block py-2 text-base font-medium border-b border-slate-100 ${
-                isActive('/tours') ? 'text-[#009999] font-bold' : 'text-slate-800'
-              }`}
-            >
-              {t.tours}
-            </Link>
+            {/* Tours & Duration submenu */}
+            <div className="border-b border-slate-100 pb-2">
+              <div className="flex items-center justify-between py-2">
+                <Link
+                  to="/tours"
+                  onClick={() => setMobileMenuOpen(false)}
+                  className={`text-base font-medium ${
+                    isActive('/tours') ? 'text-[#009999] font-bold' : 'text-slate-800'
+                  }`}
+                >
+                  {t.tours}
+                </Link>
+                <button
+                  type="button"
+                  onClick={() => setMobileToursOpen(!mobileToursOpen)}
+                  className="p-1 text-slate-500 hover:text-slate-800 cursor-pointer"
+                  aria-label="Toggle duration options"
+                >
+                  <ChevronDown
+                    className={`w-5 h-5 transition-transform duration-200 ${
+                      mobileToursOpen ? 'rotate-180 text-[#009999]' : ''
+                    }`}
+                  />
+                </button>
+              </div>
+
+              {mobileToursOpen && (
+                <div className="pl-3 pr-1 py-2 space-y-1.5 bg-[#FAF8F5] rounded-xl my-1 border border-[#E5DFD5]">
+                  <Link
+                    to="/tours"
+                    onClick={() => {
+                      setMobileToursOpen(false);
+                      setMobileMenuOpen(false);
+                    }}
+                    className="block py-1.5 px-2 text-xs font-bold text-[#009999] hover:underline"
+                  >
+                    {currentLanguage === 'en' ? '• All Tours & Packages' : '• Tüm Turlar & Paketler'}
+                  </Link>
+                  <div className="text-[10px] font-bold text-slate-400 uppercase tracking-wider px-2 pt-1">
+                    {currentLanguage === 'en' ? 'Tours by Duration' : 'Gün Sayısına Göre'}
+                  </div>
+                  <div className="grid grid-cols-2 gap-1 pt-1">
+                    {durationList.map((item) => (
+                      <Link
+                        key={item.days}
+                        to={`/tours/${item.slug}`}
+                        onClick={() => {
+                          setMobileToursOpen(false);
+                          setMobileMenuOpen(false);
+                        }}
+                        className="py-1.5 px-2 text-xs rounded-lg text-slate-700 hover:text-[#009999] hover:bg-white flex items-center gap-1.5"
+                      >
+                        <span className="font-bold text-[#009999]">{item.days}D:</span>
+                        <span className="truncate">{currentLanguage === 'en' ? `${item.days} Days` : `${item.days} Gün`}</span>
+                      </Link>
+                    ))}
+                  </div>
+                </div>
+              )}
+            </div>
+
             <Link
               to="/destinations"
               onClick={() => setMobileMenuOpen(false)}

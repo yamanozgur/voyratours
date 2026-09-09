@@ -15,8 +15,112 @@ function getGenAI() {
   if (!apiKey) {
     throw new Error("GEMINI_API_KEY environment variable is missing.");
   }
-  return new GoogleGenAI({ apiKey });
+  return new GoogleGenAI({
+    apiKey,
+    httpOptions: {
+      headers: {
+        "User-Agent": "aistudio-build",
+      },
+    },
+  });
 }
+
+// API endpoint for Voyra AI Travel Concierge chat
+app.post("/api/ai-chat", async (req, res) => {
+  try {
+    const { messages, userLanguage = "tr", tourContext } = req.body;
+
+    if (!Array.isArray(messages) || messages.length === 0) {
+      return res.status(400).json({ error: "Messages array is required" });
+    }
+
+    const apiKey = process.env.GEMINI_API_KEY;
+    if (!apiKey) {
+      // Fallback graceful response if API key is not yet set
+      const isTr = userLanguage === "tr";
+      const fallbackReply = isTr
+        ? "Merhaba! Voyra Tours Seyahat Danışmanına hoş geldiniz. Şu anda sistemimiz aktif ancak seyahat uzmanlarımızla WhatsApp üzerinden de anında görüşebilirsiniz (+90 532 000 0000). Kapadokya balon turları, 2-9 günlük paketlerimiz ve özel rotalarımız için size nasıl yardımcı olabilirim?"
+        : "Hello! Welcome to Voyra Tours Travel Concierge. You can also chat with our travel designers directly on WhatsApp (+90 532 000 0000). How can I assist you with your Turkey travel plans today?";
+      return res.json({ reply: fallbackReply });
+    }
+
+    const ai = getGenAI();
+
+    const systemInstruction = `
+You are "Voyra AI", the warm, sophisticated, and expert Travel Concierge for Voyra Tours (a premier boutique Turkish travel agency).
+Your mission is to warmly welcome visitors, inspire them, and provide helpful, accurate, and detailed answers to all their questions regarding Turkey tours, custom travel planning, destinations, pricing, logistics, and experiences.
+
+About Voyra Tours:
+- Official boutique travel agency in Turkey (TURSAB member).
+- Core promise: Seamless journeys with boutique 4*/5* cave hotels in Cappadocia and authentic boutique heritage hotels in Istanbul, Ephesus, and Antalya.
+- Every package includes:
+  * Private VIP airport transfers with Mercedes Vito/Sprinter vehicles.
+  * Licensed professional English/multilingual tour guides (historians & locals).
+  * Domestic flight tickets within Turkey (Istanbul - Cappadocia - Izmir/Ephesus - Antalya).
+  * Museum & heritage site entrance fees.
+  * Delicious authentic local lunches on full-day tour days.
+  * Daily artisan breakfast at hotels.
+- Exclusions: International flights to/from Turkey, dinners (unless specified), personal shopping/expenses, and optional adventure activities.
+- Optional Signature Activities:
+  * Cappadocia Sunrise Hot Air Balloon Flight (one of Turkey's greatest highlights! Operated early morning at sunrise, 100% weather-dependent. If cancelled by civil aviation due to wind, guests receive a 100% full refund).
+  * Cappadocia Sunset ATV / Quad Safari across Swords & Red Valleys.
+  * Traditional Whirling Dervishes Sema ceremony.
+  * Turkish Night dinner & cultural show in a rock-carved cave restaurant.
+  * Private Bosphorus Yacht Cruise in Istanbul.
+- Tour Packages by Duration (2 to 9 Days):
+  * 2 Days: Cappadocia Express, Ephesus & Pamukkale Express, Gallipoli & Troy, Istanbul Essentials.
+  * 3 Days: Imperial Istanbul & Bosphorus Yachting, Cappadocia In-Depth.
+  * 4 Days: Best of Istanbul & Cappadocia Highlights.
+  * 5 Days: The Golden Triangle Circuit (Cappadocia, Pamukkale, Ephesus).
+  * 6 Days: Grand Classic Turkey (Istanbul, Cappadocia, Pamukkale, Ephesus).
+  * 7 Days: Turquoise Coast & Lycian Wonders (Antalya, Kekova Sunken City, Kas, Oludeniz).
+  * 8 Days: Grand Anatolian & Aegean Journey (Istanbul, Cappadocia, Pamukkale, Ephesus).
+  * 9 Days: Ultimate Grand Turkey Loop (Comprehensive round-trip of Turkey's finest jewels).
+- 100% Bespoke / Tailor-Made Planning:
+  * If a guest wants a custom duration (e.g. 10 days, 12 days, honeymoon, family with young kids, luxury private tour), Voyra crafts 100% tailor-made itineraries within 24 hours.
+- WhatsApp Direct Assistance:
+  * Guests can also talk directly to a human travel specialist via WhatsApp (+90 532 000 0000) or email (info@voyratours.com) for fast reservations or custom quote requests.
+
+${tourContext ? `Current Tour Context: The user is currently browsing "${tourContext.title || ''}" (${tourContext.durationDays || ''} Days, Price: €${tourContext.priceEUR || ''}). Keep this in mind if they ask about "this tour".` : ""}
+
+Interaction Guidelines:
+- Language: ALWAYS reply in the language the user addresses you in. If they write in Turkish, reply in fluent, natural Turkish. If English, in polished English.
+- Tone: Welcoming, courteous, expert, and friendly. Avoid robotic repetition.
+- Formatting: Use concise paragraphs and clean bullet points for readability. Keep it engaging and avoid huge walls of text.
+- Encouragement: When relevant, warmly encourage them to check out our specific tour packages or connect with us on WhatsApp for custom booking assistance.
+`;
+
+    // Format previous messages for Gemini contents
+    const contents = messages.map((m: { role: string; content: string }) => ({
+      role: m.role === "assistant" || m.role === "model" ? "model" : "user",
+      parts: [{ text: m.content }],
+    }));
+
+    const response = await ai.models.generateContent({
+      model: "gemini-3.8-flash",
+      contents,
+      config: {
+        systemInstruction,
+        temperature: 0.7,
+      },
+    });
+
+    const reply = response.text || (userLanguage === "tr"
+      ? "Üzgünüm, şu an yanıt oluşturulamadı. Lütfen tekrar deneyin veya WhatsApp üzerinden bize ulaşın."
+      : "I apologize, but I could not generate a response right now. Please try again or reach out on WhatsApp.");
+
+    res.json({ reply });
+  } catch (error: any) {
+    console.error("Error in /api/ai-chat:", error);
+    const isTr = req.body?.userLanguage === "tr";
+    res.status(500).json({
+      error: error.message || "Failed to generate AI response",
+      fallbackReply: isTr
+        ? "Bağlantıda küçük bir aksaklık oldu. Lütfen tekrar sorabilir veya doğrudan WhatsApp hattımızdan (+90 532 000 0000) bize yazabilirsiniz."
+        : "There was a brief glitch connecting to the travel concierge. Please try again or message us on WhatsApp (+90 532 000 0000).",
+    });
+  }
+});
 
 // API endpoint to parse a tour from Word document text using Gemini
 app.post("/api/parse-tour-word", async (req, res) => {
@@ -99,7 +203,7 @@ ${text}
 `;
 
     const response = await ai.models.generateContent({
-      model: "gemini-1.5-flash",
+      model: "gemini-3.8-flash",
       contents: prompt,
     });
 

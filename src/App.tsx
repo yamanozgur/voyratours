@@ -5,7 +5,7 @@ import { Footer } from './components/Footer';
 import { ScrollToTop } from './components/ScrollToTop';
 import { TourDetailModal } from './components/TourDetailModal';
 import { TailorMadePlanner } from './components/TailorMadePlanner';
-import { WhatsAppFloatingButton } from './components/WhatsAppFloatingButton';
+import { AIChatWidget } from './components/AIChatWidget';
 
 // Pages
 import { HomePage } from './pages/HomePage';
@@ -71,6 +71,16 @@ export default function App() {
             }
           />
           <Route
+            path="/tours/:durationSlug"
+            element={
+              <ToursPage
+                language={language}
+                currency={currency}
+                onSelectTour={setActiveTour}
+              />
+            }
+          />
+          <Route
             path="/destinations"
             element={<DestinationsPage language={language} />}
           />
@@ -98,8 +108,8 @@ export default function App() {
         onOpenPlanner={() => setIsPlannerOpen(true)}
       />
 
-      {/* Floating WhatsApp Action */}
-      <WhatsAppFloatingButton language={language} />
+      {/* Floating AI Chat Concierge & WhatsApp Action */}
+      <AIChatWidget language={language} activeTour={activeTour} />
 
       {/* Tour Detail Modal */}
       <TourDetailModal

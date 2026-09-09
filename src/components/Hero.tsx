@@ -273,8 +273,8 @@ export const Hero: React.FC<HeroProps> = ({
         </div>
       </div>
 
-      {/* Trust & Features Bar - Elegant Turquoise Ribbon (Single-row responsive on mobile & desktop) */}
-      <div className="relative z-10 bg-[#009999] shadow-sm py-3.5 sm:py-6 lg:py-7 px-2 sm:px-8 text-white border-t border-white/20">
+      {/* Trust & Features Bar - Elegant Ribbon with lighter turquoise gradient */}
+      <div className="relative z-10 bg-gradient-to-b from-[#009ca0] via-[#08abb0] to-[#008c90] shadow-sm py-3.5 sm:py-6 lg:py-7 px-2 sm:px-8 text-white border-t border-[#38efee]/30">
         <div className="max-w-7xl mx-auto flex sm:grid sm:grid-cols-5 items-center justify-between sm:justify-items-center overflow-x-auto no-scrollbar gap-1 sm:gap-4 text-center">
           {/* 1. Licensed Tour Operator */}
           <div className="flex-1 min-w-[66px] sm:min-w-0 flex flex-col items-center justify-center px-1">

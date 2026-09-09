@@ -53,15 +53,26 @@ export const HomePage: React.FC<HomePageProps> = ({
 
   // Popular Bestselling Tours (Top curated tours with domestic flights and boutique stays)
   const popularTours = useMemo(() => {
-    const bestsellers = TOURS_DATA.filter(
-      (tour) =>
+    const bestsellers = TOURS_DATA.filter((tour) => {
+      const lower = tour.title.toLowerCase();
+      if (
+        lower.startsWith('number of guests') ||
+        lower.includes('1-2 pax') ||
+        lower.startsWith('day 1:') ||
+        lower.startsWith('your journey begins')
+      ) {
+        return false;
+      }
+
+      return (
         tour.id === 'cappadocia-2-day' ||
         tour.id === 'ephesus-pamukkale-2-day' ||
         tour.id === 'grand-turkey-6-day' ||
         tour.id === 'istanbul-3-day' ||
         tour.id === 'gallipoli-troy-2-day' ||
         tour.featured === true
-    );
+      );
+    });
 
     if (popularTab === 'all') {
       return bestsellers.slice(0, 8);
@@ -163,7 +174,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           className="flex overflow-x-auto gap-6 snap-x snap-mandatory scrollbar-none pb-4 items-stretch"
         >
           {popularTours.map((tour) => (
-            <div key={tour.id} className="snap-start shrink-0 w-[280px] sm:w-[320px] lg:w-[calc(25%-18px)]">
+            <div key={tour.id} className="snap-start shrink-0 w-[280px] sm:w-[320px] lg:w-[calc(25%-18px)] flex flex-col">
               <TourCard
                 tour={tour}
                 language={language}
@@ -183,9 +194,9 @@ export const HomePage: React.FC<HomePageProps> = ({
 
       {/* Tailor-Made Custom Trip Banner Callout */}
       <section className="max-w-7xl mx-auto px-4 sm:px-8 py-14">
-        <div className="rounded-2xl bg-gradient-to-r from-[#007373] via-[#008b8f] to-[#006a6e] text-white p-7 sm:p-10 shadow-lg flex flex-col md:flex-row items-center justify-between gap-6 border border-[#009999]/50">
+        <div className="rounded-2xl bg-gradient-to-r from-[#009ca0] via-[#08abb0] to-[#008c90] text-white p-7 sm:p-10 shadow-lg flex flex-col md:flex-row items-center justify-between gap-6 border border-[#38efee]/35">
           <div className="space-y-2 max-w-xl">
-            <div className="inline-flex items-center gap-1.5 text-xs font-bold tracking-widest text-[#5ce6e6] uppercase">
+            <div className="inline-flex items-center gap-1.5 text-xs font-bold tracking-widest text-[#e0fbfc] uppercase">
               <Compass className="w-4 h-4" />
               <span>{isTr ? 'KİŞİYE ÖZEL BUTİK SEYAHAT' : 'BESPOKE TRAVEL DESIGN'}</span>
             </div>
@@ -194,7 +205,7 @@ export const HomePage: React.FC<HomePageProps> = ({
                 ? 'Kendi Türkiye Masalınızı Tasarlayın'
                 : 'Looking for a Custom Tailored Itinerary?'}
             </h3>
-            <p className="text-teal-100/85 text-xs sm:text-sm leading-relaxed font-light">
+            <p className="text-teal-50 text-xs sm:text-sm leading-relaxed font-normal">
               {isTr
                 ? 'Tarihlerinize, ilgi alanlarınıza ve temponuza özel gün be gün rotanızı uzman seyahat tasarımcılarımızla birlikte hazırlayalım.'
                 : 'Tell us your preferred dates, group size, and must-see destinations. Our Istanbul-based travel specialists will handcraft your private journey within 24 hours.'}
@@ -204,7 +215,7 @@ export const HomePage: React.FC<HomePageProps> = ({
           <button
             id="home-tailor-made-btn"
             onClick={() => navigate('/tailor-made')}
-            className="px-6 py-3.5 rounded-xl bg-[#009999] hover:bg-[#008080] text-white font-bold text-xs tracking-wider transition shadow-md shadow-[#009999]/30 shrink-0 flex items-center gap-2 cursor-pointer"
+            className="px-6 py-3.5 rounded-xl bg-white hover:bg-teal-50 text-[#007f82] font-bold text-xs tracking-wider transition shadow-lg shadow-black/10 shrink-0 flex items-center gap-2 cursor-pointer"
           >
             <span>{isTr ? 'Özel Tur Planlayın' : 'Design Your Custom Trip'}</span>
             <ArrowRight className="w-4 h-4" />

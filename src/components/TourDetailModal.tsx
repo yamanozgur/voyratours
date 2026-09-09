@@ -556,16 +556,16 @@ Could you please confirm availability and provide details?`
                     )}
 
                     {/* Total Estimated Cost Box */}
-                    <div className="p-3.5 bg-slate-900 text-white rounded-2xl flex items-center justify-between shadow-xs">
+                    <div className="p-3.5 bg-gradient-to-br from-[#f0fbfb] to-[#e1f6f6] border border-[#a8e7e7] rounded-2xl flex items-center justify-between shadow-xs">
                       <div>
-                        <span className="text-[10px] text-slate-400 uppercase tracking-wider block">
+                        <span className="text-[10px] text-stone-600 font-semibold uppercase tracking-wider block">
                           {t.totalEstimate}
                         </span>
-                        <span className="text-2xl font-bold font-serif-luxury text-[#12bbba]">
+                        <span className="text-2xl font-bold font-serif-luxury text-[#008080]">
                           {formatPrice(totalCostEUR, currency)}
                         </span>
                       </div>
-                      <span className="text-[11px] text-slate-300 text-right">
+                      <span className="text-[11px] font-medium text-stone-600 text-right bg-white/80 px-2.5 py-1 rounded-lg border border-[#c3eeee]">
                         {adults + children} {isTr ? 'kişi için' : 'total guests'}
                       </span>
                     </div>

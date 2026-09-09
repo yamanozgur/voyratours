@@ -44,25 +44,25 @@ export const DestinationsSection: React.FC<DestinationsSectionProps> = ({
   }[language];
 
   return (
-    <section id="destinations" className="py-16 sm:py-20 bg-gradient-to-b from-[#007373] via-[#008b8f] to-[#006a6e] text-white border-y border-[#009999]/40 relative overflow-hidden">
-      {/* Radiant dark turquoise ambient glow effects */}
-      <div className="absolute -top-40 -right-40 w-96 h-96 bg-[#00cccc]/20 rounded-full blur-3xl pointer-events-none" />
-      <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-[#00b3b3]/25 rounded-full blur-3xl pointer-events-none" />
+    <section id="destinations" className="py-16 sm:py-20 bg-gradient-to-b from-[#009ca0] via-[#08abb0] to-[#008c90] text-white border-y border-[#38efee]/30 relative overflow-hidden">
+      {/* Radiant turquoise ambient glow effects */}
+      <div className="absolute -top-40 -right-40 w-96 h-96 bg-white/10 rounded-full blur-3xl pointer-events-none" />
+      <div className="absolute -bottom-40 -left-40 w-96 h-96 bg-[#38efee]/20 rounded-full blur-3xl pointer-events-none" />
 
       <div className="max-w-7xl mx-auto px-4 sm:px-8 relative z-10">
         {/* Section Header with Carousel Navigation */}
         <div className="flex flex-col sm:flex-row sm:items-end justify-between mb-10 gap-4">
           <div className="max-w-2xl">
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#003a3f]/85 border border-[#38efee]/40 mb-2.5 shadow-xs">
-              <Sparkles className="w-3.5 h-3.5 text-[#5ce6e6]" />
-              <span className="text-[11px] font-bold uppercase tracking-widest text-[#5ce6e6]">
+            <div className="inline-flex items-center gap-2 px-3.5 py-1 rounded-full bg-black/15 backdrop-blur-sm border border-white/25 mb-2.5 shadow-xs">
+              <Sparkles className="w-3.5 h-3.5 text-[#e0fbfc]" />
+              <span className="text-[11px] font-bold uppercase tracking-widest text-[#e0fbfc]">
                 {t.eyebrow}
               </span>
             </div>
             <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif-luxury font-bold text-white mb-2 tracking-tight">
               {t.title}
             </h2>
-            <p className="text-teal-100/90 text-xs sm:text-sm leading-relaxed font-light">
+            <p className="text-teal-50 text-xs sm:text-sm leading-relaxed font-normal">
               {t.subtitle}
             </p>
           </div>
@@ -71,14 +71,14 @@ export const DestinationsSection: React.FC<DestinationsSectionProps> = ({
           <div className="hidden sm:flex items-center gap-2 shrink-0">
             <button
               onClick={() => scroll('left')}
-              className="p-2.5 rounded-xl bg-[#003a3f]/80 border border-[#38efee]/40 text-teal-100 hover:text-white hover:bg-[#004a50] transition cursor-pointer shadow-xs"
+              className="p-2.5 rounded-xl bg-black/15 hover:bg-black/25 border border-white/25 text-white transition cursor-pointer shadow-xs"
               title="Previous"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
             <button
               onClick={() => scroll('right')}
-              className="p-2.5 rounded-xl bg-[#003a3f]/80 border border-[#38efee]/40 text-teal-100 hover:text-white hover:bg-[#004a50] transition cursor-pointer shadow-xs"
+              className="p-2.5 rounded-xl bg-black/15 hover:bg-black/25 border border-white/25 text-white transition cursor-pointer shadow-xs"
               title="Next"
             >
               <ChevronRight className="w-4 h-4" />

@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import mammoth from 'mammoth';
-import { TOURS_DATA, updateToursData, HERO_SLIDES, updateHeroSlides } from '../data/toursData';
+import { TOURS_DATA, updateToursData, HERO_SLIDES, updateHeroSlides, resetToursToDefault } from '../data/toursData';
 import { TourPackage, Language, Currency } from '../types';
 import { parseVoyraTourDocument } from '../utils/docxTourParser';
-import { Plus, Edit, Trash2, Shield, Lock, ArrowLeft, Save, X, Eye, CheckCircle2, AlertCircle, Image as ImageIcon, Calendar, ListChecks, Sparkles } from 'lucide-react';
+import { Plus, Edit, Trash2, Shield, Lock, ArrowLeft, Save, X, Eye, CheckCircle2, AlertCircle, Image as ImageIcon, Calendar, ListChecks, Sparkles, RotateCcw } from 'lucide-react';
 import { Link } from 'react-router-dom';
 
 interface AdminPageProps {
@@ -71,6 +71,14 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
       setTours(updatedList);
       updateToursData(updatedList);
       showToast('Tur silindi.');
+    }
+  };
+
+  const handleResetToDefaultTours = () => {
+    if (confirm('Hatalı girilmiş taslak turları temizleyip orijinal turlara dönmek istiyor musunuz?')) {
+      const fresh = resetToursToDefault();
+      setTours(fresh);
+      showToast('Hatalı turlar temizlendi ve varsayılan turlar geri yüklendi!');
     }
   };
 
@@ -235,8 +243,8 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
       originalPriceEUR: 580,
       rating: 5.0,
       reviewsCount: 1,
-      groupType: 'Small Boutique Group',
-      groupTypeTr: 'Küçük Butik Grup',
+      groupType: 'Small Group',
+      groupTypeTr: 'Küçük Grup',
       heroImage: 'https://images.unsplash.com/photo-1570939274717-7eda259b50ed?auto=format&fit=crop&w=1200&q=85',
       galleryImages: [
         'https://images.unsplash.com/photo-1570939274717-7eda259b50ed?auto=format&fit=crop&w=800&q=85',
@@ -385,6 +393,14 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
               <ArrowLeft className="w-3.5 h-3.5" />
               <span>Siteye Dön</span>
             </Link>
+            <button
+              onClick={handleResetToDefaultTours}
+              className="px-4 py-2.5 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-100 font-semibold text-xs transition border border-rose-400/40 flex items-center gap-1.5 cursor-pointer"
+              title="Hatalı veya taslak turları temizleyip orijinal listeye dön"
+            >
+              <RotateCcw className="w-3.5 h-3.5 text-rose-300" />
+              <span>Hatalı Turları Temizle</span>
+            </button>
             <label className="px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs transition shadow-lg shadow-teal-700/30 flex items-center gap-2 cursor-pointer">
               <span>📄 Word (.docx) Dosyasından Tur Yükle</span>
               <input
@@ -515,7 +531,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
           </div>
 
           <div className="flex items-center gap-2 w-full sm:w-auto overflow-x-auto">
-            {['all', ...Array.from(new Set(tours.map((t) => t.region)))].map((reg) => (
+            {['all', ...Array.from(new Set(tours.map((t) => t.region)))].map((reg: string) => (
               <button
                 key={reg}
                 onClick={() => setSelectedRegion(reg)}

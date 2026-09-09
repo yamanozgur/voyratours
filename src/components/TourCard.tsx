@@ -47,10 +47,10 @@ export const TourCard: React.FC<TourCardProps> = ({
   return (
     <div
       id={`tour-card-${tour.id}`}
-      className="group bg-white rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-lg hover:border-[#009999]/60 transition-all duration-300 flex flex-col overflow-hidden"
+      className="group bg-white rounded-2xl border border-slate-200/90 shadow-xs hover:shadow-lg hover:border-[#009999]/60 transition-all duration-300 flex flex-col h-full overflow-hidden"
     >
       {/* Image Container - Story Portrait Proportion */}
-      <div className="relative h-64 sm:h-72 w-full overflow-hidden bg-slate-100">
+      <div className="relative h-64 sm:h-72 w-full overflow-hidden bg-slate-100 shrink-0">
         <img
           src={tour.heroImage}
           alt={title}
@@ -87,7 +87,7 @@ export const TourCard: React.FC<TourCardProps> = ({
         </div>
       </div>
 
-      {/* Content Body - Refined Compact Spacing */}
+      {/* Content Body - Refined Compact Spacing with Equalized Heights */}
       <div className="p-4 sm:p-5 flex-1 flex flex-col justify-between">
         <div>
           {/* Header Row: Certification & Route Style */}
@@ -100,16 +100,17 @@ export const TourCard: React.FC<TourCardProps> = ({
             </span>
           </div>
 
-          {/* Tour Title */}
+          {/* Tour Title - Fixed 2 lines height so all cards align perfectly */}
           <h3
             onClick={() => onSelectTour(tour)}
-            className="text-base font-bold text-slate-900 font-serif-luxury group-hover:text-[#009999] transition cursor-pointer mb-1.5 line-clamp-2 leading-snug"
+            className="text-base font-bold text-slate-900 font-serif-luxury group-hover:text-[#009999] transition cursor-pointer mb-1.5 line-clamp-2 h-[2.75rem] leading-snug"
+            title={title}
           >
             {title}
           </h3>
 
-          {/* Subtitle / summary */}
-          <p className="text-xs text-slate-600 mb-3 line-clamp-2 leading-relaxed">
+          {/* Subtitle / summary - Fixed 2 lines height */}
+          <p className="text-xs text-slate-600 mb-3 line-clamp-2 h-[2.25rem] leading-relaxed">
             {subtitle}
           </p>
 
