@@ -56,6 +56,10 @@ export const DestinationsSection: React.FC<DestinationsSectionProps> = ({
     },
   }[language];
 
+  if (destinationsList.length === 0) {
+    return null;
+  }
+
   return (
     <section id="destinations" className="py-16 sm:py-20 bg-gradient-to-b from-[#009ca0] via-[#08abb0] to-[#008c90] text-white border-y border-[#38efee]/30 relative overflow-hidden">
       {/* Radiant turquoise ambient glow effects */}

@@ -180,10 +180,10 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
   };
 
   const handleResetToDefaultTours = () => {
-    if (confirm('Hatalı girilmiş taslak turları temizleyip orijinal turlara dönmek istiyor musunuz?')) {
+    if (confirm('Tüm turları temizlemek ve listeyi sıfırlamak istiyor musunuz?')) {
       const fresh = resetToursToDefault();
       setTours(fresh);
-      showToast('Hatalı turlar temizlendi ve varsayılan turlar geri yüklendi!');
+      showToast('Tüm turlar temizlendi.');
     }
   };
 
@@ -312,6 +312,20 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
       }
 
       if (newTour) {
+        // Enforce Voyra default.jpg if heroImage is missing or using legacy Paris photo
+        if (!newTour.heroImage || newTour.heroImage.includes('1570939274717-7eda259b50ed')) {
+          newTour.heroImage = 'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg';
+        }
+        if (!newTour.galleryImages || !Array.isArray(newTour.galleryImages) || newTour.galleryImages.length === 0) {
+          newTour.galleryImages = ['https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg'];
+        } else {
+          newTour.galleryImages = newTour.galleryImages.map((img: string) =>
+            img.includes('1570939274717-7eda259b50ed')
+              ? 'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg'
+              : img
+          );
+        }
+
         if (tours.some((t) => t.id === newTour!.id)) {
           newTour!.id = `${newTour!.id}-${Date.now().toString().slice(-4)}`;
           newTour!.slug = newTour!.id;
@@ -368,9 +382,9 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
       reviewsCount: 1,
       groupType: 'Small Group',
       groupTypeTr: 'Küçük Grup',
-      heroImage: 'https://images.unsplash.com/photo-1570939274717-7eda259b50ed?auto=format&fit=crop&w=1200&q=85',
+      heroImage: 'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg',
       galleryImages: [
-        'https://images.unsplash.com/photo-1570939274717-7eda259b50ed?auto=format&fit=crop&w=800&q=85',
+        'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg',
         'https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?auto=format&fit=crop&w=800&q=85',
       ],
       badge: 'Bestseller',
@@ -435,7 +449,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
       nameTr: '',
       tagline: '',
       taglineTr: '',
-      image: 'https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?auto=format&fit=crop&w=800&q=80',
+      image: 'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg',
       toursCount: 1,
       popularHighlights: ['Top Attraction 1', 'Top Attraction 2'],
       popularHighlightsTr: ['Gezilecek Yer 1', 'Gezilecek Yer 2'],
@@ -478,6 +492,10 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
       nameTr: editingDestination.nameTr.trim() || editingDestination.name.trim(),
       tagline: editingDestination.tagline.trim(),
       taglineTr: editingDestination.taglineTr.trim(),
+      image:
+        !editingDestination.image?.trim() || editingDestination.image.includes('1570939274717-7eda259b50ed')
+          ? 'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg'
+          : editingDestination.image.trim(),
       popularHighlights: highlightsEn.length > 0 ? highlightsEn : ['Tour Highlight'],
       popularHighlightsTr: highlightsTr.length > 0 ? highlightsTr : ['Tur Noktası'],
     };
@@ -507,10 +525,10 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
   };
 
   const handleResetDestinations = () => {
-    if (confirm('Destinasyonları orijinal varsayılan listeye döndürmek istiyor musunuz?')) {
+    if (confirm('Tüm destinasyonları temizlemek ve listeyi sıfırlamak istiyor musunuz?')) {
       const fresh = resetDestinationsToDefault();
       setDestinations(fresh);
-      showToast('Destinasyonlar varsayılana sıfırlandı.');
+      showToast('Tüm destinasyonlar sıfırlandı.');
     }
   };
 
@@ -644,10 +662,10 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
                 <button
                   onClick={handleResetToDefaultTours}
                   className="px-4 py-2.5 rounded-xl bg-rose-500/20 hover:bg-rose-500/30 text-rose-100 font-semibold text-xs transition border border-rose-400/40 flex items-center gap-1.5 cursor-pointer"
-                  title="Hatalı veya taslak turları temizleyip orijinal listeye dön"
+                  title="Tüm turları temizle ve sıfırla"
                 >
                   <RotateCcw className="w-3.5 h-3.5 text-rose-300" />
-                  <span>Hatalı Turları Temizle</span>
+                  <span>Listeyi Temizle</span>
                 </button>
                 <label className="px-5 py-2.5 rounded-xl bg-teal-600 hover:bg-teal-700 text-white font-bold text-xs transition shadow-lg shadow-teal-700/30 flex items-center gap-2 cursor-pointer">
                   <span>📄 Word (.docx) Dosyasından Tur Yükle</span>
@@ -990,7 +1008,15 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
                 </tr>
               </thead>
               <tbody className="divide-y divide-slate-100 text-xs">
-                {filteredTours.map((tour) => (
+                {filteredTours.length === 0 ? (
+                  <tr>
+                    <td colSpan={6} className="p-12 text-center text-slate-500">
+                      <p className="font-bold text-sm text-slate-700 mb-1">Kayıtlı tur bulunamadı.</p>
+                      <p className="text-xs text-slate-400">Yukarıdaki <strong>"📄 Word (.docx) Dosyasından Tur Yükle"</strong> veya <strong>"Yeni Tur Ekle"</strong> butonuyla ilk turunuzu ekleyebilirsiniz.</p>
+                    </td>
+                  </tr>
+                ) : (
+                filteredTours.map((tour) => (
                   <tr key={tour.id} className="hover:bg-slate-50/80 transition">
                     <td className="p-4 flex items-center gap-3">
                       <img
@@ -1071,7 +1097,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
                       </div>
                     </td>
                   </tr>
-                ))}
+                )))}
               </tbody>
             </table>
           </div>

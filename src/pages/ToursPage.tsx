@@ -162,17 +162,32 @@ export const ToursPage: React.FC<ToursPageProps> = ({
     if (q !== null) setSearchTerm(q);
   }, [searchParams]);
 
+  // Tours data state with live update subscription
+  const [toursList, setToursList] = useState<TourPackage[]>(TOURS_DATA);
+
+  useEffect(() => {
+    const handleToursUpdate = () => {
+      setToursList([...TOURS_DATA]);
+    };
+    window.addEventListener('voyra_tours_updated', handleToursUpdate);
+    window.addEventListener('storage', handleToursUpdate);
+    return () => {
+      window.removeEventListener('voyra_tours_updated', handleToursUpdate);
+      window.removeEventListener('storage', handleToursUpdate);
+    };
+  }, []);
+
   // Count available tours per duration for badges
   const durationCounts = useMemo(() => {
     const counts: Record<number, number> = { 2: 0, 3: 0, 4: 0, 5: 0, 6: 0, 7: 0, 8: 0, 9: 0 };
-    TOURS_DATA.forEach((tour) => {
+    toursList.forEach((tour) => {
       const d = tour.durationDays;
       if (counts[d] !== undefined) {
         counts[d]++;
       }
     });
     return counts;
-  }, []);
+  }, [toursList]);
 
   // Destinations data state with live update subscription
   const [destinationsData, setDestinationsData] = useState<DestinationInfo[]>(DESTINATIONS_DATA);
@@ -191,7 +206,7 @@ export const ToursPage: React.FC<ToursPageProps> = ({
 
   // Filter logic
   const filteredTours = useMemo(() => {
-    return TOURS_DATA.filter((tour) => {
+    return toursList.filter((tour) => {
       const lower = tour.title.toLowerCase();
       if (
         lower.startsWith('number of guests') ||

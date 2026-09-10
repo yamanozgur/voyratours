@@ -102,95 +102,97 @@ export const HomePage: React.FC<HomePageProps> = ({
       />
 
       {/* Popular Tours Section */}
-      <section className="py-16 sm:py-20 max-w-7xl mx-auto px-4 sm:px-8">
-        <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-5">
-          <div>
-            <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#e6f8f8] text-[#008080] text-xs font-bold uppercase tracking-wider mb-2.5">
-              <Sparkles className="w-3.5 h-3.5 text-[#009999]" />
-              <span>{isTr ? 'EN ÇOK TERCİH EDİLENLER' : 'BESTSELLING EXPERIENCES'}</span>
+      {toursList.length > 0 && (
+        <section className="py-16 sm:py-20 max-w-7xl mx-auto px-4 sm:px-8">
+          <div className="flex flex-col md:flex-row md:items-end justify-between mb-8 gap-5">
+            <div>
+              <div className="inline-flex items-center gap-2 px-3 py-1 rounded-full bg-[#e6f8f8] text-[#008080] text-xs font-bold uppercase tracking-wider mb-2.5">
+                <Sparkles className="w-3.5 h-3.5 text-[#009999]" />
+                <span>{isTr ? 'EN ÇOK TERCİH EDİLENLER' : 'BESTSELLING EXPERIENCES'}</span>
+              </div>
+              <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif-luxury font-bold text-slate-900 mb-2 tracking-tight">
+                {isTr ? 'Popüler Paket Turlar' : 'Popular Tour Packages'}
+              </h2>
+              <p className="text-slate-600 text-xs sm:text-sm max-w-2xl font-light">
+                {isTr
+                  ? 'İç hat uçak biletleri, otantik butik mağara oteller ve lisanslı tarihçi rehberler dahil en çok satan ikonik rotalarımız.'
+                  : 'Our most requested boutique journeys combining domestic flights, handpicked cave & heritage hotels, and licensed historian guides.'}
+              </p>
             </div>
-            <h2 className="text-2xl sm:text-3xl lg:text-4xl font-serif-luxury font-bold text-slate-900 mb-2 tracking-tight">
-              {isTr ? 'Popüler Paket Turlar' : 'Popular Tour Packages'}
-            </h2>
-            <p className="text-slate-600 text-xs sm:text-sm max-w-2xl font-light">
-              {isTr
-                ? 'İç hat uçak biletleri, otantik butik mağara oteller ve lisanslı tarihçi rehberler dahil en çok satan ikonik rotalarımız.'
-                : 'Our most requested boutique journeys combining domestic flights, handpicked cave & heritage hotels, and licensed historian guides.'}
-            </p>
+
+            <button
+              onClick={() => navigate('/tours')}
+              className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#009999] hover:bg-[#008080] text-white font-semibold text-xs tracking-wide transition shadow-xs shadow-[#009999]/20 shrink-0 cursor-pointer self-start md:self-auto"
+            >
+              <span>{isTr ? 'Tüm Turları İncele' : 'View All Tours'}</span>
+              <ArrowRight className="w-3.5 h-3.5" />
+            </button>
           </div>
 
-          <button
-            onClick={() => navigate('/tours')}
-            className="inline-flex items-center gap-1.5 px-5 py-2.5 rounded-xl bg-[#009999] hover:bg-[#008080] text-white font-semibold text-xs tracking-wide transition shadow-xs shadow-[#009999]/20 shrink-0 cursor-pointer self-start md:self-auto"
+          {/* Category Filter Pills & Carousel Controls */}
+          <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
+            <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
+              {[
+                { id: 'all', label: isTr ? 'Tüm Popüler Turlar' : 'All Bestsellers' },
+                { id: 'cappadocia', label: isTr ? 'Kapadokya' : 'Cappadocia' },
+                { id: 'aegean-ephesus', label: isTr ? 'Efes & Pamukkale' : 'Ephesus & Aegean' },
+                { id: 'multi-region', label: isTr ? 'Büyük Türkiye Turu' : 'Grand Turkey Loop' },
+                { id: 'istanbul', label: isTr ? 'İstanbul' : 'Istanbul' },
+              ].map((tab) => {
+                const isActive = popularTab === tab.id;
+                return (
+                  <button
+                    key={tab.id}
+                    onClick={() => setPopularTab(tab.id)}
+                    className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition cursor-pointer ${
+                      isActive
+                        ? 'bg-[#009999] text-white shadow-xs'
+                        : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
+                    }`}
+                  >
+                    {tab.label}
+                  </button>
+                );
+              })}
+            </div>
+
+            {/* Carousel Arrows */}
+            <div className="hidden sm:flex items-center gap-2 shrink-0">
+              <button
+                onClick={() => scrollPopular('left')}
+                className="p-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 transition cursor-pointer shadow-xs"
+                title="Previous"
+              >
+                <ChevronLeft className="w-4 h-4" />
+              </button>
+              <button
+                onClick={() => scrollPopular('right')}
+                className="p-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 transition cursor-pointer shadow-xs"
+                title="Next"
+              >
+                <ChevronRight className="w-4 h-4" />
+              </button>
+            </div>
+          </div>
+
+          {/* Compact Tour Cards Horizontal Carousel */}
+          <div
+            ref={popularScrollRef}
+            className="flex overflow-x-auto gap-6 snap-x snap-mandatory scrollbar-none pb-4 items-stretch"
           >
-            <span>{isTr ? 'Tüm Turları İncele' : 'View All Tours'}</span>
-            <ArrowRight className="w-3.5 h-3.5" />
-          </button>
-        </div>
-
-        {/* Category Filter Pills & Carousel Controls */}
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-          <div className="flex items-center gap-2 overflow-x-auto pb-2 scrollbar-none">
-            {[
-              { id: 'all', label: isTr ? 'Tüm Popüler Turlar' : 'All Bestsellers' },
-              { id: 'cappadocia', label: isTr ? 'Kapadokya' : 'Cappadocia' },
-              { id: 'aegean-ephesus', label: isTr ? 'Efes & Pamukkale' : 'Ephesus & Aegean' },
-              { id: 'multi-region', label: isTr ? 'Büyük Türkiye Turu' : 'Grand Turkey Loop' },
-              { id: 'istanbul', label: isTr ? 'İstanbul' : 'Istanbul' },
-            ].map((tab) => {
-              const isActive = popularTab === tab.id;
-              return (
-                <button
-                  key={tab.id}
-                  onClick={() => setPopularTab(tab.id)}
-                  className={`px-3.5 py-1.5 rounded-xl text-xs font-semibold whitespace-nowrap transition cursor-pointer ${
-                    isActive
-                      ? 'bg-[#009999] text-white shadow-xs'
-                      : 'bg-white border border-slate-200 text-slate-700 hover:bg-slate-50'
-                  }`}
-                >
-                  {tab.label}
-                </button>
-              );
-            })}
+            {popularTours.map((tour) => (
+              <div key={tour.id} className="snap-start shrink-0 w-[280px] sm:w-[320px] lg:w-[calc(25%-18px)] flex flex-col">
+                <TourCard
+                  tour={tour}
+                  language={language}
+                  currency={currency}
+                  onSelectTour={onSelectTour}
+                />
+              </div>
+            ))}
           </div>
-
-          {/* Carousel Arrows */}
-          <div className="hidden sm:flex items-center gap-2 shrink-0">
-            <button
-              onClick={() => scrollPopular('left')}
-              className="p-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 transition cursor-pointer shadow-xs"
-              title="Previous"
-            >
-              <ChevronLeft className="w-4 h-4" />
-            </button>
-            <button
-              onClick={() => scrollPopular('right')}
-              className="p-2.5 rounded-xl bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 transition cursor-pointer shadow-xs"
-              title="Next"
-            >
-              <ChevronRight className="w-4 h-4" />
-            </button>
-          </div>
-        </div>
-
-        {/* Compact Tour Cards Horizontal Carousel */}
-        <div
-          ref={popularScrollRef}
-          className="flex overflow-x-auto gap-6 snap-x snap-mandatory scrollbar-none pb-4 items-stretch"
-        >
-          {popularTours.map((tour) => (
-            <div key={tour.id} className="snap-start shrink-0 w-[280px] sm:w-[320px] lg:w-[calc(25%-18px)] flex flex-col">
-              <TourCard
-                tour={tour}
-                language={language}
-                currency={currency}
-                onSelectTour={onSelectTour}
-              />
-            </div>
-          ))}
-        </div>
-      </section>
+        </section>
+      )}
 
       {/* Popular Destinations Section - Sleek & Compact */}
       <DestinationsSection

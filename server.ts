@@ -280,7 +280,7 @@ ${text}
     jsonStr = jsonStr.replace(/```json/g, "").replace(/```/g, "").trim();
     
     // Attempt parsing, if invalid JSON try to find JSON substring
-    let parsedTour;
+    let parsedTour: any;
     try {
       parsedTour = JSON.parse(jsonStr);
     } catch (e) {
@@ -289,6 +289,15 @@ ${text}
         parsedTour = JSON.parse(match[0]);
       } else {
         throw new Error("Could not parse JSON response from AI");
+      }
+    }
+
+    if (parsedTour) {
+      if (!parsedTour.heroImage || parsedTour.heroImage.includes('1570939274717-7eda259b50ed')) {
+        parsedTour.heroImage = 'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg';
+      }
+      if (!parsedTour.galleryImages || !Array.isArray(parsedTour.galleryImages) || parsedTour.galleryImages.length === 0) {
+        parsedTour.galleryImages = ['https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg'];
       }
     }
     
