@@ -1,4 +1,5 @@
 import { TourPackage, ItineraryDay } from '../types';
+import { detectRegionsFromTour } from './destinationDetector';
 
 /**
  * Robust, deterministic parser tailored specifically for Voyra Tour Document templates.
@@ -310,19 +311,32 @@ export function parseVoyraTourDocument(rawText: string, fileName?: string): Tour
     'Otantik Mağara Otel konaklaması ve açık büfe kahvaltı'
   ];
 
-  // Destination & Region detection
-  const lowerTitle = tourTitle.toLowerCase();
+  // Destination & Multi-Region detection
+  const detectedRegions = detectRegionsFromTour({
+    title: tourTitle,
+    destination: tourTitle,
+    overview,
+    itinerary,
+  });
+
   let destination = 'Cappadocia';
   let destinationTr = 'Kapadokya';
   let region: TourPackage['region'] = 'cappadocia';
 
-  if (lowerTitle.includes('pamukkale') || lowerTitle.includes('ephesus') || lowerTitle.includes('efes')) {
-    destination = 'Ephesus & Pamukkale';
-    destinationTr = 'Efes & Pamukkale';
-    region = 'aegean-ephesus';
-  } else if (lowerTitle.includes('istanbul')) {
-    destination = 'Istanbul & Cappadocia';
-    destinationTr = 'İstanbul & Kapadokya';
+  if (detectedRegions.length > 0) {
+    destination = detectedRegions.map((r) => r.name).join(', ');
+    destinationTr = detectedRegions.map((r) => r.nameTr).join(', ');
+    region = (detectedRegions.length > 1 ? 'multi-region' : detectedRegions[0].id) as any;
+  } else {
+    const lowerTitle = tourTitle.toLowerCase();
+    if (lowerTitle.includes('pamukkale') || lowerTitle.includes('ephesus') || lowerTitle.includes('efes')) {
+      destination = 'Ephesus & Pamukkale';
+      destinationTr = 'Efes & Pamukkale';
+      region = 'aegean-ephesus';
+    } else if (lowerTitle.includes('istanbul')) {
+      destination = 'Istanbul & Cappadocia';
+      destinationTr = 'İstanbul & Kapadokya';
+    }
   }
 
   const durationDays = itinerary.length > 0 ? itinerary.length : 2;

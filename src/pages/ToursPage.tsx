@@ -1,8 +1,9 @@
 import React, { useState, useMemo, useEffect } from 'react';
 import { useSearchParams, Link, useNavigate, useParams } from 'react-router-dom';
 import { TourCard } from '../components/TourCard';
-import { TOURS_DATA } from '../data/toursData';
-import { Currency, Language, TourPackage } from '../types';
+import { TOURS_DATA, DESTINATIONS_DATA } from '../data/toursData';
+import { Currency, Language, TourPackage, DestinationInfo } from '../types';
+import { tourVisitsDestination } from '../utils/destinationDetector';
 import { Search, RotateCcw, Compass, ArrowRight, Sparkles, ChevronRight, Calendar, Clock } from 'lucide-react';
 
 interface ToursPageProps {
@@ -172,6 +173,21 @@ export const ToursPage: React.FC<ToursPageProps> = ({
     return counts;
   }, []);
 
+  // Destinations data state with live update subscription
+  const [destinationsData, setDestinationsData] = useState<DestinationInfo[]>(DESTINATIONS_DATA);
+
+  useEffect(() => {
+    const handleDestUpdate = () => {
+      setDestinationsData([...DESTINATIONS_DATA]);
+    };
+    window.addEventListener('voyra_destinations_updated', handleDestUpdate);
+    window.addEventListener('storage', handleDestUpdate);
+    return () => {
+      window.removeEventListener('voyra_destinations_updated', handleDestUpdate);
+      window.removeEventListener('storage', handleDestUpdate);
+    };
+  }, []);
+
   // Filter logic
   const filteredTours = useMemo(() => {
     return TOURS_DATA.filter((tour) => {
@@ -185,9 +201,10 @@ export const ToursPage: React.FC<ToursPageProps> = ({
         return false;
       }
 
-      // Destination filter
-      if (selectedDestination !== 'all' && tour.region !== selectedDestination) {
-        return false;
+      // Destination filter - matches region, title, destination tokens or day overnights
+      if (selectedDestination !== 'all') {
+        const matches = tourVisitsDestination(tour, selectedDestination, destinationsData);
+        if (!matches) return false;
       }
 
       // Duration filter
@@ -227,7 +244,7 @@ export const ToursPage: React.FC<ToursPageProps> = ({
 
       return true;
     });
-  }, [selectedDestination, selectedDuration, selectedGroupType, searchTerm]);
+  }, [selectedDestination, selectedDuration, selectedGroupType, searchTerm, destinationsData]);
 
   const handleSelectDuration = (val: string) => {
     setSelectedDuration(val);
@@ -253,15 +270,15 @@ export const ToursPage: React.FC<ToursPageProps> = ({
     ? DURATION_METAS[parseInt(selectedDuration, 10)]
     : null;
 
-  const destinationsList = [
-    { id: 'all', label: isTr ? 'Tüm Rotalar' : 'All Regions' },
-    { id: 'cappadocia', label: isTr ? 'Kapadokya' : 'Cappadocia' },
-    { id: 'aegean-ephesus', label: isTr ? 'Efes & Pamukkale' : 'Ephesus & Pamukkale' },
-    { id: 'istanbul', label: isTr ? 'İstanbul' : 'Istanbul' },
-    { id: 'gallipoli', label: isTr ? 'Çanakkale & Truva' : 'Gallipoli & Troy' },
-    { id: 'multi-region', label: isTr ? 'Büyük Türkiye Turu' : 'Grand Turkey Loop' },
-    { id: 'mediterranean', label: isTr ? 'Antalya & Akdeniz' : 'Antalya & Coast' },
-  ];
+  const destinationsList = useMemo(() => {
+    return [
+      { id: 'all', label: isTr ? 'Tüm Rotalar' : 'All Regions' },
+      ...destinationsData.map((d) => ({
+        id: d.id,
+        label: isTr ? d.nameTr : d.name,
+      })),
+    ];
+  }, [destinationsData, isTr]);
 
   const durationNavItems = [
     { key: 'all', labelEn: 'All Tours', labelTr: 'Tüm Turlar', count: TOURS_DATA.length, slug: '' },

@@ -173,6 +173,8 @@ Follow these strict rules:
 6. Extract Travel Recommendations and include them in the tour details or overview.
 7. Generate a comprehensive "overview" summarizing the tour.
 8. Generate 5-6 bullet points for "highlights" and "highlightsTr".
+9. DESTINATION & REGIONS DETECTION (CRITICAL):
+Identify ALL cities, regions, and cultural destinations visited or mentioned throughout the tour (for example, if the tour visits Cappadocia, Konya, and Antalya, you MUST list all of them: "destination": "Cappadocia, Konya, Antalya", "destinationTr": "Kapadokya, Konya, Antalya"). If more than one region is visited, set "region" to "multi-region". Each mentioned location will be automatically added to the agency's destination registry.
 
 Extract and structure the tour into a valid JSON object matching this TypeScript TourPackage interface:
 

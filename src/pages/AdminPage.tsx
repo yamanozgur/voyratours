@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useMemo } from 'react';
 import mammoth from 'mammoth';
 import {
   TOURS_DATA,
@@ -12,6 +12,11 @@ import {
 } from '../data/toursData';
 import { TourPackage, Language, Currency, DestinationInfo } from '../types';
 import { parseVoyraTourDocument } from '../utils/docxTourParser';
+import {
+  autoSyncDestinationsFromTour,
+  syncDestinationsWithAllTours,
+  detectRegionsFromTour,
+} from '../utils/destinationDetector';
 import {
   Plus,
   Edit,
@@ -66,6 +71,18 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
   const [editingTour, setEditingTour] = useState<TourPackage | null>(null);
   const [toastMessage, setToastMessage] = useState<string | null>(null);
 
+  // Live preview of regions detected from current tour being edited
+  const detectedRegionsPreview = useMemo(() => {
+    if (!editingTour) return [];
+    return detectRegionsFromTour(editingTour);
+  }, [
+    editingTour?.destination,
+    editingTour?.destinationTr,
+    editingTour?.title,
+    editingTour?.titleTr,
+    editingTour?.region,
+  ]);
+
   const showToast = (msg: string) => {
     setToastMessage(msg);
     setTimeout(() => setToastMessage(null), 4000);
@@ -96,9 +113,41 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
 
     setTours(updatedList);
     updateToursData(updatedList);
+
+    // Auto-detect regions mentioned in the tour and synchronize with destinations
+    const { updatedDestinations, newlyAdded, detectedRegions } = autoSyncDestinationsFromTour(
+      editingTour,
+      updatedList,
+      destinations
+    );
+
+    setDestinations(updatedDestinations);
+    updateDestinationsData(updatedDestinations);
+
     setIsModalOpen(false);
     setEditingTour(null);
-    showToast('Tur başarıyla kaydedildi ve tüm sitede güncellendi!');
+
+    const detectedNames = detectedRegions.map((r) => r.nameTr || r.name).join(', ');
+    if (newlyAdded.length > 0) {
+      const addedNames = newlyAdded.map((d) => d.nameTr || d.name).join(', ');
+      showToast(`Tur kaydedildi! Turda geçen bölgeler tespit edilip destinasyonlara eklendi: ${addedNames}`);
+    } else if (detectedNames) {
+      showToast(`Tur başarıyla kaydedildi! Bölgeler güncellendi: ${detectedNames}`);
+    } else {
+      showToast('Tur başarıyla kaydedildi ve tüm sitede güncellendi!');
+    }
+  };
+
+  const handleScanAllToursForDestinations = () => {
+    const { updatedDestinations, newlyAdded } = syncDestinationsWithAllTours(tours, destinations);
+    setDestinations(updatedDestinations);
+    updateDestinationsData(updatedDestinations);
+    if (newlyAdded.length > 0) {
+      const names = newlyAdded.map((d) => d.nameTr || d.name).join(', ');
+      showToast(`Tüm turlar tarandı! ${newlyAdded.length} yeni destinasyon sisteme eklendi: ${names}`);
+    } else {
+      showToast(`Tüm turlar tarandı. Kayıtlı ${updatedDestinations.length} destinasyonun tur sayıları güncellendi!`);
+    }
   };
 
   const handleToggleFeatured = (tourId: string, e?: React.MouseEvent) => {
@@ -271,7 +320,25 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
         const updated = [newTour, ...tours];
         setTours(updated);
         updateToursData(updated);
-        showToast(`"${newTour.title}" başarıyla Word dosyasından eklendi!`);
+
+        // Auto-detect regions mentioned in the Word tour and synchronize with destinations
+        const { updatedDestinations, newlyAdded, detectedRegions } = autoSyncDestinationsFromTour(
+          newTour,
+          updated,
+          destinations
+        );
+        setDestinations(updatedDestinations);
+        updateDestinationsData(updatedDestinations);
+
+        const detectedNames = detectedRegions.map((r) => r.nameTr || r.name).join(', ');
+        if (newlyAdded.length > 0) {
+          const addedNames = newlyAdded.map((d) => d.nameTr || d.name).join(', ');
+          showToast(`"${newTour.title}" Word'den eklendi! Tespit edilen yeni destinasyonlar eklendi: ${addedNames}`);
+        } else if (detectedNames) {
+          showToast(`"${newTour.title}" Word'den eklendi! (Bölgeler: ${detectedNames})`);
+        } else {
+          showToast(`"${newTour.title}" başarıyla Word dosyasından eklendi!`);
+        }
       }
     } catch (err: any) {
       console.error(err);
@@ -745,7 +812,16 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
                 </p>
               </div>
 
-              <div className="flex items-center gap-2.5 shrink-0">
+              <div className="flex items-center gap-2.5 shrink-0 flex-wrap">
+                <button
+                  type="button"
+                  onClick={handleScanAllToursForDestinations}
+                  className="px-4 py-2.5 bg-teal-50 hover:bg-teal-100 text-[#009999] border border-teal-200/80 font-bold rounded-xl text-xs whitespace-nowrap transition cursor-pointer shadow-xs flex items-center gap-2"
+                  title="Mevcut tüm turları inceleyip geçen bölgeleri tespit eder ve destinasyonlara ekler"
+                >
+                  <RotateCcw className="w-3.5 h-3.5" />
+                  <span>Turlardan Otomatik Tara & Eşitle</span>
+                </button>
                 <button
                   type="button"
                   onClick={handleCreateNewDestination}
@@ -1158,6 +1234,43 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
                     />
                   </div>
                 </div>
+
+                {/* Real-Time Detected Regions Detection Banner */}
+                {detectedRegionsPreview.length > 0 && (
+                  <div className="p-3.5 bg-teal-50/90 border border-teal-200 rounded-2xl">
+                    <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-1.5 mb-2">
+                      <span className="text-xs font-bold text-teal-900 flex items-center gap-1.5">
+                        <MapPin className="w-3.5 h-3.5 text-[#009999]" />
+                        Turda Otomatik Tespit Edilen Bölgeler ({detectedRegionsPreview.length}):
+                      </span>
+                      <span className="text-[11px] text-teal-700 font-medium">
+                        (Kaydettiğinizde otomatik olarak destinasyonlar listesine eklenecektir)
+                      </span>
+                    </div>
+                    <div className="flex flex-wrap gap-2">
+                      {detectedRegionsPreview.map((reg) => {
+                        const isExisting = destinations.some(
+                          (d) => d.id === reg.id || d.name.toLowerCase() === reg.name.toLowerCase()
+                        );
+                        return (
+                          <span
+                            key={reg.id}
+                            className={`text-xs px-2.5 py-1 rounded-lg font-bold flex items-center gap-1.5 shadow-2xs ${
+                              isExisting
+                                ? 'bg-white text-teal-900 border border-teal-300'
+                                : 'bg-[#009999] text-white border border-[#008080]'
+                            }`}
+                          >
+                            <span>📍 {reg.nameTr || reg.name}</span>
+                            <span className="text-[10px] font-normal opacity-85">
+                              {isExisting ? '✓ Kayıtlı' : '+ Yeni Destinasyon'}
+                            </span>
+                          </span>
+                        );
+                      })}
+                    </div>
+                  </div>
+                )}
 
                 <div className="grid grid-cols-2 sm:grid-cols-4 gap-4">
                   <div>

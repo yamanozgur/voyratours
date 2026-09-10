@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Search, MapPin, Calendar, Users, ShieldCheck, ArrowRight, Sparkles, Plane, IdCard, CircleUserRound, Clock, MessageCircle, ChevronLeft, ChevronRight } from 'lucide-react';
-import { Language } from '../types';
-import { HERO_SLIDES } from '../data/toursData';
+import { Language, DestinationInfo } from '../types';
+import { HERO_SLIDES, DESTINATIONS_DATA } from '../data/toursData';
 
 interface HeroProps {
   language: Language;
@@ -27,6 +27,19 @@ export const Hero: React.FC<HeroProps> = ({
   onOpenPlanner,
 }) => {
   const [currentSlide, setCurrentSlide] = useState(0);
+  const [destinationsData, setDestinationsData] = useState<DestinationInfo[]>(DESTINATIONS_DATA);
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setDestinationsData([...DESTINATIONS_DATA]);
+    };
+    window.addEventListener('voyra_destinations_updated', handleUpdate);
+    window.addEventListener('storage', handleUpdate);
+    return () => {
+      window.removeEventListener('voyra_destinations_updated', handleUpdate);
+      window.removeEventListener('storage', handleUpdate);
+    };
+  }, []);
 
   // Auto-play slider every 6 seconds
   useEffect(() => {
@@ -210,12 +223,11 @@ export const Hero: React.FC<HeroProps> = ({
                 className="bg-transparent text-slate-900 font-semibold text-sm focus:outline-none cursor-pointer"
               >
                 <option value="all">{t.allDestinations}</option>
-                <option value="cappadocia">Cappadocia (Kapadokya)</option>
-                <option value="aegean-ephesus">Ephesus & Pamukkale (Efes)</option>
-                <option value="gallipoli">Gallipoli & Troy (Çanakkale)</option>
-                <option value="multi-region">Multi-Region (Grand Turkey)</option>
-                <option value="istanbul">Istanbul (İstanbul)</option>
-                <option value="mediterranean">Antalya & Turquoise Coast</option>
+                {destinationsData.map((dest) => (
+                  <option key={dest.id} value={dest.id}>
+                    {dest.name} {dest.nameTr && dest.nameTr !== dest.name ? `(${dest.nameTr})` : ''}
+                  </option>
+                ))}
               </select>
             </div>
 
