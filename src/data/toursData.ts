@@ -16,14 +16,8 @@ export const DUMMY_TOUR_IDS = new Set([
   'ultimate-turkey-9-day',
 ]);
 
-// Known dummy destination IDs to remove completely
-export const DUMMY_DESTINATION_IDS = new Set([
-  'cappadocia',
-  'aegean-ephesus',
-  'istanbul',
-  'gallipoli',
-  'mediterranean',
-]);
+// Dummy destination IDs set (empty so custom/detected destinations are never removed)
+export const DUMMY_DESTINATION_IDS = new Set<string>();
 
 // No hardcoded dummy tours - only tours uploaded or created by the user
 export const INITIAL_TOURS_DATA: TourPackage[] = [];
@@ -99,6 +93,7 @@ export let DESTINATIONS_DATA: DestinationInfo[] = (() => {
           .filter((d: DestinationInfo) => !DUMMY_DESTINATION_IDS.has(d.id))
           .map((d: DestinationInfo) => ({
             ...d,
+            showOnHome: d.showOnHome !== false,
             image:
               !d.image?.trim() || d.image.includes('1570939274717-7eda259b50ed')
                 ? 'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg'

@@ -67,6 +67,7 @@ export interface DestinationInfo {
   toursCount: number;
   popularHighlights: string[];
   popularHighlightsTr: string[];
+  showOnHome?: boolean;
 }
 
 export interface ReviewItem {

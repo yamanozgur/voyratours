@@ -497,6 +497,7 @@ export function autoSyncDestinationsFromTour(
         toursCount: 1,
         popularHighlights: region.popularHighlights,
         popularHighlightsTr: region.popularHighlightsTr,
+        showOnHome: true,
       };
       destMap.set(newDest.id, newDest);
       newlyAdded.push(newDest);
@@ -513,6 +514,7 @@ export function autoSyncDestinationsFromTour(
     }
     return {
       ...dest,
+      showOnHome: dest.showOnHome !== false,
       toursCount: Math.max(count, dest.toursCount || 0),
     };
   });
@@ -561,6 +563,7 @@ export function syncDestinationsWithAllTours(
           toursCount: 1,
           popularHighlights: region.popularHighlights,
           popularHighlightsTr: region.popularHighlightsTr,
+          showOnHome: true,
         };
         destMap.set(newDest.id, newDest);
         newlyAdded.push(newDest);
@@ -578,6 +581,7 @@ export function syncDestinationsWithAllTours(
     }
     return {
       ...dest,
+      showOnHome: dest.showOnHome !== false,
       toursCount: count > 0 ? count : (dest.toursCount || 0),
     };
   });

@@ -56,7 +56,9 @@ export const DestinationsSection: React.FC<DestinationsSectionProps> = ({
     },
   }[language];
 
-  if (destinationsList.length === 0) {
+  const homeDestinations = destinationsList.filter((d) => d.showOnHome !== false);
+
+  if (homeDestinations.length === 0) {
     return null;
   }
 
@@ -108,7 +110,7 @@ export const DestinationsSection: React.FC<DestinationsSectionProps> = ({
           ref={scrollRef}
           className="flex overflow-x-auto gap-6 snap-x snap-mandatory scrollbar-none pb-4 items-stretch"
         >
-          {destinationsList.map((dest) => {
+          {homeDestinations.map((dest) => {
             const name = isTr ? dest.nameTr : dest.name;
             const tagline = isTr ? dest.taglineTr : dest.tagline;
             const highlights = isTr ? dest.popularHighlightsTr : dest.popularHighlights;

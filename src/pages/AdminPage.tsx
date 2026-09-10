@@ -27,6 +27,7 @@ import {
   Save,
   X,
   Eye,
+  EyeOff,
   CheckCircle2,
   AlertCircle,
   Image as ImageIcon,
@@ -453,6 +454,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
       toursCount: 1,
       popularHighlights: ['Top Attraction 1', 'Top Attraction 2'],
       popularHighlightsTr: ['Gezilecek Yer 1', 'Gezilecek Yer 2'],
+      showOnHome: true,
     };
     setEditingDestination(newDest);
     setHighlightsInputEn(newDest.popularHighlights.join(', '));
@@ -461,10 +463,35 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
   };
 
   const handleEditDestination = (dest: DestinationInfo) => {
-    setEditingDestination(JSON.parse(JSON.stringify(dest)));
+    setEditingDestination({
+      ...JSON.parse(JSON.stringify(dest)),
+      showOnHome: dest.showOnHome !== false,
+    });
     setHighlightsInputEn(dest.popularHighlights.join(', '));
     setHighlightsInputTr(dest.popularHighlightsTr.join(', '));
     setIsDestModalOpen(true);
+  };
+
+  const handleToggleDestinationShowOnHome = (destId: string, e?: React.MouseEvent) => {
+    if (e) {
+      e.stopPropagation();
+    }
+    const updatedList = destinations.map((d) => {
+      if (d.id === destId) {
+        const isCurrentlyShown = d.showOnHome !== false;
+        return { ...d, showOnHome: !isCurrentlyShown };
+      }
+      return d;
+    });
+    setDestinations(updatedList);
+    updateDestinationsData(updatedList);
+    const target = updatedList.find((d) => d.id === destId);
+    const isNowShown = target?.showOnHome !== false;
+    showToast(
+      isNowShown
+        ? `"${target?.nameTr || target?.name}" ana sayfada gösterilecek!`
+        : `"${target?.nameTr || target?.name}" ana sayfadan gizlendi.`
+    );
   };
 
   const handleSaveDestination = (e: React.FormEvent) => {
@@ -492,6 +519,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
       nameTr: editingDestination.nameTr.trim() || editingDestination.name.trim(),
       tagline: editingDestination.tagline.trim(),
       taglineTr: editingDestination.taglineTr.trim(),
+      showOnHome: editingDestination.showOnHome !== false,
       image:
         !editingDestination.image?.trim() || editingDestination.image.includes('1570939274717-7eda259b50ed')
           ? 'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg'
@@ -878,6 +906,37 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
+                  
+                  {/* Homepage Visibility Status Badge */}
+                  <div className="absolute top-3 left-3">
+                    <button
+                      type="button"
+                      onClick={(e) => handleToggleDestinationShowOnHome(dest.id, e)}
+                      className={`px-2.5 py-1 rounded-full text-[11px] font-bold backdrop-blur-md transition flex items-center gap-1.5 cursor-pointer shadow-sm ${
+                        dest.showOnHome !== false
+                          ? 'bg-emerald-600/90 hover:bg-emerald-700 text-white border border-emerald-400/40'
+                          : 'bg-slate-900/80 hover:bg-slate-800 text-slate-300 border border-white/20'
+                      }`}
+                      title={
+                        dest.showOnHome !== false
+                          ? 'Ana sayfada gösteriliyor (Gizlemek için tıklayın)'
+                          : 'Ana sayfada gizli (Göstermek için tıklayın)'
+                      }
+                    >
+                      {dest.showOnHome !== false ? (
+                        <>
+                          <Eye className="w-3 h-3 text-emerald-200" />
+                          <span>Ana Sayfada</span>
+                        </>
+                      ) : (
+                        <>
+                          <EyeOff className="w-3 h-3 text-slate-400" />
+                          <span>Gizli</span>
+                        </>
+                      )}
+                    </button>
+                  </div>
+
                   <div className="absolute top-3 right-3 bg-black/60 backdrop-blur-md text-white text-[11px] font-bold px-3 py-1 rounded-full border border-white/20">
                     {dest.toursCount} Tur
                   </div>
@@ -923,25 +982,51 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
                     </div>
                   </div>
 
-                  {/* Actions */}
-                  <div className="pt-3 border-t border-slate-100 flex items-center justify-between gap-2">
+                  {/* Actions & Homepage Visibility Toggle */}
+                  <div className="pt-3 border-t border-slate-100 flex flex-col gap-2">
+                    {/* Direct Homepage Visibility Button */}
                     <button
                       type="button"
-                      onClick={() => handleEditDestination(dest)}
-                      className="flex-1 py-2 px-3 rounded-xl bg-teal-50 hover:bg-teal-100 text-[#009999] text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
+                      onClick={(e) => handleToggleDestinationShowOnHome(dest.id, e)}
+                      className={`w-full py-2 px-3 rounded-xl text-xs font-bold transition flex items-center justify-center gap-2 cursor-pointer border ${
+                        dest.showOnHome !== false
+                          ? 'bg-emerald-50 border-emerald-200 text-emerald-800 hover:bg-emerald-100'
+                          : 'bg-slate-50 border-slate-200 text-slate-600 hover:bg-slate-100'
+                      }`}
+                      title="Ana sayfadaki 'Bölgelere Göre Keşfedin' vitrininde bu bölgeyi göster veya gizle"
                     >
-                      <Edit className="w-3.5 h-3.5" />
-                      <span>Düzenle</span>
+                      {dest.showOnHome !== false ? (
+                        <>
+                          <Eye className="w-3.5 h-3.5 text-emerald-600" />
+                          <span>Ana Sayfada Gösteriliyor</span>
+                        </>
+                      ) : (
+                        <>
+                          <EyeOff className="w-3.5 h-3.5 text-slate-400" />
+                          <span>Ana Sayfada Göster (Şu an Gizli)</span>
+                        </>
+                      )}
                     </button>
-                    <button
-                      type="button"
-                      onClick={() => handleDeleteDestination(dest.id)}
-                      className="py-2 px-3 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
-                      title="Destinasyonu Sil"
-                    >
-                      <Trash2 className="w-3.5 h-3.5" />
-                      <span>Sil</span>
-                    </button>
+
+                    <div className="flex items-center justify-between gap-2">
+                      <button
+                        type="button"
+                        onClick={() => handleEditDestination(dest)}
+                        className="flex-1 py-2 px-3 rounded-xl bg-teal-50 hover:bg-teal-100 text-[#009999] text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
+                      >
+                        <Edit className="w-3.5 h-3.5" />
+                        <span>Düzenle</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => handleDeleteDestination(dest.id)}
+                        className="py-2 px-3 rounded-xl bg-rose-50 hover:bg-rose-100 text-rose-600 text-xs font-bold transition flex items-center justify-center gap-1.5 cursor-pointer"
+                        title="Destinasyonu Sil"
+                      >
+                        <Trash2 className="w-3.5 h-3.5" />
+                        <span>Sil</span>
+                      </button>
+                    </div>
                   </div>
                 </div>
               </div>
@@ -1887,6 +1972,37 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
                     className="w-full px-4 py-2.5 bg-slate-50 border border-slate-200 rounded-xl text-slate-900 focus:outline-none focus:border-[#009999]"
                   />
                 </div>
+              </div>
+
+              {/* Show on Homepage Toggle Card */}
+              <div className="p-4 rounded-2xl bg-teal-50/70 border border-teal-200/80 flex items-center justify-between gap-4">
+                <div>
+                  <label className="text-xs font-bold text-slate-800 flex items-center gap-1.5">
+                    <Eye className="w-3.5 h-3.5 text-[#009999]" />
+                    <span>Ana Sayfada Göster</span>
+                  </label>
+                  <p className="text-[11px] text-slate-500 mt-0.5">
+                    Bu destinasyonun ana sayfadaki "Bölgelere Göre Keşfedin" vitrininde listelenmesini sağlar.
+                  </p>
+                </div>
+                <button
+                  type="button"
+                  onClick={() =>
+                    setEditingDestination({
+                      ...editingDestination,
+                      showOnHome: editingDestination.showOnHome === false ? true : false,
+                    })
+                  }
+                  className={`relative inline-flex h-6 w-11 shrink-0 items-center rounded-full transition-colors cursor-pointer ${
+                    editingDestination.showOnHome !== false ? 'bg-[#009999]' : 'bg-slate-300'
+                  }`}
+                >
+                  <span
+                    className={`inline-block h-4 w-4 transform rounded-full bg-white transition-transform ${
+                      editingDestination.showOnHome !== false ? 'translate-x-6' : 'translate-x-1'
+                    }`}
+                  />
+                </button>
               </div>
 
               {/* Action Buttons */}
