@@ -1,6 +1,7 @@
 import React, { useState, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import { Language } from '../types';
+import { SEOHead } from '../components/SEOHead';
 import {
   ChevronDown,
   ChevronUp,
@@ -112,6 +113,17 @@ export const FAQPage: React.FC<FAQPageProps> = ({ language }) => {
 
   return (
     <div className="min-h-screen bg-[#f8fbfb] pb-24">
+      <SEOHead
+        title={isTr ? 'Sıkça Sorulan Sorular & Rezervasyon Rehberi' : 'Frequently Asked Questions & Booking Guide'}
+        description={
+          isTr
+            ? 'Kapadokya balon uçuşları, hava muhalefeti iade garantisi, iç hat uçuşları ve butik otel konaklamaları hakkında merak edilen tüm sorular ve yanıtları.'
+            : 'Answers on Cappadocia hot air balloon flights, 100% weather refund guarantee, domestic flight luggage limits, and boutique cave hotels.'
+        }
+        language={language}
+        schemaType="faq"
+        faqItems={allFaqs.map((f) => ({ question: f.q, answer: f.a }))}
+      />
       {/* Header */}
       <div className="bg-gradient-to-b from-[#007373] via-[#008b8f] to-[#006a6e] text-white pt-12 pb-16 px-4 sm:px-8 border-b border-[#009999]/40">
         <div className="max-w-7xl mx-auto">

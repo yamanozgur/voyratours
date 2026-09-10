@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Language } from '../types';
+import { SEOHead } from '../components/SEOHead';
 import {
   Sparkles,
   MapPin,
@@ -79,6 +80,15 @@ export const TailorMadePage: React.FC<TailorMadePageProps> = ({ language }) => {
 
   return (
     <div className="min-h-screen bg-[#f8fbfb] pb-24">
+      <SEOHead
+        title={isTr ? 'Kişiye Özel Türkiye Turu Tasarlayın' : 'Tailor-Made Private Turkey Itinerary Designer'}
+        description={
+          isTr
+            ? 'Kapadokya, Efes, Pamukkale ve İstanbul için 100% size özel rota. Özel şoförlü VIP araç, kokartlı rehber ve butik mağara otellerle hayalinizdeki seyahat.'
+            : 'Design your bespoke private Turkey tour with our travel architects. Private VIP vehicles, licensed guides, and luxury cave suites.'
+        }
+        language={language}
+      />
       {/* Header */}
       <div className="bg-gradient-to-b from-[#007373] via-[#008b8f] to-[#006a6e] text-white pt-12 pb-16 px-4 sm:px-8 border-b border-[#009999]/40">
         <div className="max-w-7xl mx-auto">

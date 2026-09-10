@@ -499,7 +499,42 @@ Which destinations or dates are you planning for?`;
     }
   }
 
-  // 10. Default contextual / intelligent response
+  // 10. Dynamic Tour Search across all tours in the catalog
+  const cleanQ = q.replace(/[^a-z0-9ğüşıöç\s]/gi, ' ').trim();
+  const searchWords = cleanQ.split(/\s+/).filter((w) => w.length >= 3 && !['tur', 'turu', 'turları', 'hakkında', 'bilgi', 'fiyat', 'fiyatı', 'fiyatları', 'nedir', 'nelerdir', 'varmı', 'var', 'mı', 'mu', 'how', 'much', 'tour', 'tours', 'about'].includes(w));
+
+  if (searchWords.length > 0) {
+    const matchedTours = TOURS_DATA.filter((t) => {
+      const tourText = `${t.title} ${t.titleTr} ${t.destination} ${t.destinationTr} ${t.region || ''} ${t.overview || ''} ${t.overviewTr || ''}`.toLowerCase();
+      return searchWords.some((w) => tourText.includes(w));
+    });
+
+    if (matchedTours.length > 0) {
+      if (isTr) {
+        const topMatches = matchedTours.slice(0, 3);
+        const tourList = topMatches
+          .map(
+            (t) =>
+              `• **${t.titleTr || t.title}** (${t.durationDays} Gün / ${t.durationNights || t.durationDays - 1} Gece) — **€${t.priceEUR} / kişi başı**\n  *Güzergah:* ${t.destinationTr || t.destination}\n  *Fiyata Dahil:* İç hat uçuşları, VIP transferler, butik otel konaklaması, rehberlik ve müze girişleri.`
+          )
+          .join('\n\n');
+
+        return `Sistemimizde aradığınız kriterlere uygun ${matchedTours.length} adet tur programımız bulunmaktadır:\n\n${tourList}\n\n🗓️ Bu turlarımızdan herhangi birinin detaylı gün gün programını görmek ister misiniz, yoksa dilediğiniz tarihe özel VIP fiyat teklifi mi hazırlayalım?`;
+      } else {
+        const topMatches = matchedTours.slice(0, 3);
+        const tourList = topMatches
+          .map(
+            (t) =>
+              `• **${t.title}** (${t.durationDays} Days / ${t.durationNights || t.durationDays - 1} Nights) — **€${t.priceEUR} / person**\n  *Route:* ${t.destination}\n  *Inclusions:* Domestic flights, VIP Mercedes transfers, boutique hotels, licensed guide, and museum entries.`
+          )
+          .join('\n\n');
+
+        return `We have ${matchedTours.length} curated journey(s) matching your request in our catalog:\n\n${tourList}\n\n🗓️ Would you like to review the day-by-day itinerary, or should we prepare a custom quote for your preferred dates?`;
+      }
+    }
+  }
+
+  // 11. Default contextual / intelligent response
   if (activeTour) {
     const tourTitle = isTr ? activeTour.titleTr : activeTour.title;
     if (isTr) {

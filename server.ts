@@ -64,7 +64,13 @@ async function generateWithFallback(
 
 // API endpoint for Voyra AI Travel Concierge chat
 app.post("/api/ai-chat", async (req, res) => {
-  const { messages, userLanguage = "tr", tourContext } = req.body || {};
+  const {
+    messages,
+    userLanguage = "tr",
+    tourContext,
+    availableTours,
+    destinationsCatalog,
+  } = req.body || {};
   const isTr = userLanguage === "tr";
 
   const defaultWelcomeFallback = isTr
@@ -83,13 +89,44 @@ app.post("/api/ai-chat", async (req, res) => {
 
     const ai = getGenAI();
 
+    // Dynamically format available website tours for Gemini's grounding
+    let catalogSection = "";
+    if (Array.isArray(availableTours) && availableTours.length > 0) {
+      const tourLines = availableTours
+        .map(
+          (t: any) =>
+            `• [ID: ${t.id}] "${t.titleTr || t.title}" (EN: "${t.title}") | Süre: ${t.durationDays} Gün (${t.durationNights || t.durationDays - 1} Gece) | Bölgeler: ${t.destinationTr || t.destination || t.region} | Fiyat: €${t.priceEUR}/kişi başı | Öne Çıkanlar: ${(t.highlightsTr || t.highlights || []).slice(0, 3).join(', ')}`
+        )
+        .join('\n');
+      catalogSection = `
+=== SİTEDE MEVCUT TÜM TUR PAKETLERİ (LIVE WEBSITE TOURS CATALOG) ===
+Ziyaretçi herhangi bir şehir, bölge, gün sayısı veya tur adı sorduğunda AŞAĞIDAKİ GERÇEK VE GÜNCEL TURLARIMIZDAN referans ver, tam fiyat ve gün sayısını belirt:
+${tourLines}
+`;
+    }
+
+    let destSection = "";
+    if (Array.isArray(destinationsCatalog) && destinationsCatalog.length > 0) {
+      const destLines = destinationsCatalog
+        .map(
+          (d: any) =>
+            `• ${d.nameTr || d.name} (Slug: ${d.id}, Aktif Tur Sayısı: ${d.toursCount || '1+'}): ${d.taglineTr || d.tagline || ''}`
+        )
+        .join('\n');
+      destSection = `
+=== SİTEDE MEVCUT DESTİNASYONLAR & BÖLGELER ===
+${destLines}
+`;
+    }
+
     const systemInstruction = `
 You are "Voyra AI", the warm, sophisticated, and consultative Travel Concierge for Voyra Tours (a premier boutique Turkish travel agency, TURSAB certified).
 
 CRITICAL CONSULTATIVE ROLE & DIRECTIVE:
-When a visitor asks for information about a destination (especially Cappadocia / Kapadokya, Ephesus, Antalya, Istanbul, etc.) or generally inquires about tours (e.g., "Kapadokya turları hakkında bilgi almak istiyorum", "bana tur önerin", "turlarınız neler?"):
-1. DO NOT dump an encyclopedic, overwhelming wall of text.
-2. ALWAYS ACT AS A PROACTIVE CONSULTANT: Guide the traveler step-by-step by presenting clear duration/budget options and asking qualifying questions to pinpoint the perfect journey:
+When a visitor asks for information about a destination (especially Cappadocia, Ephesus, Antalya, Istanbul, Konya, Mardin, Pamukkale, etc.) or generally inquires about tours (e.g., "Kapadokya turları hakkında bilgi almak istiyorum", "bana tur önerin", "turlarınız neler?", "Konya turunuz var mı?"):
+1. ALWAYS scan the live website tour catalog provided below to see all matching tours, durations, and exact prices.
+2. DO NOT dump an encyclopedic, overwhelming wall of text.
+3. ALWAYS ACT AS A PROACTIVE CONSULTANT: Guide the traveler step-by-step by presenting clear duration/budget options and asking qualifying questions to pinpoint the perfect journey:
    - 📅 **Duration (Gün Sayısı):** Ask how many days they have available, while presenting our concrete options:
      * **2 Gün / 1 Gece (€555/kişi):** Hızlı Kapadokya Kaçamağı (Göreme Açık Hava Müzesi, Paşabağ, Uçhisar, Yeraltı Şehri, gün doğumu balon penceresi).
      * **3 Gün / 2 Gece (€690/kişi):** Derinlemesine Kapadokya (Ihlara Vadisi, Selime Manastırı ve vadi keşifleri dahil en çok tercih edilen rota).
@@ -97,7 +134,10 @@ When a visitor asks for information about a destination (especially Cappadocia /
    - 💰 **Budget & Hotel Style (Bütçe ve Konaklama Tarzı):** Ask if they prefer an authentic boutique cave hotel (comfortable & authentic) or a luxury panoramic cave suite with private jacuzzi and balloon-view terrace.
    - 🎈 **Must-Have Experiences (Öncelikli Deneyimler):** Mention signature optional activities (Gün doğumu sıcak hava balon uçuşu - %100 hava muhalefeti iade garantili, gün batımı ATV safari, Türk Gecesi veya çömlek atölyesi).
    - 👥 **Group / Style (Kişi Sayısı ve Seyahat Tipi):** Inquire if this is a romantic honeymoon/couples trip, family with children, or friends.
-3. If the user replies with their duration, budget, or dates, immediately recommend the tailored package, clearly outline inclusions (iç hat uçak biletleri, VIP Mercedes transferler, butik otel, lisanslı rehber, müze biletleri), and provide clear next steps or WhatsApp assistance (+90 532 000 0000).
+4. If the user replies with their duration, budget, or dates, immediately recommend the tailored package, clearly outline inclusions (iç hat uçak biletleri, VIP Mercedes transferler, butik otel, lisanslı rehber, müze biletleri), and provide clear next steps or WhatsApp assistance (+90 532 000 0000).
+
+${catalogSection}
+${destSection}
 
 Core Inclusions in All Voyra Packages:
 - All domestic flight tickets within Turkey.

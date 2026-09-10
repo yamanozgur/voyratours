@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Language, DestinationInfo } from '../types';
 import { DESTINATIONS_DATA } from '../data/toursData';
+import { SEOHead } from '../components/SEOHead';
 import { ChevronRight, Sparkles, MapPin, Calendar, Compass, ArrowRight } from 'lucide-react';
 
 interface DestinationsPageProps {
@@ -156,6 +157,15 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({ language }) 
 
   return (
     <div className="min-h-screen bg-[#f8fbfb] pb-24">
+      <SEOHead
+        title={isTr ? 'Türkiye Destinasyonları & Bölgeler' : 'Iconic Turkey Destinations & Regions'}
+        description={
+          isTr
+            ? 'Kapadokya, Efes, Pamukkale, İstanbul, Antalya ve Truva gibi Türkiye’nin en büyüleyici kültür ve doğa rotalarını keşfedin.'
+            : 'Explore Cappadocia, Ephesus, Pamukkale, Istanbul, Antalya, and Gallipoli with curated boutique itineraries and licensed expert guides.'
+        }
+        language={language}
+      />
       {/* Header */}
       <div className="bg-gradient-to-b from-[#007373] via-[#008b8f] to-[#006a6e] text-white pt-12 pb-16 px-4 sm:px-8 border-b border-[#009999]/40">
         <div className="max-w-7xl mx-auto">

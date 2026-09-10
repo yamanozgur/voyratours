@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 import { Language } from '../types';
+import { SEOHead } from '../components/SEOHead';
 import {
   Phone,
   Mail,
@@ -42,6 +43,15 @@ export const ContactPage: React.FC<ContactPageProps> = ({ language }) => {
 
   return (
     <div className="min-h-screen bg-[#f8fbfb] pb-24">
+      <SEOHead
+        title={isTr ? 'İletişim & 7/24 WhatsApp Konsiyerj' : 'Contact Voyra Tours | 24/7 Concierge'}
+        description={
+          isTr
+            ? 'Voyra Tours seyahat uzmanlarına dilediğiniz an ulaşın. Özel Kapadokya turları ve Türkiye seyahat danışmanlığı için 7/24 WhatsApp hattımız.'
+            : 'Get in touch with Voyra Tours travel specialists. 24/7 WhatsApp concierge for custom Cappadocia journeys and Turkey itineraries.'
+        }
+        language={language}
+      />
       {/* Header */}
       <div className="bg-gradient-to-b from-[#007373] via-[#008b8f] to-[#006a6e] text-white pt-12 pb-16 px-4 sm:px-8 border-b border-[#009999]/40">
         <div className="max-w-7xl mx-auto">

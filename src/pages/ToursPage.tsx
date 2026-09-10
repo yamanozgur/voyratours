@@ -4,6 +4,7 @@ import { TourCard } from '../components/TourCard';
 import { TOURS_DATA, DESTINATIONS_DATA } from '../data/toursData';
 import { Currency, Language, TourPackage, DestinationInfo } from '../types';
 import { tourVisitsDestination } from '../utils/destinationDetector';
+import { SEOHead } from '../components/SEOHead';
 import { Search, RotateCcw, Compass, ArrowRight, Sparkles, ChevronRight, Calendar, Clock } from 'lucide-react';
 
 interface ToursPageProps {
@@ -292,8 +293,33 @@ export const ToursPage: React.FC<ToursPageProps> = ({
     { key: '9', labelEn: '9 Days', labelTr: '9 Günlük', count: durationCounts[9] || 0, slug: '9-days' },
   ];
 
+  const currentDestObj = destinationsData.find((d) => d.id === selectedDestination);
+  const destName = currentDestObj ? (isTr ? currentDestObj.nameTr : currentDestObj.name) : null;
+
+  let seoTitle = isTr ? 'Özenle Hazırlanmış Türkiye Paket Turları' : 'Curated Turkey Tour Packages & Itineraries';
+  if (currentDurationMeta && destName) {
+    seoTitle = isTr
+      ? `${currentDurationMeta.days} Günlük ${destName} Turları`
+      : `${currentDurationMeta.days}-Day ${destName} Tours`;
+  } else if (currentDurationMeta) {
+    seoTitle = isTr ? currentDurationMeta.titleTr : currentDurationMeta.titleEn;
+  } else if (destName) {
+    seoTitle = isTr ? `${destName} Turları & Paketleri` : `${destName} Tours & Packages`;
+  }
+
+  const seoDesc = currentDurationMeta
+    ? (isTr ? currentDurationMeta.descTr : currentDurationMeta.descEn)
+    : (isTr
+        ? 'İstanbul çıkışlı Kapadokya, Efes, Pamukkale ve Antalya turları. İç hat uçuşları, lüks mağara otel konaklamaları ve hava muhalefeti iade garantili balon uçuşu opsiyonu.'
+        : 'Curated boutique Turkey packages from Istanbul to Cappadocia, Ephesus, Pamukkale, and Antalya. Domestic flights, cave suites, and licensed guides included.');
+
   return (
     <div className="min-h-screen bg-[#f8fbfb] pb-24">
+      <SEOHead
+        title={seoTitle}
+        description={seoDesc}
+        language={language}
+      />
       {/* Page Hero Header */}
       <div className="bg-gradient-to-b from-[#007373] via-[#008b8f] to-[#006a6e] text-white pt-10 pb-14 px-4 sm:px-8 border-b border-[#009999]/40">
         <div className="max-w-7xl mx-auto">

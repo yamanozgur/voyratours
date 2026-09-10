@@ -14,6 +14,7 @@ import {
   ChevronDown
 } from 'lucide-react';
 import { Language, TourPackage } from '../types';
+import { TOURS_DATA, DESTINATIONS_DATA } from '../data/toursData';
 import { getSmartClientSideResponse } from '../utils/aiTravelEngine';
 
 interface AIChatWidgetProps {
@@ -234,6 +235,27 @@ Feel free to ask me anything about routes, pricing, or travel tips. How may I as
                 region: activeTour.region,
               }
             : undefined,
+          availableTours: TOURS_DATA.map((t) => ({
+            id: t.id,
+            title: t.title,
+            titleTr: t.titleTr,
+            durationDays: t.durationDays,
+            durationNights: t.durationNights,
+            priceEUR: t.priceEUR,
+            destination: t.destination,
+            destinationTr: t.destinationTr,
+            region: t.region,
+            highlights: t.highlights?.slice(0, 3),
+            highlightsTr: t.highlightsTr?.slice(0, 3),
+          })),
+          destinationsCatalog: DESTINATIONS_DATA.map((d) => ({
+            id: d.id,
+            name: d.name,
+            nameTr: d.nameTr,
+            toursCount: d.toursCount,
+            tagline: d.tagline,
+            taglineTr: d.taglineTr,
+          })),
         }),
       });
 

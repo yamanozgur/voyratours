@@ -1,0 +1,8 @@
+# Voyra Tours - robots.txt
+User-agent: *
+Allow: /
+Disallow: /admin
+Disallow: /api/
+
+# Sitemaps
+Sitemap: https://voyratours.com/sitemap.xml
