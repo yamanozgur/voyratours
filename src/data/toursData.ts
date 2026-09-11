@@ -1,4 +1,5 @@
 import { TourPackage, DestinationInfo } from '../types';
+import { sanitizeTourDestinations, syncDestinationsWithAllTours } from '../utils/destinationDetector';
 
 const STORAGE_KEY = 'voyra_admin_tours_v1';
 
@@ -77,64 +78,6 @@ export const REVIEWS_DATA = [
   },
 ];
 
-export const DESTINATIONS_STORAGE_KEY = 'voyra_destinations_v1';
-
-// No hardcoded dummy destinations - initialized empty
-export const INITIAL_DESTINATIONS_DATA: DestinationInfo[] = [];
-
-export let DESTINATIONS_DATA: DestinationInfo[] = (() => {
-  try {
-    const saved = localStorage.getItem(DESTINATIONS_STORAGE_KEY);
-    if (saved) {
-      const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed)) {
-        // Strip out dummy destinations and enforce Voyra default image
-        const cleanDests = parsed
-          .filter((d: DestinationInfo) => !DUMMY_DESTINATION_IDS.has(d.id))
-          .map((d: DestinationInfo) => ({
-            ...d,
-            showOnHome: d.showOnHome !== false,
-            image:
-              !d.image?.trim() || d.image.includes('1570939274717-7eda259b50ed')
-                ? 'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg'
-                : d.image,
-          }));
-
-        localStorage.setItem(DESTINATIONS_STORAGE_KEY, JSON.stringify(cleanDests));
-        return cleanDests;
-      }
-    }
-  } catch (e) {
-    console.error(e);
-  }
-  return INITIAL_DESTINATIONS_DATA;
-})();
-
-export function updateDestinationsData(newList: DestinationInfo[]) {
-  DESTINATIONS_DATA = newList;
-  try {
-    localStorage.setItem(DESTINATIONS_STORAGE_KEY, JSON.stringify(newList));
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new Event('voyra_destinations_updated'));
-    }
-  } catch (e) {
-    console.error(e);
-  }
-}
-
-export function resetDestinationsToDefault(): DestinationInfo[] {
-  DESTINATIONS_DATA = [...INITIAL_DESTINATIONS_DATA];
-  try {
-    localStorage.removeItem(DESTINATIONS_STORAGE_KEY);
-    if (typeof window !== 'undefined') {
-      window.dispatchEvent(new Event('voyra_destinations_updated'));
-    }
-  } catch (e) {
-    console.error(e);
-  }
-  return DESTINATIONS_DATA;
-}
-
 export function isInvalidTourTitle(title?: string, badge?: string): boolean {
   if (!title) return true;
   const lower = title.toLowerCase().trim();
@@ -157,21 +100,23 @@ export let TOURS_DATA: TourPackage[] = (() => {
     if (saved) {
       const parsed = JSON.parse(saved);
       if (Array.isArray(parsed)) {
-        // Strip out dummy tours, remove corrupted drafts, and replace legacy images
+        // Strip out dummy tours, remove corrupted drafts, sanitize destinations based on itinerary, and replace legacy images
         const cleanTours = parsed
           .filter((t: TourPackage) => !DUMMY_TOUR_IDS.has(t.id))
-          .map((t: TourPackage) => ({
-            ...t,
-            heroImage:
-              !t.heroImage?.trim() || t.heroImage.includes('1570939274717-7eda259b50ed')
-                ? 'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg'
-                : t.heroImage,
-            galleryImages: t.galleryImages?.map((img) =>
-              img.includes('1570939274717-7eda259b50ed')
-                ? 'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg'
-                : img
-            ),
-          }))
+          .map((t: TourPackage) =>
+            sanitizeTourDestinations({
+              ...t,
+              heroImage:
+                !t.heroImage?.trim() || t.heroImage.includes('1570939274717-7eda259b50ed')
+                  ? 'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg'
+                  : t.heroImage,
+              galleryImages: t.galleryImages?.map((img) =>
+                img.includes('1570939274717-7eda259b50ed')
+                  ? 'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg'
+                  : img
+              ),
+            })
+          )
           .filter(
             (t: TourPackage) => !isInvalidTourTitle(t.title) && !isInvalidTourTitle(t.titleTr)
           );
@@ -209,6 +154,63 @@ export function resetToursToDefault(): TourPackage[] {
     console.error(e);
   }
   return TOURS_DATA;
+}
+
+export const DESTINATIONS_STORAGE_KEY = 'voyra_destinations_v1';
+
+// No hardcoded dummy destinations - initialized empty
+export const INITIAL_DESTINATIONS_DATA: DestinationInfo[] = [];
+
+export let DESTINATIONS_DATA: DestinationInfo[] = (() => {
+  try {
+    const saved = localStorage.getItem(DESTINATIONS_STORAGE_KEY);
+    const parsed = saved ? JSON.parse(saved) : [];
+    const parsedDests: DestinationInfo[] = Array.isArray(parsed)
+      ? parsed
+          .filter((d: DestinationInfo) => !DUMMY_DESTINATION_IDS.has(d.id))
+          .map((d: DestinationInfo) => ({
+            ...d,
+            showOnHome: d.showOnHome !== false,
+            image:
+              !d.image?.trim() || d.image.includes('1570939274717-7eda259b50ed')
+                ? 'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg'
+                : d.image,
+          }))
+      : [];
+
+    // Automatically sync destinations with the active sanitized tours (pruning unvisited ghost destinations)
+    const { updatedDestinations } = syncDestinationsWithAllTours(TOURS_DATA, parsedDests);
+    localStorage.setItem(DESTINATIONS_STORAGE_KEY, JSON.stringify(updatedDestinations));
+    return updatedDestinations;
+  } catch (e) {
+    console.error(e);
+  }
+  return INITIAL_DESTINATIONS_DATA;
+})();
+
+export function updateDestinationsData(newList: DestinationInfo[]) {
+  DESTINATIONS_DATA = newList;
+  try {
+    localStorage.setItem(DESTINATIONS_STORAGE_KEY, JSON.stringify(newList));
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('voyra_destinations_updated'));
+    }
+  } catch (e) {
+    console.error(e);
+  }
+}
+
+export function resetDestinationsToDefault(): DestinationInfo[] {
+  DESTINATIONS_DATA = [...INITIAL_DESTINATIONS_DATA];
+  try {
+    localStorage.removeItem(DESTINATIONS_STORAGE_KEY);
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(new Event('voyra_destinations_updated'));
+    }
+  } catch (e) {
+    console.error(e);
+  }
+  return DESTINATIONS_DATA;
 }
 
 export const HERO_STORAGE_KEY = 'voyra_hero_slides_v1';

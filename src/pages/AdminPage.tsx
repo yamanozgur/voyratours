@@ -16,6 +16,7 @@ import {
   autoSyncDestinationsFromTour,
   syncDestinationsWithAllTours,
   detectRegionsFromTour,
+  sanitizeTourDestinations,
 } from '../utils/destinationDetector';
 import {
   Plus,
@@ -82,6 +83,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
     editingTour?.title,
     editingTour?.titleTr,
     editingTour?.region,
+    editingTour?.itinerary,
   ]);
 
   const showToast = (msg: string) => {
@@ -326,6 +328,9 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
               : img
           );
         }
+
+        // Sanitize destinations strictly according to day-by-day sightseeing
+        newTour = sanitizeTourDestinations(newTour);
 
         if (tours.some((t) => t.id === newTour!.id)) {
           newTour!.id = `${newTour!.id}-${Date.now().toString().slice(-4)}`;
@@ -1242,13 +1247,17 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
                         <option key={r} value={r} />
                       ))}
                       <option value="cappadocia" />
-                      <option value="aegean-ephesus" />
-                      <option value="istanbul" />
-                      <option value="gallipoli" />
+                      <option value="ephesus" />
+                      <option value="pamukkale" />
                       <option value="antalya" />
+                      <option value="istanbul" />
+                      <option value="canakkale" />
+                      <option value="troy" />
                       <option value="bodrum" />
-                      <option value="karadeniz" />
                       <option value="fethiye" />
+                      <option value="kas" />
+                      <option value="trabzon" />
+                      <option value="multi-region" />
                     </datalist>
                     <span className="text-[10px] text-slate-400 mt-1 block">İstediğiniz yeni bölge adını yazabilirsiniz (Otomatik tireli formata çevrilir).</span>
                   </div>

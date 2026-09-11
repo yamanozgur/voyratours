@@ -6,6 +6,7 @@ import { DestinationsSection } from '../components/DestinationsSection';
 import { WhyVoyra } from '../components/WhyVoyra';
 import { FAQSection } from '../components/FAQSection';
 import { TOURS_DATA } from '../data/toursData';
+import { tourVisitsDestination } from '../utils/destinationDetector';
 import { Currency, Language, TourPackage } from '../types';
 import { ArrowRight, Compass, Sparkles, SlidersHorizontal, ChevronLeft, ChevronRight } from 'lucide-react';
 
@@ -83,7 +84,7 @@ export const HomePage: React.FC<HomePageProps> = ({
     if (popularTab === 'all') {
       return bestsellers.slice(0, 8);
     }
-    return bestsellers.filter((t) => t.region === popularTab);
+    return bestsellers.filter((t) => tourVisitsDestination(t, popularTab));
   }, [toursList, popularTab]);
 
   return (
@@ -135,8 +136,9 @@ export const HomePage: React.FC<HomePageProps> = ({
               {[
                 { id: 'all', label: isTr ? 'Tüm Popüler Turlar' : 'All Bestsellers' },
                 { id: 'cappadocia', label: isTr ? 'Kapadokya' : 'Cappadocia' },
-                { id: 'aegean-ephesus', label: isTr ? 'Efes & Pamukkale' : 'Ephesus & Aegean' },
-                { id: 'multi-region', label: isTr ? 'Büyük Türkiye Turu' : 'Grand Turkey Loop' },
+                { id: 'ephesus', label: isTr ? 'Efes' : 'Ephesus' },
+                { id: 'pamukkale', label: isTr ? 'Pamukkale' : 'Pamukkale' },
+                { id: 'antalya', label: isTr ? 'Antalya' : 'Antalya' },
                 { id: 'istanbul', label: isTr ? 'İstanbul' : 'Istanbul' },
               ].map((tab) => {
                 const isActive = popularTab === tab.id;

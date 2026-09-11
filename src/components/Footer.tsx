@@ -126,10 +126,26 @@ export const Footer: React.FC<FooterProps> = ({
               </li>
               <li>
                 <Link
-                  to="/tours?dest=aegean-ephesus"
+                  to="/tours?dest=pamukkale"
                   className="hover:text-white transition"
                 >
-                  Ephesus & Pamukkale / Efes
+                  Pamukkale
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/tours?dest=ephesus"
+                  className="hover:text-white transition"
+                >
+                  Ephesus / Efes
+                </Link>
+              </li>
+              <li>
+                <Link
+                  to="/tours?dest=antalya"
+                  className="hover:text-white transition"
+                >
+                  Antalya
                 </Link>
               </li>
               <li>
@@ -142,18 +158,10 @@ export const Footer: React.FC<FooterProps> = ({
               </li>
               <li>
                 <Link
-                  to="/tours?dest=gallipoli"
+                  to="/tours?dest=canakkale"
                   className="hover:text-white transition"
                 >
-                  Gallipoli & Troy / Çanakkale
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/tours?dest=mediterranean"
-                  className="hover:text-white transition"
-                >
-                  Antalya & Turquoise Coast
+                  Gallipoli & Çanakkale
                 </Link>
               </li>
               <li>

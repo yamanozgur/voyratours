@@ -215,8 +215,18 @@ Follow these strict rules:
 Scan the entire document for any Tour Overview, Summary, or Introduction section. If present, extract and use it. If not present as a separate section, synthesize an engaging, detailed 2-3 paragraph tour overview strictly reflecting the ACTUAL places, monuments, daily itinerary, hotel accommodations, and destinations visited in THIS specific tour (for instance, if the tour is about Ephesus and Pamukkale, describe Ephesus, Library of Celsus, and Pamukkale terraces; NEVER mention Cappadocia or other unrelated places unless actually in the document!). Provide both "overview" (English) and "overviewTr" (Turkish).
 8. HIGHLIGHTS (CRITICAL - STRICTLY FROM THIS TOUR):
 Generate 5-6 bullet points for "highlights" (English) and "highlightsTr" (Turkish) based STRICTLY on the actual landmarks, ruins, activities, and experiences mentioned in THIS tour document (never use default or unrelated destinations).
-9. DESTINATION & REGIONS DETECTION (CRITICAL):
-Identify ALL cities, regions, and cultural destinations visited or mentioned throughout the tour (for example, if the tour visits Cappadocia, Konya, and Antalya, you MUST list all of them: "destination": "Cappadocia, Konya, Antalya", "destinationTr": "Kapadokya, Konya, Antalya"). If more than one region is visited, set "region" to "multi-region". Each mentioned location will be automatically added to the agency's destination registry.
+9. DESTINATION DETECTION (STRICTLY ATOMIC SEPARATE LOCATIONS - BASE ON TOUR TITLE & ACTUAL SIGHTSEEING):
+Destinations must be individual separate locations (e.g. "Antalya", "Efes", "Pamukkale", "Kapadokya", "İstanbul").
+DO NOT use grouped/combined region names like "Antalya & Turkuaz Kıyı" or "Efes & Pamukkale".
+- Base the locations primarily on the Tour Title if present! (e.g. If the tour title is "2 gün kapadokya & pamukkale" or "2-Day Ephesus & Pamukkale Tour", the visited locations are strictly the two individual locations: "Kapadokya" and "Pamukkale" or "Efes" and "Pamukkale").
+- If the title is generic (e.g. "Boutique Anatolia Trip"), examine the actual sightseeing places on Day 1, Day 2, Day 3 (excluding departure/transit airports).
+- Format:
+  - "destination": comma-separated individual locations in English (e.g. "Cappadocia, Pamukkale" or "Ephesus, Pamukkale" or "Antalya")
+  - "destinationTr": comma-separated individual locations in Turkish (e.g. "Kapadokya, Pamukkale" or "Efes, Pamukkale" or "Antalya")
+  - "region": if only 1 location is visited, use its id: "cappadocia", "ephesus", "pamukkale", "antalya", "istanbul", etc. If 2 or more locations are visited, set region to "multi-region".
+CRITICAL TRANSIT & FALSE POSITIVE RULES:
+- Departure airports or transit transfer flights (e.g. "Early morning flight from Istanbul", "Fly into Izmir Airport ADB", "Transfer back to Kayseri Airport") are NOT tour destinations! NEVER include Istanbul or Izmir if they are only transit/flight departure points without sightseeing!
+- NEVER include cities or regions that are not actually in this tour (e.g. Çeşme, Antalya, Bodrum have nothing to do with an Ephesus & Pamukkale tour!).
 
 Extract and structure the tour into a valid JSON object matching this TypeScript TourPackage interface:
 

@@ -42,24 +42,58 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({ language }) 
       highlights: isTr
         ? ['Gün Doğumu Balon Uçuşu', 'Göreme Açık Hava Müzesi', 'Derinkuyu Yeraltı Şehri', 'Paşabağ Peri Bacaları']
         : ['Sunrise Hot Air Ballooning', 'Goreme Open-Air Museum', 'Derinkuyu Underground City', 'Pasabag Fairy Chimneys'],
-      toursCount: '4 Paket',
+      toursCount: 'Paketler',
     },
     {
-      id: 'aegean-ephesus',
-      nameEn: 'Ephesus & Pamukkale',
-      nameTr: 'Efes & Pamukkale',
-      taglineEn: 'Greco-Roman Splendor & White Travertines',
-      taglineTr: 'Antik Roma İhtişamı & Beyaz Travertenler',
-      image: 'https://images.unsplash.com/photo-1635166045025-b078ac986d77?auto=format&fit=crop&w=1200&q=80',
+      id: 'pamukkale',
+      nameEn: 'Pamukkale',
+      nameTr: 'Pamukkale',
+      taglineEn: 'White Mineral Travertines & Cleopatra Antique Pool',
+      taglineTr: 'Beyaz Mineral Travertenler & Kleopatra Antik Havuzu',
+      image: 'https://images.unsplash.com/photo-1549880338-65ddcdfd017b?auto=format&fit=crop&w=1200&q=80',
       descriptionEn:
-        'Walk the marble streets where Cleopatra and Mark Antony once strolled. Marvel at the grand Library of Celsus, the Great Theatre, and visit the serene House of Virgin Mary before bathing in the ancient thermal pools of Pamukkale Hierapolis.',
+        'Marvel at the breathtaking tiered white calcium cascades of Pamukkale and bathe in the thermal mineral waters of Cleopatra’s ancient antique pool amidst sunken Roman marble columns.',
       descriptionTr:
-        'Antik dünyanın en görkemli metropollerinden Efes’te mermer caddelerde yürüyün. Celsus Kütüphanesi ve Meryem Ana Evi’ni ziyaret ettikten sonra Pamukkale’nin kalsiyum zengini beyaz travertenlerinde Hierapolis antik havuzunun keyfini çıkarın.',
+        'Pamukkale’nin kalsiyum zengini bembeyaz traverten teraslarında yürüyün, Hierapolis antik kentini gezin ve Roma sütunları arasında Kleopatra Antik Termal Havuzu’nun keyfini çıkarın.',
       bestTime: isTr ? 'Mart - Aralık' : 'March - December',
       highlights: isTr
-        ? ['Celsus Kütüphanesi', 'Pamukkale Travertenleri', 'Meryem Ana Evi', 'Hierapolis Antik Havuzu']
-        : ['Library of Celsus', 'Pamukkale Travertine Terraces', 'House of Virgin Mary', 'Cleopatra Antique Pool'],
-      toursCount: '3 Paket',
+        ? ['Pamukkale Beyaz Travertenleri', 'Hierapolis Antik Kenti & Nekropol', 'Kleopatra Antik Termal Havuzu', 'Antik Roma Tiyatrosu']
+        : ['White Travertine Terraces', 'Hierapolis Ancient Necropolis', 'Cleopatra Antique Thermal Pool', 'Roman Theatre'],
+      toursCount: 'Paketler',
+    },
+    {
+      id: 'ephesus',
+      nameEn: 'Ephesus',
+      nameTr: 'Efes',
+      taglineEn: 'Greco-Roman Metropolis & Library of Celsus',
+      taglineTr: 'Antik Roma İhtişamı & Celsus Kütüphanesi',
+      image: 'https://images.unsplash.com/photo-1635166045025-b078ac986d77?auto=format&fit=crop&w=1200&q=80',
+      descriptionEn:
+        'Walk the preserved marble streets where Cleopatra and Mark Antony once strolled. Marvel at the grand Library of Celsus, the Great Theatre, and visit the peaceful House of Virgin Mary.',
+      descriptionTr:
+        'Antik dünyanın en görkemli metropollerinden Efes’te mermer caddelerde yürüyün. Celsus Kütüphanesi, Meryem Ana Evi ve Artemis Tapınağı’nın büyüleyici tarihini keşfedin.',
+      bestTime: isTr ? 'Mart - Aralık' : 'March - December',
+      highlights: isTr
+        ? ['Celsus Kütüphanesi', 'Meryem Ana Evi', 'Büyük Antik Tiyatro', 'Artemis Tapınağı']
+        : ['Library of Celsus', 'House of Virgin Mary', 'Great Ancient Theatre', 'Temple of Artemis'],
+      toursCount: 'Paketler',
+    },
+    {
+      id: 'antalya',
+      nameEn: 'Antalya',
+      nameTr: 'Antalya',
+      taglineEn: 'Historic Kaleiçi Old Town & Roman Theatres',
+      taglineTr: 'Tarihi Kaleiçi Sokakları & Roma Tiyatroları',
+      image: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&w=1200&q=80',
+      descriptionEn:
+        'Discover the jewel of the Mediterranean where historic Ottoman-era stone mansions meet Roman city walls in Kaleiçi, alongside the majestic Aspendos amphitheatre and Düden waterfalls.',
+      descriptionTr:
+        'Tarihi Kaleiçi’nin begonvilli sokakları, görkemli Aspendos Antik Roma Tiyatrosu, Perge harabeleri ve Akdeniz’e dökülen Düden Şelaleleri ile unutulmaz bir deneyim.',
+      bestTime: isTr ? 'Nisan - Kasım' : 'April - November',
+      highlights: isTr
+        ? ['Tarihi Kaleiçi Sokakları', 'Aspendos Roma Tiyatrosu', 'Düden Şelaleleri', 'Perge Antik Kenti']
+        : ['Historic Kaleiçi Old Town', 'Aspendos Roman Theatre', 'Düden Waterfalls', 'Perge Ancient City'],
+      toursCount: 'Paketler',
     },
     {
       id: 'istanbul',
@@ -76,41 +110,41 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({ language }) 
       highlights: isTr
         ? ['Ayasofya-i Kebir Camii', 'Topkapı Sarayı', 'Özel Boğaz Yat Turu', 'Tarihi Kapalıçarşı']
         : ['Hagia Sophia', 'Topkapi Palace', 'Private Bosphorus Cruise', 'Grand Bazaar'],
-      toursCount: '5 Paket',
+      toursCount: 'Paketler',
     },
     {
-      id: 'gallipoli',
-      nameEn: 'Gallipoli & Troy',
-      nameTr: 'Çanakkale & Truva',
-      taglineEn: 'Homeric Legends & World War I Battlefields',
-      taglineTr: 'Homeros Destanları & Çanakkale Zaferi',
+      id: 'canakkale',
+      nameEn: 'Gallipoli & Çanakkale',
+      nameTr: 'Çanakkale & Gelibolu',
+      taglineEn: 'Historic Battlefields of 1915 & ANZAC Cove',
+      taglineTr: '1915 Çanakkale Zaferi & Anzak Koyu',
       image: 'https://images.unsplash.com/photo-1572025442646-866d16c84a54?auto=format&fit=crop&w=1200&q=80',
       descriptionEn:
-        'A deeply moving historic crossing from the legendary wooden horse of Homer’s Iliad at Troy to the poignant memorial sites of Anzac Cove, Lone Pine, and Chunuk Bair along the Dardanelles Strait.',
+        'A deeply moving historic journey along the Dardanelles Strait visiting ANZAC Cove, Lone Pine, Chunuk Bair, and the historic memorial sites of the Gallipoli campaign.',
       descriptionTr:
-        'Homeros’un İlyada destanına konu olan 4000 yıllık efsanevi Truva Atı’ndan, Çanakkale Boğazı boyunca uzanan Anzak Koyu, Conkbayırı ve Şehitler Abidesi’ne uzanan duygu yüklü bir tarih yolculuğu.',
+        'Çanakkale Boğazı boyunca uzanan Anzak Koyu, Conkbayırı, Lone Pine ve Şehitler Abidesi’ne uzanan duygu yüklü bir tarih ve kahramanlık yolculuğu.',
       bestTime: isTr ? 'Nisan - Kasım' : 'April - November',
       highlights: isTr
-        ? ['Truva Antik Kenti & Tahta At', 'Anzak Koyu', 'Conkbayırı', 'Çanakkale Boğazı']
-        : ['Ancient City of Troy', 'ANZAC Cove Memorial', 'Chunuk Bair', 'Dardanelles Strait'],
-      toursCount: '2 Paket',
+        ? ['Anzak Koyu Anıtı', 'Conkbayırı', 'Lone Pine Şehitliği', 'Çanakkale Boğazı Geçişi']
+        : ['ANZAC Cove Memorial', 'Chunuk Bair', 'Lone Pine Cemetery', 'Dardanelles Strait'],
+      toursCount: 'Paketler',
     },
     {
-      id: 'mediterranean',
-      nameEn: 'Antalya & Turquoise Coast',
-      nameTr: 'Antalya & Turkuaz Sahil',
-      taglineEn: 'Azure Mediterranean Waters & Ancient Lycia',
-      taglineTr: 'Akdeniz’in Berrak Suları & Antik Likya',
-      image: 'https://images.unsplash.com/photo-1549880338-65ddcdfd017b?auto=format&fit=crop&w=1200&q=80',
+      id: 'troy',
+      nameEn: 'Troy',
+      nameTr: 'Truva',
+      taglineEn: 'Homeric Epics & The Legendary Trojan Wooden Horse',
+      taglineTr: 'Homeros Destanları & Efsanevi Truva Tahta Atı',
+      image: 'https://images.unsplash.com/photo-1572025442646-866d16c84a54?auto=format&fit=crop&w=1200&q=80',
       descriptionEn:
-        'Known as the Turkish Riviera, where pine-forested Taurus Mountains plunge into crystal-clear turquoise waters. Discover Roman theatres at Aspendos, cascading Duden waterfalls, and ancient sunken cities by private yacht.',
+        'Step into the myth of Homer’s Iliad at the 4,000-year-old archaeological site of Troy, the iconic Wooden Horse, and the award-winning Troy Museum.',
       descriptionTr:
-        'Toros Dağları’nın masmavi Akdeniz’e kavuştuğu Türk Rivierası. Aspendos Antik Tiyatrosu, Düden Şelaleleri, Kaleiçi tarihi sokakları ve Kekova batık şehrinde özel gulet turları.',
-      bestTime: isTr ? 'Mayıs - Ekim' : 'May - October',
+        'Homeros’un İlyada destanına konu olan 4000 yıllık efsanevi Truva Antik Kenti, Tahta At ve ödüllü Truva Müzesi ile mitolojik bir serüven.',
+      bestTime: isTr ? 'Nisan - Kasım' : 'April - November',
       highlights: isTr
-        ? ['Aspendos Roma Tiyatrosu', 'Kaleiçi Tarihi Merkez', 'Düden Şelaleleri', 'Özel Gulet Koyu Turları']
-        : ['Aspendos Roman Theatre', 'Historic Kaleici Old Town', 'Duden Waterfalls', 'Private Gulet Cruises'],
-      toursCount: '3 Paket',
+        ? ['Truva Antik Kenti', 'Efsanevi Tahta At', 'Truva Müzesi', 'Antik Kazı Katmanları']
+        : ['Ancient City of Troy', 'Legendary Wooden Horse', 'Museum of Troy', 'Excavation Layers'],
+      toursCount: 'Paketler',
     },
     {
       id: 'multi-region',

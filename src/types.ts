@@ -24,7 +24,20 @@ export interface TourPackage {
   subtitleTr: string;
   destination: string;
   destinationTr: string;
-  region: 'cappadocia' | 'istanbul' | 'aegean-ephesus' | 'gallipoli' | 'mediterranean' | 'black-sea' | 'multi-region';
+  region:
+    | 'cappadocia'
+    | 'ephesus'
+    | 'pamukkale'
+    | 'antalya'
+    | 'istanbul'
+    | 'canakkale'
+    | 'troy'
+    | 'fethiye'
+    | 'bodrum'
+    | 'kas'
+    | 'trabzon'
+    | 'multi-region'
+    | string;
   durationDays: number;
   durationNights: number;
   priceEUR: number; // Base price per person in EUR

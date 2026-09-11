@@ -13,7 +13,9 @@ export interface PredefinedRegionMeta {
 }
 
 /**
- * Curated knowledge base of major Turkey tourism destinations, cities, and cultural hubs.
+ * Curated knowledge base of individual (atomic) Turkey tourism destinations.
+ * Each location is strictly separate (e.g. Antalya, Efes, Pamukkale, Kapadokya, Istanbul).
+ * No grouped or compound regions (e.g. NO "Antalya & Turkuaz Kıyı", NO "Efes & Pamukkale").
  */
 export const PREDEFINED_TURKEY_REGIONS: PredefinedRegionMeta[] = [
   {
@@ -21,198 +23,213 @@ export const PREDEFINED_TURKEY_REGIONS: PredefinedRegionMeta[] = [
     name: 'Cappadocia',
     nameTr: 'Kapadokya',
     tagline: 'Fairy Chimneys, Cave Suites & Sunrise Hot Air Balloons',
-    taglineTr: 'Peri Bacaları, Mağara Oteller ve Gün Doğumu Sıcak Hava Balonları',
+    taglineTr: 'Peri Bacaları, Butik Mağara Oteller ve Gün Doğumu Sıcak Hava Balonları',
     image: 'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg',
-    popularHighlights: ['Sunrise Balloon Flight', 'Derinkuyu Underground City', 'Göreme Open Air Museum', 'Uçhisar Castle Panoramic View'],
-    popularHighlightsTr: ['Gün Doğumu Balon Uçuşu', 'Derinkuyu Yeraltı Şehri', 'Göreme Açık Hava Müzesi', 'Uçhisar Kalesi Manzarası'],
-    aliases: ['cappadocia', 'kapadokya', 'goreme', 'göreme', 'urgup', 'ürgüp', 'uchisar', 'uçhisar', 'avanos', 'derinkuyu', 'kaymakli', 'kaymaklı', 'ihlara'],
+    popularHighlights: ['Sunrise Balloon Flight', 'Derinkuyu Underground City', 'Göreme Open Air Museum', 'Uçhisar Rock Castle'],
+    popularHighlightsTr: ['Gün Doğumu Balon Uçuşu', 'Derinkuyu Yeraltı Şehri', 'Göreme Açık Hava Müzesi', 'Uçhisar Kalesi'],
+    aliases: [
+      'cappadocia', 'kapadokya', 'cappadocian', 'goreme', 'göreme', 'urgup', 'ürgüp',
+      'uchisar', 'uçhisar', 'avanos', 'derinkuyu', 'kaymakli', 'kaymaklı', 'ihlara',
+      'pasabag', 'paşabağ', 'devrent', 'fairy chimney', 'peri bacasi', 'peri bacası', 'balloon flight', 'balon turu'
+    ],
   },
   {
-    id: 'konya',
-    name: 'Konya',
-    nameTr: 'Konya',
-    tagline: 'Sufi Heritage, Mevlana Rumi & Seljuk Imperial Splendor',
-    taglineTr: 'Mevlana Celaleddin Rumi, Tasavvuf Mirası ve Selçuklu Başkenti',
-    image: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&w=1200&q=85',
-    popularHighlights: ['Mevlana Rumi Tomb & Museum', 'Whirling Dervishes Ritual', 'Sultanhani Silk Road Caravanserai', 'Alaeddin Mosque & Hill'],
-    popularHighlightsTr: ['Mevlana Müzesi ve Türbesi', 'Geleneksel Semazen Ayini', 'Sultanhanı Tarihi Kervansarayı', 'Alâeddin Camii ve Tepesi'],
-    aliases: ['konya', 'mevlana', 'rumi', 'catalhoyuk', 'çatalhöyük', 'karatay', 'sultanhani', 'sultanhanı', 'ince minare'],
-  },
-  {
-    id: 'mediterranean',
-    name: 'Antalya & Turquoise Coast',
-    nameTr: 'Antalya & Turkuaz Sahil',
-    tagline: 'Sunken Lycian Cities, Azure Bays & Greco-Roman Theatres',
-    taglineTr: 'Likya Antik Kentleri, Turkuaz Koylar ve Görkemli Roma Tiyatroları',
+    id: 'pamukkale',
+    name: 'Pamukkale',
+    nameTr: 'Pamukkale',
+    tagline: 'White Mineral Travertine Terraces & Cleopatra Antique Thermal Pool',
+    taglineTr: 'Beyaz Mineral Traverten Havuzları ve Kleopatra Antik Termal Havuzu',
     image: 'https://images.unsplash.com/photo-1549880338-65ddcdfd017b?auto=format&fit=crop&w=1200&q=85',
-    popularHighlights: ['Aspendos Roman Amphitheatre', 'Historic Kaleiçi Old Town', 'Düden Waterfalls', 'Kekova Sunken Ruins Yacht Cruise'],
-    popularHighlightsTr: ['Aspendos Roma Amfitiyatrosu', 'Tarihi Kaleiçi Sokakları', 'Düden Şelaleleri', 'Kekova Batık Şehir Gulet Turu'],
-    aliases: ['antalya', 'kaleici', 'kaleiçi', 'aspendos', 'perge', 'duden', 'düden', 'side', 'kemer', 'alanya', 'mediterranean', 'akdeniz'],
+    popularHighlights: ['White Travertine Terraces', 'Hierapolis Ancient Necropolis', 'Cleopatra Antique Thermal Pool', 'Roman Amphitheatre'],
+    popularHighlightsTr: ['Pamukkale Traverten Havuzları', 'Hierapolis Antik Kenti & Nekropol', 'Kleopatra Antik Termal Havuzu', 'Roma Tiyatrosu'],
+    aliases: [
+      'pamukkale', 'hierapolis', 'travertine', 'traverten', 'cleopatra pool', 'kleopatra havuzu', 'denizli'
+    ],
   },
   {
-    id: 'aegean-ephesus',
-    name: 'Ephesus & Pamukkale',
-    nameTr: 'Efes & Pamukkale',
-    tagline: 'Ancient Roman Grandeur & White Mineral Travertine Cascades',
-    taglineTr: 'Antik Roma İhtişamı ve Beyaz Mineral Traverten Havuzları',
+    id: 'ephesus',
+    name: 'Ephesus',
+    nameTr: 'Efes',
+    tagline: 'Greco-Roman Metropolis, Grand Library of Celsus & House of Virgin Mary',
+    taglineTr: 'Antik Roma İhtişamı, Görkemli Celsus Kütüphanesi ve Meryem Ana Evi',
     image: 'https://images.unsplash.com/photo-1635166045025-b078ac986d77?auto=format&fit=crop&w=1200&q=85',
-    popularHighlights: ['Library of Celsus', 'Pamukkale Travertine Terraces', 'House of Virgin Mary', 'Cleopatra Antique Thermal Pool'],
-    popularHighlightsTr: ['Celsus Kütüphanesi', 'Pamukkale Traverten Havuzları', 'Meryem Ana Evi', 'Kleopatra Antik Termal Havuzu'],
-    aliases: ['ephesus', 'efes', 'pamukkale', 'hierapolis', 'selcuk', 'selçuk', 'denizli', 'aegean', 'ege'],
+    popularHighlights: ['Library of Celsus', 'House of Virgin Mary', 'Temple of Artemis', 'Great Ancient Theatre'],
+    popularHighlightsTr: ['Celsus Kütüphanesi', 'Meryem Ana Evi', 'Artemis Tapınağı', 'Büyük Antik Tiyatro'],
+    aliases: [
+      'ephesus', 'efes', 'celsus', 'meryem ana', 'virgin mary', 'selcuk', 'selçuk', 'sirince', 'şirince', 'artemis'
+    ],
+  },
+  {
+    id: 'antalya',
+    name: 'Antalya',
+    nameTr: 'Antalya',
+    tagline: 'Historic Kaleiçi Old Town, Aspendos Roman Theatre & Azure Waterfalls',
+    taglineTr: 'Tarihi Kaleiçi Sokakları, Aspendos Roma Tiyatrosu ve Düden Şelaleleri',
+    image: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&w=1200&q=85',
+    popularHighlights: ['Historic Kaleiçi Old Town', 'Aspendos Roman Theatre', 'Düden Waterfalls', 'Perge Ancient City Ruins'],
+    popularHighlightsTr: ['Tarihi Kaleiçi', 'Aspendos Roma Tiyatrosu', 'Düden Şelaleleri', 'Perge Antik Kenti'],
+    aliases: [
+      'antalya', 'kaleici', 'kaleiçi', 'aspendos', 'perge', 'duden', 'düden', 'kemer', 'belek', 'alanya', 'side'
+    ],
   },
   {
     id: 'istanbul',
     name: 'Istanbul',
     nameTr: 'İstanbul',
-    tagline: 'Two Continents, Grand Ottoman Palaces & Sunset Bosphorus Yachts',
-    taglineTr: 'İki Kıta, İhtişamlı Osmanlı Sarayları ve Gün Batımı Boğaz Yat Turları',
+    tagline: 'Imperial Capital of Two Continents: Palaces & Bosphorus Yacht Cruises',
+    taglineTr: 'İki Kıtanın Buluştuğu Kadim Başkent, Saraylar ve Boğaz Turları',
     image: 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&w=1200&q=85',
     popularHighlights: ['Hagia Sophia Grand Mosque', 'Topkapi Imperial Palace', 'Private Bosphorus Sunset Yacht Cruise', 'Historic Grand Bazaar'],
     popularHighlightsTr: ['Ayasofya-i Kebir Camii', 'Topkapı Sarayı', 'Özel Boğaz Yat Turu', 'Tarihi Kapalıçarşı'],
-    aliases: ['istanbul', 'istanbul', 'bosphorus', 'boğaz', 'sultanahmet', 'ayasofya', 'topkapi', 'topkapı'],
+    aliases: [
+      'istanbul', 'bosphorus', 'boğaz', 'sultanahmet', 'ayasofya', 'hagia sophia', 'topkapi', 'topkapı',
+      'kapalicarsi', 'kapalıçarşı', 'grand bazaar', 'galata', 'taksim', 'istiklal', 'yerebatan', 'dolmabahce', 'dolmabahçe'
+    ],
   },
   {
-    id: 'gallipoli',
-    name: 'Gallipoli & Troy',
-    nameTr: 'Çanakkale & Truva',
-    tagline: 'Homeric Epics, Trojan Horse & Historic Battlefields of 1915',
-    taglineTr: 'Homeros Destanları, Truva Efsanesi ve 1915 Çanakkale Siperleri',
+    id: 'canakkale',
+    name: 'Gallipoli & Çanakkale',
+    nameTr: 'Çanakkale & Gelibolu',
+    tagline: 'Historic 1915 Battlefields, Anzac Cove & Dardanelles Strait',
+    taglineTr: '1915 Çanakkale Siperleri, Anzak Koyu ve Boğaz Geçişi',
     image: 'https://images.unsplash.com/photo-1572025442646-866d16c84a54?auto=format&fit=crop&w=1200&q=85',
-    popularHighlights: ['Ancient Troy & Legendary Wooden Horse', 'ANZAC Cove Memorial', 'Chunuk Bair', 'Dardanelles Strait Ferry Crossing'],
-    popularHighlightsTr: ['Truva Antik Kenti ve Tahta At', 'Anzak Koyu Anıtı', 'Conkbayırı', 'Çanakkale Boğazı Geçişi'],
-    aliases: ['gallipoli', 'troy', 'truva', 'canakkale', 'çanakkale', 'anzac', 'anzak', 'dardanelles'],
+    popularHighlights: ['ANZAC Cove Memorial', 'Chunuk Bair', 'Lone Pine Cemetery', 'Dardanelles Strait Ferry Crossing'],
+    popularHighlightsTr: ['Anzak Koyu Anıtı', 'Conkbayırı', 'Lone Pine Şehitliği', 'Çanakkale Boğazı'],
+    aliases: [
+      'canakkale', 'çanakkale', 'gallipoli', 'gelibolu', 'anzac', 'anzak', 'dardanelles', 'chunuk bair', 'conkbayırı', 'lone pine'
+    ],
+  },
+  {
+    id: 'troy',
+    name: 'Troy',
+    nameTr: 'Truva',
+    tagline: 'Homeric Epics & The Legendary Trojan Wooden Horse',
+    taglineTr: 'Homeros Destanları ve Efsanevi Truva Tahta Atı',
+    image: 'https://images.unsplash.com/photo-1572025442646-866d16c84a54?auto=format&fit=crop&w=1200&q=85',
+    popularHighlights: ['Ancient City of Troy', 'Legendary Wooden Horse', 'Museum of Troy', 'Trojan Excavation Layers'],
+    popularHighlightsTr: ['Truva Antik Kenti', 'Efsanevi Tahta At', 'Truva Müzesi', 'Truva Kazı Katmanları'],
+    aliases: ['troy', 'truva', 'troia', 'wooden horse', 'tahta at'],
+  },
+  {
+    id: 'fethiye',
+    name: 'Fethiye',
+    nameTr: 'Fethiye',
+    tagline: 'Ölüdeniz Blue Lagoon, Butterfly Valley & Babadag Paragliding',
+    taglineTr: 'Ölüdeniz Mavi Lagün, Kelebekler Vadisi ve Babadağ Yamaç Paraşütü',
+    image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=85',
+    popularHighlights: ['Ölüdeniz Blue Lagoon Paragliding', 'Butterfly Valley Boat Excursion', 'Kayaköy Ghost Village', 'Saklıkent Canyon Walk'],
+    popularHighlightsTr: ['Ölüdeniz Yamaç Paraşütü', 'Kelebekler Vadisi Tekne Turu', 'Kayaköy Tarihi Rum Köyü', 'Saklıkent Kanyonu'],
+    aliases: ['fethiye', 'oludeniz', 'ölüdeniz', 'saklikent', 'saklıkent', 'butterfly valley', 'kelebekler vadisi', 'kayakoy', 'kayaköy'],
   },
   {
     id: 'bodrum',
     name: 'Bodrum',
     nameTr: 'Bodrum',
-    tagline: 'White-Washed Aegean Villas, St. Peter Castle & Gulet Charters',
-    taglineTr: 'Beyaz Ege Evleri, Tarihi Bodrum Kalesi ve Özel Gulet Koy Turları',
+    tagline: 'St. Peter Castle, White Aegean Stone Villas & Blue Cruises',
+    taglineTr: 'Tarihi Bodrum Kalesi, Beyaz Ege Evleri ve Mavi Yolculuk',
     image: 'https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?auto=format&fit=crop&w=1200&q=85',
-    popularHighlights: ['Castle of St. Peter & Underwater Museum', 'Halicarnassus Mausoleum', 'Private Gulet Blue Cruise', 'Yalıkavak Marina & Windmills'],
-    popularHighlightsTr: ['Bodrum Kalesi ve Sualtı Arkeoloji Müzesi', 'Halikarnas Mozolesi', 'Mavi Yolculuk Özel Gulet Turu', 'Yalıkavak Marina ve Değirmenler'],
+    popularHighlights: ['Castle of St. Peter & Underwater Museum', 'Halicarnassus Mausoleum', 'Private Gulet Blue Cruise', 'Yalıkavak Marina'],
+    popularHighlightsTr: ['Bodrum Kalesi & Sualtı Müzesi', 'Halikarnas Mozolesi', 'Mavi Yolculuk Gulet Turu', 'Yalıkavak Marina'],
     aliases: ['bodrum', 'halicarnassus', 'halikarnas', 'yalikavak', 'yalıkavak'],
   },
   {
-    id: 'fethiye',
-    name: 'Fethiye & Ölüdeniz',
-    nameTr: 'Fethiye & Ölüdeniz',
-    tagline: 'Blue Lagoon, Butterfly Valley & Lycian Rock Tombs',
-    taglineTr: 'Ölüdeniz Mavi Lagün, Kelebekler Vadisi ve Likya Kaya Mezarları',
-    image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=85',
-    popularHighlights: ['Ölüdeniz Blue Lagoon Paragliding', 'Butterfly Valley Boat Excursion', 'Kayaköy Ghost Village', 'Saklıkent Gorge Canyon Walk'],
-    popularHighlightsTr: ['Ölüdeniz Lagün Yamaç Paraşütü', 'Kelebekler Vadisi Tekne Turu', 'Kayaköy Tarihi Rum Köyü', 'Saklıkent Kanyonu Keşfi'],
-    aliases: ['fethiye', 'oludeniz', 'ölüdeniz', 'butterfly valley', 'kelebekler vadisi', 'kayakoy', 'kayaköy', 'saklikent', 'saklıkent'],
-  },
-  {
-    id: 'kas-kalkan',
-    name: 'Kaş & Kalkan',
-    nameTr: 'Kaş & Kalkan',
-    tagline: 'Charming Cobblestone Harbors, Kaputaş Beach & Sunken City of Kekova',
-    taglineTr: 'Begonvilli Taş Sokaklar, Kaputaş Plajı ve Kekova Batık Şehir',
+    id: 'kas',
+    name: 'Kaş',
+    nameTr: 'Kaş',
+    tagline: 'Sunken City of Kekova, Kaputaş Beach & Lycian Rock Tombs',
+    taglineTr: 'Kekova Batık Şehir, Kaputaş Kanyon Plajı ve Likya Kaya Mezarları',
     image: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&w=1200&q=85',
-    popularHighlights: ['Kekova Sunken City Island by Sea Kayak', 'Kaputaş Canyon Beach', 'Antiphellos Ancient Amphitheatre', 'Meis Island Panoramic Ferry'],
-    popularHighlightsTr: ['Kekova Batık Kent Deniz Kanosu', 'Kaputaş Kanyon Plajı', 'Antiphellos Antik Tiyatrosu', 'Kaş Tarihi Çarşısı'],
-    aliases: ['kas', 'kaş', 'kalkan', 'kekova', 'kaputas', 'kaputaş', 'simena'],
-  },
-  {
-    id: 'mardin',
-    name: 'Mardin & Mesopotamia',
-    nameTr: 'Mardin & Mezopotamya',
-    tagline: 'Stone Mansions, Ancient Monasteries & Sweeping Mesopotamian Plains',
-    taglineTr: 'Otantik Taş Konaklar, Süryani Manastırları ve Mezopotamya Ovası',
-    image: 'https://images.unsplash.com/photo-1527838832700-5059252407fa?auto=format&fit=crop&w=1200&q=85',
-    popularHighlights: ['Deyrulzafaran Saffron Monastery', 'Dara Ancient Roman Fortress Ruins', 'Historic Stone Bazaar & Silver Filigree', 'Midyat Old Town & Mor Gabriel'],
-    popularHighlightsTr: ['Deyrulzafaran Süryani Manastırı', 'Dara Antik Kenti Harabeleri', 'Tarihi Mardin Taş Sokakları ve Telkari', 'Midyat Konukevi ve Mor Gabriel'],
-    aliases: ['mardin', 'midyat', 'mezopotamya', 'mesopotamia', 'deyrulzafaran', 'dara'],
-  },
-  {
-    id: 'sanliurfa',
-    name: 'Şanlıurfa & Göbeklitepe',
-    nameTr: 'Şanlıurfa & Göbeklitepe',
-    tagline: 'The Cradle of Civilization, 12,000-Year-Old Temples & Prophets',
-    taglineTr: 'Uygarlığın Sıfır Noktası, 12.000 Yıllık Göbeklitepe ve Peygamberler Şehri',
-    image: 'https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?auto=format&fit=crop&w=1200&q=85',
-    popularHighlights: ['Göbeklitepe UNESCO Megalithic Sanctuary', 'Balıklıgöl Sacred Pool of Abraham', 'Harran Mudbrick Beehive Houses', 'Archaeological Museum of Urfa'],
-    popularHighlightsTr: ['Göbeklitepe Arkeolojik Alanı', 'Tarihi Balıklıgöl ve Ayn Zeliha', 'Harran Kümbet Evleri', 'Şanlıurfa Mozaik ve Arkeoloji Müzesi'],
-    aliases: ['sanliurfa', 'şanlıurfa', 'urfa', 'gobeklitepe', 'göbeklitepe', 'karahantepe', 'harran', 'balikligol', 'balıklıgöl'],
-  },
-  {
-    id: 'gaziantep',
-    name: 'Gaziantep',
-    nameTr: 'Gaziantep',
-    tagline: 'UNESCO Gastronomy Capital, Zeugma Mosaics & Coppersmith Bazars',
-    taglineTr: 'UNESCO Gastronomi Başkenti, Zeugma Mozaikleri ve Tarihi Bakırcılar Çarşısı',
-    image: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=1200&q=85',
-    popularHighlights: ['Zeugma Mosaic Museum & Gypsy Girl', 'Historic Coppersmiths Bazaar', 'Traditional Pistachio Baklava Tasting', 'Gaziantep Castle & Old Citadel'],
-    popularHighlightsTr: ['Zeugma Mozaik Müzesi ve Çingene Kızı', 'Tarihi Bakırcılar Çarşısı', 'Otantik Antep Baklavası ve Mutfak Keşfi', 'Gaziantep Kalesi ve Tahmis Kahvesi'],
-    aliases: ['gaziantep', 'antep', 'zeugma', 'bakırcılar', 'coppersmith'],
-  },
-  {
-    id: 'trabzon',
-    name: 'Trabzon & Black Sea',
-    nameTr: 'Trabzon & Karadeniz',
-    tagline: 'Cliffside Sumela Monastery, Emerald Highland Valleys & Tea Terraces',
-    taglineTr: 'Sarp Kayalıklarda Sümela Manastırı, Zümrüt Yaylalar ve Çay Bahçeleri',
-    image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=85',
-    popularHighlights: ['Sümela Rock-Cut Monastery', 'Uzungöl Alpine Lake', 'Ayder Highland & Cloud Valleys', 'Fırtına River & Ottoman Stone Bridges'],
-    popularHighlightsTr: ['Sümela Kaya Manastırı', 'Uzungöl Tabiat Parkı', 'Ayder Yaylası ve Bulut Denizi', 'Fırtına Deresi ve Tarihi Kemer Köprüler'],
-    aliases: ['trabzon', 'black sea', 'karadeniz', 'sumela', 'sümela', 'uzungol', 'uzungöl', 'rize', 'ayder'],
-  },
-  {
-    id: 'kars',
-    name: 'Kars & Ani Ruins',
-    nameTr: 'Kars & Ani Harabeleri',
-    tagline: 'City of 1001 Churches, Frozen Lake Çıldır & Russian Architecture',
-    taglineTr: '1001 Kiliseli Ani Antik Kenti, Donmuş Çıldır Gölü ve Baltık Mimarisi',
-    image: 'https://images.unsplash.com/photo-1486870591958-9b9d0d1dda99?auto=format&fit=crop&w=1200&q=85',
-    popularHighlights: ['UNESCO Medieval Ani Ruins on Silk Road', 'Frozen Lake Çıldır Horse Sleigh', 'Baltic Stone Architecture Walk', 'Kars Castle & Cheese Tasting'],
-    popularHighlightsTr: ['UNESCO Ani Harabeleri ve İpek Yolu Köprüsü', 'Donmuş Çıldır Gölü Atlı Kızak Turu', 'Tarihi Baltık Mimarisi Evleri', 'Kars Kalesi ve Meşhur Gravyer Keşfi'],
-    aliases: ['kars', 'ani', 'cildir', 'çıldır', 'sarikamis', 'sarıkamış'],
-  },
-  {
-    id: 'nemrut',
-    name: 'Mount Nemrut',
-    nameTr: 'Nemrut Dağı',
-    tagline: 'Colossal Royal Statues, Sunrise Sanctuaries & Commagene Kings',
-    taglineTr: 'Devasa Kral Heykelleri, Gün Doğumu Terasları ve Kommagene Krallığı',
-    image: 'https://images.unsplash.com/photo-1549880338-65ddcdfd017b?auto=format&fit=crop&w=1200&q=85',
-    popularHighlights: ['Sunrise at Mount Nemrut Sanctuary', 'Arsameia & Ancient Cendere Bridge', 'Karakuş Tumulus', 'Taurus Mountain Panoramas'],
-    popularHighlightsTr: ['Nemrut Dağı Zirvesinde Gün Doğumu', 'Cendere Roma Taş Köprüsü', 'Arsameia Ören Yeri', 'Karakuş Tümülüsü'],
-    aliases: ['nemrut', 'mount nemrut', 'commagene', 'kommagene', 'adiyaman', 'adıyaman'],
-  },
-  {
-    id: 'bursa',
-    name: 'Bursa & Cumalıkızık',
-    nameTr: 'Bursa & Cumalıkızık',
-    tagline: 'First Ottoman Capital, Green Mosques & Silk Caravanserais',
-    taglineTr: 'İlk Osmanlı Başkenti, Yeşil Türbe, İpek Hanları ve Cumalıkızık',
-    image: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=1200&q=85',
-    popularHighlights: ['Grand Mosque (Ulu Cami)', 'Historic Koza Han Silk Bazaar', 'UNESCO Cumalıkızık Ottoman Village', 'Uludağ Cable Car & Mountain View'],
-    popularHighlightsTr: ['Ulu Cami ve Şadırvanı', 'Tarihi Koza Han İpek Pazarı', 'UNESCO Cumalıkızık Köyü', 'Uludağ Teleferik Gezisi'],
-    aliases: ['bursa', 'cumalikizik', 'cumalıkızık', 'uludag', 'uludağ', 'koza han'],
+    popularHighlights: ['Kekova Sunken City Island Boat Tour', 'Kaputaş Canyon Beach', 'Antiphellos Ancient Amphitheatre', 'Meis Island Ferry'],
+    popularHighlightsTr: ['Kekova Batık Kent Tekne Turu', 'Kaputaş Kanyon Plajı', 'Antiphellos Antik Tiyatrosu', 'Kaş Tarihi Çarşısı'],
+    aliases: ['kas', 'kaş', 'kalkan', 'kekova', 'kaputas', 'kaputaş', 'simena', 'antiphellos'],
   },
   {
     id: 'izmir',
-    name: 'İzmir & Çeşme',
-    nameTr: 'İzmir & Çeşme',
-    tagline: 'Aegean Pearl, Stone Boutiques of Alaçatı & Turquoise Bays',
-    taglineTr: 'Ege’nin İncisi, Alaçatı Taş Evleri ve Turkuaz Koylar',
+    name: 'İzmir',
+    nameTr: 'İzmir',
+    tagline: 'Historic Clock Tower, Kemeraltı Bazaar & Kordon Promenade',
+    taglineTr: 'Tarihi Saat Kulesi, Kemeraltı Çarşısı ve Kordon Sahili',
     image: 'https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?auto=format&fit=crop&w=1200&q=85',
-    popularHighlights: ['Alaçatı Windmills & Stone Streets', 'Historic Kemeraltı Bazaar', 'Kordon Seaside Promenade', 'Çeşme Marina & Fortress'],
-    popularHighlightsTr: ['Alaçatı Değirmenleri ve Taş Evleri', 'Tarihi Kemeraltı Çarşısı', 'İzmir Kordon Sahil Yürüyüşü', 'Çeşme Kalesi ve Marina'],
-    aliases: ['izmir', 'izmir', 'cesme', 'çeşme', 'alacati', 'alaçatı', 'sirince', 'şirince'],
+    popularHighlights: ['Konak Clock Tower', 'Historic Kemeraltı Bazaar', 'Kordon Seaside Promenade', 'Agora of Smyrna'],
+    popularHighlightsTr: ['Tarihi Saat Kulesi', 'Kemeraltı Çarşısı', 'Kordon Sahil Boyu', 'Smyrna Agorası'],
+    aliases: ['izmir', 'kemeralti', 'kemeraltı', 'kordon boyu', 'konak meydanı'],
+  },
+  {
+    id: 'cesme',
+    name: 'Çeşme',
+    nameTr: 'Çeşme',
+    tagline: 'Alaçatı Stone Streets, Windmills & Aegean Beaches',
+    taglineTr: 'Alaçatı Taş Sokakları, Tarihi Değirmenler ve Ege Plajları',
+    image: 'https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?auto=format&fit=crop&w=1200&q=85',
+    popularHighlights: ['Alaçatı Windmills & Cobbled Streets', 'Çeşme Marina & Ottoman Castle', 'Ilıca Thermal Beach', 'Ayayorgi Bay'],
+    popularHighlightsTr: ['Alaçatı Değirmenleri ve Taş Evleri', 'Çeşme Kalesi & Marina', 'Ilıca Termal Plajı', 'Ayayorgi Koyu'],
+    aliases: ['cesme', 'çeşme', 'alacati', 'alaçatı', 'cesme kalesi', 'çeşme kalesi'],
+  },
+  {
+    id: 'konya',
+    name: 'Konya',
+    nameTr: 'Konya',
+    tagline: 'Mevlana Rumi Shrine, Whirling Dervishes & Seljuk Heritage',
+    taglineTr: 'Mevlana Celaleddin Rumi, Semazen Ayinleri ve Selçuklu Mirası',
+    image: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&w=1200&q=85',
+    popularHighlights: ['Mevlana Rumi Tomb & Museum', 'Whirling Dervishes Ceremony', 'Sultanhani Silk Road Caravanserai', 'Alaeddin Mosque'],
+    popularHighlightsTr: ['Mevlana Müzesi ve Türbesi', 'Geleneksel Semazen Gösterisi', 'Sultanhanı Kervansarayı', 'Alâeddin Camii'],
+    aliases: ['konya', 'mevlana', 'rumi', 'catalhoyuk', 'çatalhöyük', 'sultanhani', 'sultanhanı', 'semazen'],
+  },
+  {
+    id: 'trabzon',
+    name: 'Trabzon',
+    nameTr: 'Trabzon',
+    tagline: 'Cliffside Sümela Monastery, Uzungöl Alpine Lake & Cloud Valleys',
+    taglineTr: 'Sarp Kayalıklarda Sümela Manastırı, Uzungöl ve Yaylalar',
+    image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=85',
+    popularHighlights: ['Sümela Rock-Cut Monastery', 'Uzungöl Alpine Nature Park', 'Ayder Highland', 'Fırtına River Stone Bridges'],
+    popularHighlightsTr: ['Sümela Kaya Manastırı', 'Uzungöl Tabiat Parkı', 'Ayder Yaylası', 'Fırtına Deresi Köprüleri'],
+    aliases: ['trabzon', 'sumela', 'sümela', 'uzungol', 'uzungöl', 'ayder', 'rize'],
+  },
+  {
+    id: 'mardin',
+    name: 'Mardin',
+    nameTr: 'Mardin',
+    tagline: 'Stone Mansions, Syriac Monasteries & Sweeping Mesopotamian Plains',
+    taglineTr: 'Tarihi Taş Konaklar, Süryani Manastırları ve Mezopotamya Ovası',
+    image: 'https://images.unsplash.com/photo-1527838832700-5059252407fa?auto=format&fit=crop&w=1200&q=85',
+    popularHighlights: ['Deyrulzafaran Saffron Monastery', 'Dara Roman Ruins', 'Midyat Old Town & Filigree Bazaars', 'Mor Gabriel Monastery'],
+    popularHighlightsTr: ['Deyrulzafaran Süryani Manastırı', 'Dara Antik Kenti', 'Midyat Tarihi Taş Evleri', 'Mor Gabriel Manastırı'],
+    aliases: ['mardin', 'midyat', 'mezopotamya', 'mesopotamia', 'deyrulzafaran', 'dara antik'],
+  },
+  {
+    id: 'sanliurfa',
+    name: 'Şanlıurfa',
+    nameTr: 'Şanlıurfa',
+    tagline: 'Göbeklitepe Megaliths, Sacred Pool of Abraham & Harran Beehive Houses',
+    taglineTr: 'Göbeklitepe 12.000 Yıllık Tapınaklar, Balıklıgöl ve Harran Evleri',
+    image: 'https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?auto=format&fit=crop&w=1200&q=85',
+    popularHighlights: ['Göbeklitepe UNESCO Megalithic Site', 'Balıklıgöl Sacred Pool of Abraham', 'Harran Mudbrick Beehive Houses', 'Urfa Archaeology Museum'],
+    popularHighlightsTr: ['Göbeklitepe Arkeolojik Alanı', 'Tarihi Balıklıgöl', 'Harran Kümbet Evleri', 'Şanlıurfa Mozaik Müzesi'],
+    aliases: ['sanliurfa', 'şanlıurfa', 'gobeklitepe', 'göbeklitepe', 'karahantepe', 'harran', 'balikligol', 'balıklıgöl', 'urfa'],
+  },
+  {
+    id: 'bursa',
+    name: 'Bursa',
+    nameTr: 'Bursa',
+    tagline: 'First Ottoman Capital, Green Mosque & Silk Caravanserais',
+    taglineTr: 'İlk Osmanlı Başkenti, Yeşil Türbe, İpek Hanları ve Uludağ',
+    image: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=1200&q=85',
+    popularHighlights: ['Grand Mosque (Ulu Cami)', 'Historic Koza Han Silk Bazaar', 'UNESCO Cumalıkızık Village', 'Uludağ Cable Car'],
+    popularHighlightsTr: ['Ulu Cami', 'Tarihi Koza Han', 'UNESCO Cumalıkızık Köyü', 'Uludağ Teleferik'],
+    aliases: ['bursa', 'cumalikizik', 'cumalıkızık', 'koza han', 'uludag', 'uludağ'],
   },
   {
     id: 'ankara',
     name: 'Ankara',
     nameTr: 'Ankara',
-    tagline: 'The Republic Capital & Museum of Anatolian Civilizations',
-    taglineTr: 'Cumhuriyet Başkenti, Anıtkabir ve Anadolu Medeniyetleri Müzesi',
+    tagline: 'Anıtkabir Atatürk Mausoleum & Museum of Anatolian Civilizations',
+    taglineTr: 'Anıtkabir ve Anadolu Medeniyetleri Müzesi',
     image: 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&w=1200&q=85',
-    popularHighlights: ['Anıtkabir Mausoleum of Atatürk', 'Museum of Anatolian Civilizations', 'Ankara Citadel & Historic Hamamönü', 'Hacı Bayram Veli Mosque'],
-    popularHighlightsTr: ['Anıtkabir ve Atatürk Müzesi', 'Anadolu Medeniyetleri Müzesi', 'Ankara Kalesi ve Hamamönü', 'Hacı Bayram Veli Camii'],
-    aliases: ['ankara', 'anitkabir', 'anıtkabir', 'hamamonu', 'hamamönü'],
+    popularHighlights: ['Anıtkabir Atatürk Mausoleum', 'Museum of Anatolian Civilizations', 'Ankara Citadel', 'Hacı Bayram Veli Mosque'],
+    popularHighlightsTr: ['Anıtkabir Atatürk Mozolesi', 'Anadolu Medeniyetleri Müzesi', 'Ankara Kalesi', 'Hacı Bayram Veli Camii'],
+    aliases: ['ankara', 'anitkabir', 'anıtkabir'],
   },
 ];
 
@@ -235,93 +252,131 @@ export function normalizeRegionText(str: string): string {
 }
 
 /**
- * Clean and format title-cased names.
+ * Checks if a normalized string contains an alias as a discrete word/phrase.
  */
-function toTitleCase(str: string): string {
-  if (!str) return '';
-  return str
-    .split(' ')
-    .filter(Boolean)
-    .map((word) => word.charAt(0).toUpperCase() + word.slice(1).toLowerCase())
-    .join(' ');
+function textContainsAlias(text: string, alias: string): boolean {
+  const normAlias = normalizeRegionText(alias);
+  if (!normAlias || normAlias.length < 3) return false;
+  const regex = new RegExp(`(?:^|\\s)${normAlias}(?:\\s|$)`, 'i');
+  return regex.test(text);
 }
 
 /**
- * Checks if a tour visits a specific destination.
+ * Matches a region against a tour title.
+ * User instruction: "Zaten lokasyon isimleri Tur adında var. Onu baz alalım.
+ * Mesela Tur adı 2 gün kapadokya & pamukkale ise 2 lokasyon var. PAMUKKALE ve KAPADOKYA"
  */
-export function tourVisitsDestination(
-  tour: TourPackage,
-  dest: DestinationInfo | string,
-  allDestinations?: DestinationInfo[]
-): boolean {
-  const destObj =
-    typeof dest === 'string'
-      ? allDestinations?.find((d) => d.id === dest) || { id: dest, name: dest, nameTr: dest }
-      : dest;
-
-  const destId = destObj.id.toLowerCase();
-  const nameEn = (destObj.name || '').toLowerCase();
-  const nameTr = (destObj.nameTr || '').toLowerCase();
-  const normDestId = normalizeRegionText(destId);
-  const normNameEn = normalizeRegionText(nameEn);
-  const normNameTr = normalizeRegionText(nameTr);
-
-  // 1. Direct region match
-  if (tour.region && (tour.region.toLowerCase() === destId || normalizeRegionText(tour.region) === normDestId)) {
+function regionMatchesTitle(region: PredefinedRegionMeta, normTitle: string): boolean {
+  // Check direct English/Turkish name
+  if (textContainsAlias(normTitle, region.name) || textContainsAlias(normTitle, region.nameTr)) {
     return true;
   }
-
-  // 2. Check destination / destinationTr field
-  const dEn = (tour.destination || '').toLowerCase();
-  const dTr = (tour.destinationTr || '').toLowerCase();
-  const normDEn = normalizeRegionText(dEn);
-  const normDTr = normalizeRegionText(dTr);
-
-  if (normDEn.includes(normDestId) || normDEn.includes(normNameEn) || (normNameTr && normDEn.includes(normNameTr))) {
-    return true;
-  }
-  if (normDTr.includes(normDestId) || normDTr.includes(normNameTr) || (normNameEn && normDTr.includes(normNameEn))) {
-    return true;
-  }
-
-  // 3. Check tour title / titleTr
-  const tEn = (tour.title || '').toLowerCase();
-  const tTr = (tour.titleTr || '').toLowerCase();
-  const normTEn = normalizeRegionText(tEn);
-  const normTTr = normalizeRegionText(tTr);
-
-  if (normTEn.includes(normNameEn) || (normNameTr && normTEn.includes(normNameTr)) || normTEn.includes(normDestId)) {
-    return true;
-  }
-  if (normTTr.includes(normNameTr) || (normNameEn && normTTr.includes(normNameEn)) || normTTr.includes(normDestId)) {
-    return true;
-  }
-
-  // 4. Check itinerary day titles or overnight locations
-  if (tour.itinerary && Array.isArray(tour.itinerary)) {
-    for (const day of tour.itinerary) {
-      const over = normalizeRegionText(((day.overnight || '') + ' ' + (day.overnightTr || '')).toLowerCase());
-      const dTitle = normalizeRegionText(((day.title || '') + ' ' + (day.titleTr || '')).toLowerCase());
-      if (over.includes(normNameEn) || (normNameTr && over.includes(normNameTr)) || over.includes(normDestId)) {
-        return true;
-      }
-      if (dTitle.includes(normNameEn) || (normNameTr && dTitle.includes(normNameTr)) || dTitle.includes(normDestId)) {
-        return true;
-      }
+  // Check key signature aliases
+  for (const alias of region.aliases) {
+    if (textContainsAlias(normTitle, alias)) {
+      return true;
     }
   }
+  return false;
+}
 
-  // 5. Check predefined aliases
-  const known = PREDEFINED_TURKEY_REGIONS.find((r) => r.id === destId);
-  if (known) {
-    const combinedTourText = normalizeRegionText(
-      `${tour.title || ''} ${tour.titleTr || ''} ${tour.destination || ''} ${tour.destinationTr || ''} ${tour.overview || ''} ${tour.overviewTr || ''}`
-    );
-    for (const alias of known.aliases) {
-      const normAlias = normalizeRegionText(alias);
-      if (normAlias.length >= 4 && combinedTourText.includes(normAlias)) {
-        return true;
-      }
+/**
+ * Clean transit clauses (flight departures, airport transfers, hotel pick-ups) from itinerary description.
+ * This prevents departure airports like Istanbul or transit stops like Izmir ADB from being registered as destinations.
+ */
+function cleanTransitFromText(text: string): string {
+  if (!text) return '';
+  const clauses = text.split(/[.\n;]/);
+  const cleanClauses = clauses.filter((clause) => {
+    const lower = clause.toLowerCase();
+    const hasTransitWords =
+      lower.includes('flight') ||
+      lower.includes('fly') ||
+      lower.includes('havalimani') ||
+      lower.includes('havalimanı') ||
+      lower.includes('airport') ||
+      lower.includes('transfer to') ||
+      lower.includes('transfer from') ||
+      lower.includes('transfer into') ||
+      lower.includes('drive to airport') ||
+      lower.includes('ucak') ||
+      lower.includes('uçak');
+
+    // If it has transit words but does NOT mention major tourist sights, treat as transit noise
+    const hasSightWords =
+      lower.includes('celsus') ||
+      lower.includes('hierapolis') ||
+      lower.includes('travertine') ||
+      lower.includes('traverten') ||
+      lower.includes('meryem') ||
+      lower.includes('goreme') ||
+      lower.includes('göreme') ||
+      lower.includes('balloon') ||
+      lower.includes('balon') ||
+      lower.includes('hagia sophia') ||
+      lower.includes('ayasofya') ||
+      lower.includes('blue mosque') ||
+      lower.includes('sultanahmet') ||
+      lower.includes('topkapi') ||
+      lower.includes('topkapı') ||
+      lower.includes('aspendos') ||
+      lower.includes('kaleiçi') ||
+      lower.includes('kaleici') ||
+      lower.includes('alacati') ||
+      lower.includes('alaçatı') ||
+      lower.includes('truva') ||
+      lower.includes('troy') ||
+      lower.includes('anzac') ||
+      lower.includes('anzak');
+
+    return !(hasTransitWords && !hasSightWords);
+  });
+
+  return cleanClauses.join(' ');
+}
+
+/**
+ * Checks if a specific day's sightseeing text matches a predefined location.
+ */
+function dayMatchesRegion(region: PredefinedRegionMeta, dayText: string, rawTitle: string): boolean {
+  const normTitle = normalizeRegionText(rawTitle);
+
+  // Transit Protection:
+  // Istanbul: Only match if actual Istanbul sightseeing monuments are visited OR day title is explicitly an Istanbul tour!
+  if (region.id === 'istanbul') {
+    const isExplicitIstanbulTitle =
+      normTitle.includes('istanbul tour') ||
+      normTitle.includes('istanbul gezisi') ||
+      normTitle.includes('istanbul classic') ||
+      normTitle.includes('istanbul old city') ||
+      normTitle.includes('bosphorus tour') ||
+      normTitle.includes('bosphorus cruise');
+
+    const hasIstanbulSightseeing = region.aliases.some((alias) => {
+      return alias !== 'istanbul' && textContainsAlias(dayText, alias);
+    });
+
+    return isExplicitIstanbulTitle || hasIstanbulSightseeing;
+  }
+
+  // İzmir: Never match on "izmir" alone if it is just airport transit
+  if (region.id === 'izmir') {
+    const isExplicitIzmirTour =
+      normTitle.includes('izmir city tour') ||
+      normTitle.includes('izmir sehiri') ||
+      normTitle.includes('izmir gezisi');
+
+    const hasIzmirSightseeing = textContainsAlias(dayText, 'saat kulesi') || textContainsAlias(dayText, 'kemeralti');
+    return isExplicitIzmirTour || hasIzmirSightseeing;
+  }
+
+  // General check
+  if (textContainsAlias(normTitle, region.name) || textContainsAlias(normTitle, region.nameTr)) {
+    return true;
+  }
+  for (const alias of region.aliases) {
+    if (textContainsAlias(dayText, alias) || textContainsAlias(normTitle, alias)) {
+      return true;
     }
   }
 
@@ -329,119 +384,67 @@ export function tourVisitsDestination(
 }
 
 /**
- * Extracts and detects all individual destination regions mentioned in a tour.
- * E.g. for a "3-day Cappadocia, Konya, Antalya Tour", detects:
- * - Cappadocia (id: cappadocia)
- * - Konya (id: konya)
- * - Antalya (id: mediterranean or antalya)
+ * Extracts individual atomic destinations for a tour package.
+ *
+ * User rule:
+ * "tek tek olacak Antalya & turkuaz kıyı ne? Antalya, Efes, Pamukkale bunlar hep ayrı lokasyonlar.
+ * Zaten lokasyon isimleri Tur adında var. Onu baz alalım. Mesela Tur adı 2 gün kapadokya & pamukkale ise 2 lokasyon var. PAMUKKALE ve KAPADOKYA"
+ *
+ * 1. Primary: Scans Tour Title (English and Turkish). If location names are present in the title,
+ *    each location is extracted individually (e.g. "2 Gün Kapadokya & Pamukkale" -> [Kapadokya, Pamukkale]).
+ * 2. Secondary: If no locations were identified from the title, scans the day-by-day itinerary sightseeing.
+ * 3. Fallback: Checks the tour's destination field.
  */
 export function detectRegionsFromTour(tour: Partial<TourPackage>): PredefinedRegionMeta[] {
   const detectedMap = new Map<string, PredefinedRegionMeta>();
 
-  // Gather all relevant tour textual contexts
-  const destinationText = `${tour.destination || ''}, ${tour.destinationTr || ''}`;
-  const titleText = `${tour.title || ''} ${tour.titleTr || ''}`;
-  const itineraryText = (tour.itinerary || [])
-    .map((day) => `${day.title || ''} ${day.titleTr || ''} ${day.overnight || ''} ${day.overnightTr || ''} ${day.description || ''}`)
-    .join(' ');
-  const combinedAllText = `${destinationText} ${titleText} ${tour.subtitle || ''} ${tour.subtitleTr || ''} ${tour.overview || ''} ${itineraryText}`;
-  const normalizedAllText = normalizeRegionText(combinedAllText);
+  // PRIORITY 1: Tour Title
+  const rawTitle = `${tour.title || ''} ${tour.titleTr || ''}`;
+  const normTitle = normalizeRegionText(rawTitle);
 
-  // 1. First priority: Check known predefined regions against the text
-  for (const region of PREDEFINED_TURKEY_REGIONS) {
-    let matched = false;
-
-    // Check if region id or names are present
-    const normName = normalizeRegionText(region.name);
-    const normNameTr = normalizeRegionText(region.nameTr);
-    const normId = normalizeRegionText(region.id);
-
-    if (
-      normalizedAllText.includes(normName) ||
-      normalizedAllText.includes(normNameTr) ||
-      (normId.length >= 4 && normalizedAllText.includes(normId))
-    ) {
-      matched = true;
-    }
-
-    // Check aliases
-    if (!matched) {
-      for (const alias of region.aliases) {
-        const normAlias = normalizeRegionText(alias);
-        // Word boundary check or length >= 4
-        if (normAlias.length >= 4 && normalizedAllText.includes(normAlias)) {
-          matched = true;
-          break;
-        }
+  if (normTitle) {
+    for (const region of PREDEFINED_TURKEY_REGIONS) {
+      if (regionMatchesTitle(region, normTitle)) {
+        detectedMap.set(region.id, region);
       }
-    }
-
-    if (matched) {
-      detectedMap.set(region.id, region);
     }
   }
 
-  // 2. Second priority: Explicit tokens in destination / destinationTr fields
-  // Often entered as: "Kapadokya, Konya, Antalya" or "Cappadocia - Konya - Antalya"
-  const rawTokens = destinationText
-    .split(/[,;&+/|]|\s+(?:ve|and|to|ile)\s+/gi)
-    .map((t) => t.trim())
-    .filter((t) => t.length > 2);
+  // If regions were found in the tour title, that is our authoritative list!
+  if (detectedMap.size > 0) {
+    return Array.from(detectedMap.values());
+  }
 
-  // Clean noise words
-  const noiseWords = ['tour', 'turu', 'turları', 'paket', 'paketi', 'days', 'day', 'gün', 'günlük', 'gece', 'nights', 'yolculuk', 'journey', 'escape', 'tatili', 'özel', 'private', 'luxury', 'boutique'];
+  // PRIORITY 2: Day-by-Day Itinerary Sightseeing
+  const days = Array.isArray(tour.itinerary) ? tour.itinerary : [];
+  if (days.length > 0) {
+    for (const day of days) {
+      const dayTitle = `${day.title || ''} ${day.titleTr || ''}`;
+      const dayHighlights = Array.isArray(day.highlights) ? day.highlights.join(' ') : '';
+      const dayHighlightsTr = Array.isArray(day.highlightsTr) ? day.highlightsTr.join(' ') : '';
+      const dayOvernight = `${day.overnight || ''} ${day.overnightTr || ''}`;
+      const cleanDesc = cleanTransitFromText(`${day.description || ''} ${day.descriptionTr || ''}`);
 
-  for (const rawToken of rawTokens) {
-    const cleanWord = rawToken
-      .replace(/[\d\(\)\.\-]/g, '')
-      .split(' ')
-      .filter((w) => !noiseWords.includes(w.toLowerCase()))
-      .join(' ')
-      .trim();
-
-    if (cleanWord.length < 3) continue;
-
-    const normClean = normalizeRegionText(cleanWord);
-
-    // Check if already covered by detectedMap
-    const alreadyFound = Array.from(detectedMap.values()).some((r) => {
-      return (
-        normalizeRegionText(r.name).includes(normClean) ||
-        normalizeRegionText(r.nameTr).includes(normClean) ||
-        normClean.includes(normalizeRegionText(r.name)) ||
-        normClean.includes(normalizeRegionText(r.nameTr)) ||
-        r.aliases.some((a) => normalizeRegionText(a) === normClean)
+      const combinedDayText = normalizeRegionText(
+        `${dayTitle} ${dayHighlights} ${dayHighlightsTr} ${dayOvernight} ${cleanDesc}`
       );
-    });
 
-    if (!alreadyFound) {
-      // Check if it matches any predefined region
-      const matchedPredefined = PREDEFINED_TURKEY_REGIONS.find((r) => {
-        return (
-          normalizeRegionText(r.name).includes(normClean) ||
-          normalizeRegionText(r.nameTr).includes(normClean) ||
-          r.aliases.some((a) => normalizeRegionText(a) === normClean)
-        );
-      });
+      for (const region of PREDEFINED_TURKEY_REGIONS) {
+        if (dayMatchesRegion(region, combinedDayText, dayTitle)) {
+          detectedMap.set(region.id, region);
+        }
+      }
+    }
+  }
 
-      if (matchedPredefined) {
-        detectedMap.set(matchedPredefined.id, matchedPredefined);
-      } else {
-        // Create custom dynamic destination
-        const slug = normClean.replace(/\s+/g, '-').slice(0, 30);
-        const titleCase = toTitleCase(cleanWord);
-        const dynamicMeta: PredefinedRegionMeta = {
-          id: slug,
-          name: titleCase,
-          nameTr: titleCase,
-          tagline: `Experience the unique heritage & scenic beauty of ${titleCase}`,
-          taglineTr: `${titleCase}’nin tarihi dokusu, doğal güzellikleri ve zengin kültürel mirası`,
-          image: 'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg',
-          popularHighlights: ['Historic Old Town', 'Cultural Heritage', 'Guided Discovery', 'Local Gastronomy'],
-          popularHighlightsTr: ['Tarihi Şehir Merkezi', 'Kültür Mirası', 'Rehberli Keşif', 'Yöresel Lezzetler'],
-          aliases: [normClean],
-        };
-        detectedMap.set(slug, dynamicMeta);
+  // PRIORITY 3: Existing destination field
+  if (detectedMap.size === 0) {
+    const destFieldText = normalizeRegionText(`${tour.destination || ''} ${tour.destinationTr || ''}`);
+    if (destFieldText) {
+      for (const region of PREDEFINED_TURKEY_REGIONS) {
+        if (regionMatchesTitle(region, destFieldText)) {
+          detectedMap.set(region.id, region);
+        }
       }
     }
   }
@@ -450,8 +453,161 @@ export function detectRegionsFromTour(tour: Partial<TourPackage>): PredefinedReg
 }
 
 /**
+ * Sanitizes a tour package so that its destination, destinationTr, and region
+ * strictly reflect the verified atomic sightseeing destinations.
+ *
+ * Example:
+ * Title "2 Gün Kapadokya & Pamukkale"
+ * -> destination: "Cappadocia, Pamukkale"
+ * -> destinationTr: "Kapadokya, Pamukkale"
+ * -> region: "multi-region"
+ *
+ * Title "Antalya Tour"
+ * -> destination: "Antalya"
+ * -> destinationTr: "Antalya"
+ * -> region: "antalya"
+ */
+export function sanitizeTourDestinations(tour: TourPackage): TourPackage {
+  if (!tour) return tour;
+  const detected = detectRegionsFromTour(tour);
+  if (detected.length === 0) {
+    return tour;
+  }
+
+  const destination = detected.map((r) => r.name).join(', ');
+  const destinationTr = detected.map((r) => r.nameTr).join(', ');
+  const region = (detected.length > 1 ? 'multi-region' : detected[0].id) as TourPackage['region'];
+
+  return {
+    ...tour,
+    destination,
+    destinationTr,
+    region,
+  };
+}
+
+/**
+ * Checks if a tour genuinely visits a specific destination.
+ * Supports checking by ID (e.g. 'pamukkale', 'cappadocia', 'ephesus', 'antalya')
+ * or by DestinationInfo object.
+ */
+export function tourVisitsDestination(
+  tour: TourPackage,
+  dest: DestinationInfo | string,
+  _allDestinations?: DestinationInfo[]
+): boolean {
+  const destId = (typeof dest === 'string' ? dest : dest.id).toLowerCase();
+  const destName = typeof dest === 'string' ? dest : (dest.name || '');
+  const destNameTr = typeof dest === 'string' ? dest : (dest.nameTr || '');
+
+  const normDestId = normalizeRegionText(destId);
+  const normDestName = normalizeRegionText(destName);
+  const normDestNameTr = normalizeRegionText(destNameTr);
+
+  // 1. Check direct region ID match
+  if (tour.region && (tour.region.toLowerCase() === destId || normalizeRegionText(tour.region) === normDestId)) {
+    return true;
+  }
+
+  // 2. Check detected visited regions for this tour
+  const visited = detectRegionsFromTour(tour);
+  const isVisited = visited.some((r) => {
+    return (
+      r.id.toLowerCase() === destId ||
+      normalizeRegionText(r.name) === normDestName ||
+      normalizeRegionText(r.nameTr) === normDestNameTr ||
+      normalizeRegionText(r.name) === normDestId ||
+      normalizeRegionText(r.nameTr) === normDestId
+    );
+  });
+  if (isVisited) return true;
+
+  // 3. Check destination and title strings
+  const combinedText = normalizeRegionText(
+    `${tour.title || ''} ${tour.titleTr || ''} ${tour.destination || ''} ${tour.destinationTr || ''}`
+  );
+  if (normDestName && textContainsAlias(combinedText, normDestName)) return true;
+  if (normDestNameTr && textContainsAlias(combinedText, normDestNameTr)) return true;
+  if (normDestId && textContainsAlias(combinedText, normDestId)) return true;
+
+  return false;
+}
+
+/**
+ * Synchronizes destinations with all existing tours.
+ * Accurately calculates tour counts for each atomic destination, adds missing visited destinations,
+ * and PRUNES ghost or legacy grouped destinations (like 'aegean-ephesus' or 'mediterranean') that have 0 tours.
+ */
+export function syncDestinationsWithAllTours(
+  allTours: TourPackage[],
+  currentDestinations: DestinationInfo[]
+): {
+  updatedDestinations: DestinationInfo[];
+  newlyAdded: DestinationInfo[];
+} {
+  const destMap = new Map<string, DestinationInfo>();
+  const newlyAdded: DestinationInfo[] = [];
+
+  // Track counts per detected atomic location
+  const regionCounts = new Map<string, number>();
+
+  for (const tour of allTours) {
+    const visited = detectRegionsFromTour(tour);
+    for (const region of visited) {
+      regionCounts.set(region.id, (regionCounts.get(region.id) || 0) + 1);
+
+      if (!destMap.has(region.id)) {
+        // Look for existing destination info to preserve custom images or descriptions
+        const existing = currentDestinations.find(
+          (d) =>
+            d.id === region.id ||
+            normalizeRegionText(d.name) === normalizeRegionText(region.name) ||
+            normalizeRegionText(d.nameTr) === normalizeRegionText(region.nameTr)
+        );
+
+        if (existing) {
+          destMap.set(region.id, {
+            ...existing,
+            id: region.id,
+            name: region.name,
+            nameTr: region.nameTr,
+            showOnHome: existing.showOnHome !== false,
+          });
+        } else {
+          const newDest: DestinationInfo = {
+            id: region.id,
+            name: region.name,
+            nameTr: region.nameTr,
+            tagline: region.tagline,
+            taglineTr: region.taglineTr,
+            image: region.image,
+            toursCount: 1,
+            popularHighlights: region.popularHighlights,
+            popularHighlightsTr: region.popularHighlightsTr,
+            showOnHome: true,
+          };
+          destMap.set(region.id, newDest);
+          newlyAdded.push(newDest);
+        }
+      }
+    }
+  }
+
+  // Build finalized clean destinations with exact tour counts
+  const updatedDestinations: DestinationInfo[] = Array.from(destMap.values()).map((dest) => ({
+    ...dest,
+    toursCount: regionCounts.get(dest.id) || 1,
+    showOnHome: dest.showOnHome !== false,
+  }));
+
+  return {
+    updatedDestinations,
+    newlyAdded,
+  };
+}
+
+/**
  * Synchronizes destinations when a tour is added, edited, or imported.
- * Automatically adds missing regions to destination list and recalculates tour counts.
  */
 export function autoSyncDestinationsFromTour(
   targetTour: Partial<TourPackage>,
@@ -463,131 +619,11 @@ export function autoSyncDestinationsFromTour(
   detectedRegions: PredefinedRegionMeta[];
 } {
   const detected = detectRegionsFromTour(targetTour);
-  const newlyAdded: DestinationInfo[] = [];
-  const destMap = new Map<string, DestinationInfo>();
-
-  // Populate existing
-  currentDestinations.forEach((d) => destMap.set(d.id, { ...d }));
-
-  // Check which detected regions are missing
-  for (const region of detected) {
-    // Check if an existing destination covers this region
-    const existing = Array.from(destMap.values()).find((d) => {
-      if (d.id === region.id) return true;
-      const normDName = normalizeRegionText(d.name);
-      const normDNameTr = normalizeRegionText(d.nameTr);
-      const normRName = normalizeRegionText(region.name);
-      const normRNameTr = normalizeRegionText(region.nameTr);
-      return (
-        normDName === normRName ||
-        normDNameTr === normRNameTr ||
-        normDName.includes(normRName) ||
-        normDNameTr.includes(normRNameTr)
-      );
-    });
-
-    if (!existing) {
-      const newDest: DestinationInfo = {
-        id: region.id,
-        name: region.name,
-        nameTr: region.nameTr,
-        tagline: region.tagline,
-        taglineTr: region.taglineTr,
-        image: region.image,
-        toursCount: 1,
-        popularHighlights: region.popularHighlights,
-        popularHighlightsTr: region.popularHighlightsTr,
-        showOnHome: true,
-      };
-      destMap.set(newDest.id, newDest);
-      newlyAdded.push(newDest);
-    }
-  }
-
-  // Recalculate toursCount for all destinations across all tours
-  const updatedDestinations: DestinationInfo[] = Array.from(destMap.values()).map((dest) => {
-    let count = 0;
-    for (const tour of allTours) {
-      if (tourVisitsDestination(tour, dest, Array.from(destMap.values()))) {
-        count++;
-      }
-    }
-    return {
-      ...dest,
-      showOnHome: dest.showOnHome !== false,
-      toursCount: Math.max(count, dest.toursCount || 0),
-    };
-  });
+  const { updatedDestinations, newlyAdded } = syncDestinationsWithAllTours(allTours, currentDestinations);
 
   return {
     updatedDestinations,
     newlyAdded,
     detectedRegions: detected,
-  };
-}
-
-/**
- * Scans ALL existing tours and ensures all regions are in destinations with correct counts.
- */
-export function syncDestinationsWithAllTours(
-  allTours: TourPackage[],
-  currentDestinations: DestinationInfo[]
-): {
-  updatedDestinations: DestinationInfo[];
-  newlyAdded: DestinationInfo[];
-} {
-  const destMap = new Map<string, DestinationInfo>();
-  currentDestinations.forEach((d) => destMap.set(d.id, { ...d }));
-  const newlyAdded: DestinationInfo[] = [];
-
-  for (const tour of allTours) {
-    const detected = detectRegionsFromTour(tour);
-    for (const region of detected) {
-      const existing = Array.from(destMap.values()).find((d) => {
-        if (d.id === region.id) return true;
-        const normDName = normalizeRegionText(d.name);
-        const normDNameTr = normalizeRegionText(d.nameTr);
-        const normRName = normalizeRegionText(region.name);
-        const normRNameTr = normalizeRegionText(region.nameTr);
-        return normDName === normRName || normDNameTr === normRNameTr;
-      });
-
-      if (!existing) {
-        const newDest: DestinationInfo = {
-          id: region.id,
-          name: region.name,
-          nameTr: region.nameTr,
-          tagline: region.tagline,
-          taglineTr: region.taglineTr,
-          image: region.image,
-          toursCount: 1,
-          popularHighlights: region.popularHighlights,
-          popularHighlightsTr: region.popularHighlightsTr,
-          showOnHome: true,
-        };
-        destMap.set(newDest.id, newDest);
-        newlyAdded.push(newDest);
-      }
-    }
-  }
-
-  // Recount
-  const updatedDestinations: DestinationInfo[] = Array.from(destMap.values()).map((dest) => {
-    let count = 0;
-    for (const tour of allTours) {
-      if (tourVisitsDestination(tour, dest, Array.from(destMap.values()))) {
-        count++;
-      }
-    }
-    return {
-      ...dest,
-      showOnHome: dest.showOnHome !== false,
-      toursCount: count > 0 ? count : (dest.toursCount || 0),
-    };
-  });
-
-  return {
-    updatedDestinations,
-    newlyAdded,
   };
 }

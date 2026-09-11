@@ -194,10 +194,20 @@ export function parseVoyraTourDocument(rawText: string, fileName?: string): Tour
     region = (detectedRegions.length > 1 ? 'multi-region' : detectedRegions[0].id) as any;
   } else {
     const lowerAll = (tourTitle + ' ' + rawText).toLowerCase();
-    if (lowerAll.includes('pamukkale') || lowerAll.includes('ephesus') || lowerAll.includes('efes')) {
-      destination = 'Ephesus & Pamukkale';
-      destinationTr = 'Efes & Pamukkale';
-      region = 'aegean-ephesus';
+    const isEfes = lowerAll.includes('ephesus') || lowerAll.includes('efes');
+    const isPamuk = lowerAll.includes('pamukkale');
+    if (isEfes && isPamuk) {
+      destination = 'Ephesus, Pamukkale';
+      destinationTr = 'Efes, Pamukkale';
+      region = 'multi-region';
+    } else if (isEfes) {
+      destination = 'Ephesus';
+      destinationTr = 'Efes';
+      region = 'ephesus';
+    } else if (isPamuk) {
+      destination = 'Pamukkale';
+      destinationTr = 'Pamukkale';
+      region = 'pamukkale';
     } else if (lowerAll.includes('cappadocia') || lowerAll.includes('kapadokya')) {
       destination = 'Cappadocia';
       destinationTr = 'Kapadokya';
@@ -206,14 +216,14 @@ export function parseVoyraTourDocument(rawText: string, fileName?: string): Tour
       destination = 'Istanbul';
       destinationTr = 'İstanbul';
       region = 'istanbul';
-    } else if (lowerAll.includes('antalya') || lowerAll.includes('kaleiçi') || lowerAll.includes('kas') || lowerAll.includes('kaş')) {
-      destination = 'Antalya & Mediterranean';
-      destinationTr = 'Antalya & Akdeniz';
-      region = 'mediterranean';
-    } else if (lowerAll.includes('trabzon') || lowerAll.includes('karadeniz') || lowerAll.includes('rize') || lowerAll.includes('uzungöl')) {
-      destination = 'Black Sea & Trabzon';
-      destinationTr = 'Karadeniz & Trabzon';
-      region = 'black-sea';
+    } else if (lowerAll.includes('antalya') || lowerAll.includes('kaleiçi')) {
+      destination = 'Antalya';
+      destinationTr = 'Antalya';
+      region = 'antalya';
+    } else if (lowerAll.includes('trabzon') || lowerAll.includes('uzungöl') || lowerAll.includes('sümela')) {
+      destination = 'Trabzon';
+      destinationTr = 'Trabzon';
+      region = 'trabzon';
     }
   }
 
@@ -230,13 +240,13 @@ export function parseVoyraTourDocument(rawText: string, fileName?: string): Tour
     if (region === 'cappadocia') {
       hotelType = 'Boutique Cave Hotel (Hera Cave Suites or similar)';
       hotelTypeTr = 'Butik Mağara Oteli (Hera Cave Suites veya benzeri)';
-    } else if (region === 'aegean-ephesus') {
+    } else if (region === 'pamukkale' || region === 'ephesus' || (destination && destination.includes('Pamukkale'))) {
       hotelType = 'Selected Thermal & Boutique Aegean Hotel (4★/5★)';
       hotelTypeTr = 'Seçkin Termal & Butik Ege Oteli (4★/5★)';
     } else if (region === 'istanbul') {
       hotelType = 'Historic Peninsula Boutique Hotel (4★/5★)';
       hotelTypeTr = 'Tarihi Yarımada Butik Oteli (4★/5★)';
-    } else if (region === 'mediterranean') {
+    } else if (region === 'antalya') {
       hotelType = 'Seaside Boutique Hotel or Resort (4★/5★)';
       hotelTypeTr = 'Sahil Butik Oteli veya Resort (4★/5★)';
     } else {
