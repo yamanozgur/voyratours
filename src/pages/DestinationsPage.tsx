@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { Language, DestinationInfo } from '../types';
 import { DESTINATIONS_DATA } from '../data/toursData';
+import { DEFAULT_DESTINATION_IMAGE, normalizeImageUrl } from '../utils/destinationDetector';
 import { SEOHead } from '../components/SEOHead';
 import { ChevronRight, Sparkles, MapPin, Calendar, Compass, ArrowRight } from 'lucide-react';
 
@@ -33,7 +34,7 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({ language }) 
       nameTr: 'Kapadokya',
       taglineEn: 'Surreal Fairy Chimneys & Hot Air Balloons',
       taglineTr: 'Peri Bacaları & Sıcak Hava Balonları',
-      image: 'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg',
+      image: DEFAULT_DESTINATION_IMAGE,
       descriptionEn:
         'A magical wonderland sculpted by volcanic erosion and early Christian history. Drift in hot air balloons at sunrise over Goreme Valley, sleep in centuries-old authentic cave suites, and explore subterranean underground cities.',
       descriptionTr:
@@ -50,7 +51,7 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({ language }) 
       nameTr: 'Pamukkale',
       taglineEn: 'White Mineral Travertines & Cleopatra Antique Pool',
       taglineTr: 'Beyaz Mineral Travertenler & Kleopatra Antik Havuzu',
-      image: 'https://images.unsplash.com/photo-1549880338-65ddcdfd017b?auto=format&fit=crop&w=1200&q=80',
+      image: DEFAULT_DESTINATION_IMAGE,
       descriptionEn:
         'Marvel at the breathtaking tiered white calcium cascades of Pamukkale and bathe in the thermal mineral waters of Cleopatra’s ancient antique pool amidst sunken Roman marble columns.',
       descriptionTr:
@@ -67,7 +68,7 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({ language }) 
       nameTr: 'Efes',
       taglineEn: 'Greco-Roman Metropolis & Library of Celsus',
       taglineTr: 'Antik Roma İhtişamı & Celsus Kütüphanesi',
-      image: 'https://images.unsplash.com/photo-1635166045025-b078ac986d77?auto=format&fit=crop&w=1200&q=80',
+      image: DEFAULT_DESTINATION_IMAGE,
       descriptionEn:
         'Walk the preserved marble streets where Cleopatra and Mark Antony once strolled. Marvel at the grand Library of Celsus, the Great Theatre, and visit the peaceful House of Virgin Mary.',
       descriptionTr:
@@ -84,7 +85,7 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({ language }) 
       nameTr: 'Antalya',
       taglineEn: 'Historic Kaleiçi Old Town & Roman Theatres',
       taglineTr: 'Tarihi Kaleiçi Sokakları & Roma Tiyatroları',
-      image: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&w=1200&q=80',
+      image: DEFAULT_DESTINATION_IMAGE,
       descriptionEn:
         'Discover the jewel of the Mediterranean where historic Ottoman-era stone mansions meet Roman city walls in Kaleiçi, alongside the majestic Aspendos amphitheatre and Düden waterfalls.',
       descriptionTr:
@@ -101,7 +102,7 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({ language }) 
       nameTr: 'İstanbul',
       taglineEn: 'Where East Meets West Across the Bosphorus',
       taglineTr: 'Boğaz’ın İki Yakasında Doğu ve Batı',
-      image: 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&w=1200&q=80',
+      image: DEFAULT_DESTINATION_IMAGE,
       descriptionEn:
         'The historic imperial capital connecting Europe and Asia. Explore Hagia Sophia, the Blue Mosque, Topkapi Palace, private Bosphorus yacht cruises at sunset, and the bustling spice scents of the centuries-old Grand Bazaar.',
       descriptionTr:
@@ -118,7 +119,7 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({ language }) 
       nameTr: 'Çanakkale & Gelibolu',
       taglineEn: 'Historic Battlefields of 1915 & ANZAC Cove',
       taglineTr: '1915 Çanakkale Zaferi & Anzak Koyu',
-      image: 'https://images.unsplash.com/photo-1572025442646-866d16c84a54?auto=format&fit=crop&w=1200&q=80',
+      image: DEFAULT_DESTINATION_IMAGE,
       descriptionEn:
         'A deeply moving historic journey along the Dardanelles Strait visiting ANZAC Cove, Lone Pine, Chunuk Bair, and the historic memorial sites of the Gallipoli campaign.',
       descriptionTr:
@@ -135,7 +136,7 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({ language }) 
       nameTr: 'Truva',
       taglineEn: 'Homeric Epics & The Legendary Trojan Wooden Horse',
       taglineTr: 'Homeros Destanları & Efsanevi Truva Tahta Atı',
-      image: 'https://images.unsplash.com/photo-1572025442646-866d16c84a54?auto=format&fit=crop&w=1200&q=80',
+      image: DEFAULT_DESTINATION_IMAGE,
       descriptionEn:
         'Step into the myth of Homer’s Iliad at the 4,000-year-old archaeological site of Troy, the iconic Wooden Horse, and the award-winning Troy Museum.',
       descriptionTr:
@@ -152,7 +153,7 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({ language }) 
       nameTr: 'Büyük Türkiye Rotaları',
       taglineEn: 'Multi-Region Seamless Comprehensive Odysseys',
       taglineTr: 'Çok Bölgeli Kapsamlı Türkiye Turu',
-      image: 'https://images.unsplash.com/photo-1527838832700-5059252407fa?auto=format&fit=crop&w=1200&q=80',
+      image: DEFAULT_DESTINATION_IMAGE,
       descriptionEn:
         'The ultimate Turkey discovery combining Istanbul, Cappadocia, Ephesus, and Pamukkale into one seamless, stress-free route connected by domestic flights and premier boutique lodgings.',
       descriptionTr:
@@ -174,7 +175,7 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({ language }) 
       nameTr: dest.nameTr,
       taglineEn: dest.tagline,
       taglineTr: dest.taglineTr,
-      image: dest.image,
+      image: normalizeImageUrl(dest.image),
       descriptionEn:
         matched?.descriptionEn ||
         `${dest.name} invites you to experience breathtaking scenery, unique heritage, and hand-crafted boutique tour packages.`,
@@ -243,10 +244,13 @@ export const DestinationsPage: React.FC<DestinationsPageProps> = ({ language }) 
                 {/* Image Banner */}
                 <div className="relative h-52 overflow-hidden bg-slate-100">
                   <img
-                    src={dest.image}
+                    src={normalizeImageUrl(dest.image)}
                     alt={isTr ? dest.nameTr : dest.nameEn}
                     className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700"
                     loading="lazy"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src = DEFAULT_DESTINATION_IMAGE;
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-black/20 to-transparent" />
 

@@ -1,5 +1,22 @@
 import { TourPackage, DestinationInfo } from '../types';
 
+export const DEFAULT_DESTINATION_IMAGE = 'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/main3.jpg';
+
+export function normalizeImageUrl(url?: string): string {
+  if (!url || !url.trim()) {
+    return DEFAULT_DESTINATION_IMAGE;
+  }
+  let clean = url.trim();
+  if (clean.includes('github.com/yamanozgur/voyratours/blob/')) {
+    clean = clean.replace('github.com/yamanozgur/voyratours/blob/', 'raw.githubusercontent.com/yamanozgur/voyratours/');
+  }
+  // Replace legacy or random unsplash/default images with the requested default image
+  if (clean.includes('images.unsplash.com') || clean.includes('asset/default.jpg') || clean.includes('1570939274717-7eda259b50ed')) {
+    return DEFAULT_DESTINATION_IMAGE;
+  }
+  return clean;
+}
+
 export interface PredefinedRegionMeta {
   id: string;
   name: string;
@@ -16,6 +33,7 @@ export interface PredefinedRegionMeta {
  * Curated knowledge base of individual (atomic) Turkey tourism destinations.
  * Each location is strictly separate (e.g. Antalya, Efes, Pamukkale, Kapadokya, Istanbul).
  * No grouped or compound regions (e.g. NO "Antalya & Turkuaz Kıyı", NO "Efes & Pamukkale").
+ * All default images strictly use Voyra's official asset (main3.jpg).
  */
 export const PREDEFINED_TURKEY_REGIONS: PredefinedRegionMeta[] = [
   {
@@ -24,7 +42,7 @@ export const PREDEFINED_TURKEY_REGIONS: PredefinedRegionMeta[] = [
     nameTr: 'Kapadokya',
     tagline: 'Fairy Chimneys, Cave Suites & Sunrise Hot Air Balloons',
     taglineTr: 'Peri Bacaları, Butik Mağara Oteller ve Gün Doğumu Sıcak Hava Balonları',
-    image: 'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg',
+    image: DEFAULT_DESTINATION_IMAGE,
     popularHighlights: ['Sunrise Balloon Flight', 'Derinkuyu Underground City', 'Göreme Open Air Museum', 'Uçhisar Rock Castle'],
     popularHighlightsTr: ['Gün Doğumu Balon Uçuşu', 'Derinkuyu Yeraltı Şehri', 'Göreme Açık Hava Müzesi', 'Uçhisar Kalesi'],
     aliases: [
@@ -39,7 +57,7 @@ export const PREDEFINED_TURKEY_REGIONS: PredefinedRegionMeta[] = [
     nameTr: 'Pamukkale',
     tagline: 'White Mineral Travertine Terraces & Cleopatra Antique Thermal Pool',
     taglineTr: 'Beyaz Mineral Traverten Havuzları ve Kleopatra Antik Termal Havuzu',
-    image: 'https://images.unsplash.com/photo-1549880338-65ddcdfd017b?auto=format&fit=crop&w=1200&q=85',
+    image: DEFAULT_DESTINATION_IMAGE,
     popularHighlights: ['White Travertine Terraces', 'Hierapolis Ancient Necropolis', 'Cleopatra Antique Thermal Pool', 'Roman Amphitheatre'],
     popularHighlightsTr: ['Pamukkale Traverten Havuzları', 'Hierapolis Antik Kenti & Nekropol', 'Kleopatra Antik Termal Havuzu', 'Roma Tiyatrosu'],
     aliases: [
@@ -52,7 +70,7 @@ export const PREDEFINED_TURKEY_REGIONS: PredefinedRegionMeta[] = [
     nameTr: 'Efes',
     tagline: 'Greco-Roman Metropolis, Grand Library of Celsus & House of Virgin Mary',
     taglineTr: 'Antik Roma İhtişamı, Görkemli Celsus Kütüphanesi ve Meryem Ana Evi',
-    image: 'https://images.unsplash.com/photo-1635166045025-b078ac986d77?auto=format&fit=crop&w=1200&q=85',
+    image: DEFAULT_DESTINATION_IMAGE,
     popularHighlights: ['Library of Celsus', 'House of Virgin Mary', 'Temple of Artemis', 'Great Ancient Theatre'],
     popularHighlightsTr: ['Celsus Kütüphanesi', 'Meryem Ana Evi', 'Artemis Tapınağı', 'Büyük Antik Tiyatro'],
     aliases: [
@@ -65,7 +83,7 @@ export const PREDEFINED_TURKEY_REGIONS: PredefinedRegionMeta[] = [
     nameTr: 'Antalya',
     tagline: 'Historic Kaleiçi Old Town, Aspendos Roman Theatre & Azure Waterfalls',
     taglineTr: 'Tarihi Kaleiçi Sokakları, Aspendos Roma Tiyatrosu ve Düden Şelaleleri',
-    image: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&w=1200&q=85',
+    image: DEFAULT_DESTINATION_IMAGE,
     popularHighlights: ['Historic Kaleiçi Old Town', 'Aspendos Roman Theatre', 'Düden Waterfalls', 'Perge Ancient City Ruins'],
     popularHighlightsTr: ['Tarihi Kaleiçi', 'Aspendos Roma Tiyatrosu', 'Düden Şelaleleri', 'Perge Antik Kenti'],
     aliases: [
@@ -78,7 +96,7 @@ export const PREDEFINED_TURKEY_REGIONS: PredefinedRegionMeta[] = [
     nameTr: 'İstanbul',
     tagline: 'Imperial Capital of Two Continents: Palaces & Bosphorus Yacht Cruises',
     taglineTr: 'İki Kıtanın Buluştuğu Kadim Başkent, Saraylar ve Boğaz Turları',
-    image: 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&w=1200&q=85',
+    image: DEFAULT_DESTINATION_IMAGE,
     popularHighlights: ['Hagia Sophia Grand Mosque', 'Topkapi Imperial Palace', 'Private Bosphorus Sunset Yacht Cruise', 'Historic Grand Bazaar'],
     popularHighlightsTr: ['Ayasofya-i Kebir Camii', 'Topkapı Sarayı', 'Özel Boğaz Yat Turu', 'Tarihi Kapalıçarşı'],
     aliases: [
@@ -92,7 +110,7 @@ export const PREDEFINED_TURKEY_REGIONS: PredefinedRegionMeta[] = [
     nameTr: 'Çanakkale & Gelibolu',
     tagline: 'Historic 1915 Battlefields, Anzac Cove & Dardanelles Strait',
     taglineTr: '1915 Çanakkale Siperleri, Anzak Koyu ve Boğaz Geçişi',
-    image: 'https://images.unsplash.com/photo-1572025442646-866d16c84a54?auto=format&fit=crop&w=1200&q=85',
+    image: DEFAULT_DESTINATION_IMAGE,
     popularHighlights: ['ANZAC Cove Memorial', 'Chunuk Bair', 'Lone Pine Cemetery', 'Dardanelles Strait Ferry Crossing'],
     popularHighlightsTr: ['Anzak Koyu Anıtı', 'Conkbayırı', 'Lone Pine Şehitliği', 'Çanakkale Boğazı'],
     aliases: [
@@ -105,7 +123,7 @@ export const PREDEFINED_TURKEY_REGIONS: PredefinedRegionMeta[] = [
     nameTr: 'Truva',
     tagline: 'Homeric Epics & The Legendary Trojan Wooden Horse',
     taglineTr: 'Homeros Destanları ve Efsanevi Truva Tahta Atı',
-    image: 'https://images.unsplash.com/photo-1572025442646-866d16c84a54?auto=format&fit=crop&w=1200&q=85',
+    image: DEFAULT_DESTINATION_IMAGE,
     popularHighlights: ['Ancient City of Troy', 'Legendary Wooden Horse', 'Museum of Troy', 'Trojan Excavation Layers'],
     popularHighlightsTr: ['Truva Antik Kenti', 'Efsanevi Tahta At', 'Truva Müzesi', 'Truva Kazı Katmanları'],
     aliases: ['troy', 'truva', 'troia', 'wooden horse', 'tahta at'],
@@ -116,7 +134,7 @@ export const PREDEFINED_TURKEY_REGIONS: PredefinedRegionMeta[] = [
     nameTr: 'Fethiye',
     tagline: 'Ölüdeniz Blue Lagoon, Butterfly Valley & Babadag Paragliding',
     taglineTr: 'Ölüdeniz Mavi Lagün, Kelebekler Vadisi ve Babadağ Yamaç Paraşütü',
-    image: 'https://images.unsplash.com/photo-1507525428034-b723cf961d3e?auto=format&fit=crop&w=1200&q=85',
+    image: DEFAULT_DESTINATION_IMAGE,
     popularHighlights: ['Ölüdeniz Blue Lagoon Paragliding', 'Butterfly Valley Boat Excursion', 'Kayaköy Ghost Village', 'Saklıkent Canyon Walk'],
     popularHighlightsTr: ['Ölüdeniz Yamaç Paraşütü', 'Kelebekler Vadisi Tekne Turu', 'Kayaköy Tarihi Rum Köyü', 'Saklıkent Kanyonu'],
     aliases: ['fethiye', 'oludeniz', 'ölüdeniz', 'saklikent', 'saklıkent', 'butterfly valley', 'kelebekler vadisi', 'kayakoy', 'kayaköy'],
@@ -127,7 +145,7 @@ export const PREDEFINED_TURKEY_REGIONS: PredefinedRegionMeta[] = [
     nameTr: 'Bodrum',
     tagline: 'St. Peter Castle, White Aegean Stone Villas & Blue Cruises',
     taglineTr: 'Tarihi Bodrum Kalesi, Beyaz Ege Evleri ve Mavi Yolculuk',
-    image: 'https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?auto=format&fit=crop&w=1200&q=85',
+    image: DEFAULT_DESTINATION_IMAGE,
     popularHighlights: ['Castle of St. Peter & Underwater Museum', 'Halicarnassus Mausoleum', 'Private Gulet Blue Cruise', 'Yalıkavak Marina'],
     popularHighlightsTr: ['Bodrum Kalesi & Sualtı Müzesi', 'Halikarnas Mozolesi', 'Mavi Yolculuk Gulet Turu', 'Yalıkavak Marina'],
     aliases: ['bodrum', 'halicarnassus', 'halikarnas', 'yalikavak', 'yalıkavak'],
@@ -138,7 +156,7 @@ export const PREDEFINED_TURKEY_REGIONS: PredefinedRegionMeta[] = [
     nameTr: 'Kaş',
     tagline: 'Sunken City of Kekova, Kaputaş Beach & Lycian Rock Tombs',
     taglineTr: 'Kekova Batık Şehir, Kaputaş Kanyon Plajı ve Likya Kaya Mezarları',
-    image: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&w=1200&q=85',
+    image: DEFAULT_DESTINATION_IMAGE,
     popularHighlights: ['Kekova Sunken City Island Boat Tour', 'Kaputaş Canyon Beach', 'Antiphellos Ancient Amphitheatre', 'Meis Island Ferry'],
     popularHighlightsTr: ['Kekova Batık Kent Tekne Turu', 'Kaputaş Kanyon Plajı', 'Antiphellos Antik Tiyatrosu', 'Kaş Tarihi Çarşısı'],
     aliases: ['kas', 'kaş', 'kalkan', 'kekova', 'kaputas', 'kaputaş', 'simena', 'antiphellos'],
@@ -149,7 +167,7 @@ export const PREDEFINED_TURKEY_REGIONS: PredefinedRegionMeta[] = [
     nameTr: 'İzmir',
     tagline: 'Historic Clock Tower, Kemeraltı Bazaar & Kordon Promenade',
     taglineTr: 'Tarihi Saat Kulesi, Kemeraltı Çarşısı ve Kordon Sahili',
-    image: 'https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?auto=format&fit=crop&w=1200&q=85',
+    image: DEFAULT_DESTINATION_IMAGE,
     popularHighlights: ['Konak Clock Tower', 'Historic Kemeraltı Bazaar', 'Kordon Seaside Promenade', 'Agora of Smyrna'],
     popularHighlightsTr: ['Tarihi Saat Kulesi', 'Kemeraltı Çarşısı', 'Kordon Sahil Boyu', 'Smyrna Agorası'],
     aliases: ['izmir', 'kemeralti', 'kemeraltı', 'kordon boyu', 'konak meydanı'],
@@ -160,7 +178,7 @@ export const PREDEFINED_TURKEY_REGIONS: PredefinedRegionMeta[] = [
     nameTr: 'Çeşme',
     tagline: 'Alaçatı Stone Streets, Windmills & Aegean Beaches',
     taglineTr: 'Alaçatı Taş Sokakları, Tarihi Değirmenler ve Ege Plajları',
-    image: 'https://images.unsplash.com/photo-1589182373726-e4f658ab50f0?auto=format&fit=crop&w=1200&q=85',
+    image: DEFAULT_DESTINATION_IMAGE,
     popularHighlights: ['Alaçatı Windmills & Cobbled Streets', 'Çeşme Marina & Ottoman Castle', 'Ilıca Thermal Beach', 'Ayayorgi Bay'],
     popularHighlightsTr: ['Alaçatı Değirmenleri ve Taş Evleri', 'Çeşme Kalesi & Marina', 'Ilıca Termal Plajı', 'Ayayorgi Koyu'],
     aliases: ['cesme', 'çeşme', 'alacati', 'alaçatı', 'cesme kalesi', 'çeşme kalesi'],
@@ -171,7 +189,7 @@ export const PREDEFINED_TURKEY_REGIONS: PredefinedRegionMeta[] = [
     nameTr: 'Konya',
     tagline: 'Mevlana Rumi Shrine, Whirling Dervishes & Seljuk Heritage',
     taglineTr: 'Mevlana Celaleddin Rumi, Semazen Ayinleri ve Selçuklu Mirası',
-    image: 'https://images.unsplash.com/photo-1542051841857-5f90071e7989?auto=format&fit=crop&w=1200&q=85',
+    image: DEFAULT_DESTINATION_IMAGE,
     popularHighlights: ['Mevlana Rumi Tomb & Museum', 'Whirling Dervishes Ceremony', 'Sultanhani Silk Road Caravanserai', 'Alaeddin Mosque'],
     popularHighlightsTr: ['Mevlana Müzesi ve Türbesi', 'Geleneksel Semazen Gösterisi', 'Sultanhanı Kervansarayı', 'Alâeddin Camii'],
     aliases: ['konya', 'mevlana', 'rumi', 'catalhoyuk', 'çatalhöyük', 'sultanhani', 'sultanhanı', 'semazen'],
@@ -182,7 +200,7 @@ export const PREDEFINED_TURKEY_REGIONS: PredefinedRegionMeta[] = [
     nameTr: 'Trabzon',
     tagline: 'Cliffside Sümela Monastery, Uzungöl Alpine Lake & Cloud Valleys',
     taglineTr: 'Sarp Kayalıklarda Sümela Manastırı, Uzungöl ve Yaylalar',
-    image: 'https://images.unsplash.com/photo-1506744038136-46273834b3fb?auto=format&fit=crop&w=1200&q=85',
+    image: DEFAULT_DESTINATION_IMAGE,
     popularHighlights: ['Sümela Rock-Cut Monastery', 'Uzungöl Alpine Nature Park', 'Ayder Highland', 'Fırtına River Stone Bridges'],
     popularHighlightsTr: ['Sümela Kaya Manastırı', 'Uzungöl Tabiat Parkı', 'Ayder Yaylası', 'Fırtına Deresi Köprüleri'],
     aliases: ['trabzon', 'sumela', 'sümela', 'uzungol', 'uzungöl', 'ayder', 'rize'],
@@ -193,7 +211,7 @@ export const PREDEFINED_TURKEY_REGIONS: PredefinedRegionMeta[] = [
     nameTr: 'Mardin',
     tagline: 'Stone Mansions, Syriac Monasteries & Sweeping Mesopotamian Plains',
     taglineTr: 'Tarihi Taş Konaklar, Süryani Manastırları ve Mezopotamya Ovası',
-    image: 'https://images.unsplash.com/photo-1527838832700-5059252407fa?auto=format&fit=crop&w=1200&q=85',
+    image: DEFAULT_DESTINATION_IMAGE,
     popularHighlights: ['Deyrulzafaran Saffron Monastery', 'Dara Roman Ruins', 'Midyat Old Town & Filigree Bazaars', 'Mor Gabriel Monastery'],
     popularHighlightsTr: ['Deyrulzafaran Süryani Manastırı', 'Dara Antik Kenti', 'Midyat Tarihi Taş Evleri', 'Mor Gabriel Manastırı'],
     aliases: ['mardin', 'midyat', 'mezopotamya', 'mesopotamia', 'deyrulzafaran', 'dara antik'],
@@ -204,7 +222,7 @@ export const PREDEFINED_TURKEY_REGIONS: PredefinedRegionMeta[] = [
     nameTr: 'Şanlıurfa',
     tagline: 'Göbeklitepe Megaliths, Sacred Pool of Abraham & Harran Beehive Houses',
     taglineTr: 'Göbeklitepe 12.000 Yıllık Tapınaklar, Balıklıgöl ve Harran Evleri',
-    image: 'https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?auto=format&fit=crop&w=1200&q=85',
+    image: DEFAULT_DESTINATION_IMAGE,
     popularHighlights: ['Göbeklitepe UNESCO Megalithic Site', 'Balıklıgöl Sacred Pool of Abraham', 'Harran Mudbrick Beehive Houses', 'Urfa Archaeology Museum'],
     popularHighlightsTr: ['Göbeklitepe Arkeolojik Alanı', 'Tarihi Balıklıgöl', 'Harran Kümbet Evleri', 'Şanlıurfa Mozaik Müzesi'],
     aliases: ['sanliurfa', 'şanlıurfa', 'gobeklitepe', 'göbeklitepe', 'karahantepe', 'harran', 'balikligol', 'balıklıgöl', 'urfa'],
@@ -215,7 +233,7 @@ export const PREDEFINED_TURKEY_REGIONS: PredefinedRegionMeta[] = [
     nameTr: 'Bursa',
     tagline: 'First Ottoman Capital, Green Mosque & Silk Caravanserais',
     taglineTr: 'İlk Osmanlı Başkenti, Yeşil Türbe, İpek Hanları ve Uludağ',
-    image: 'https://images.unsplash.com/photo-1544644181-1484b3fdfc62?auto=format&fit=crop&w=1200&q=85',
+    image: DEFAULT_DESTINATION_IMAGE,
     popularHighlights: ['Grand Mosque (Ulu Cami)', 'Historic Koza Han Silk Bazaar', 'UNESCO Cumalıkızık Village', 'Uludağ Cable Car'],
     popularHighlightsTr: ['Ulu Cami', 'Tarihi Koza Han', 'UNESCO Cumalıkızık Köyü', 'Uludağ Teleferik'],
     aliases: ['bursa', 'cumalikizik', 'cumalıkızık', 'koza han', 'uludag', 'uludağ'],
@@ -226,7 +244,7 @@ export const PREDEFINED_TURKEY_REGIONS: PredefinedRegionMeta[] = [
     nameTr: 'Ankara',
     tagline: 'Anıtkabir Atatürk Mausoleum & Museum of Anatolian Civilizations',
     taglineTr: 'Anıtkabir ve Anadolu Medeniyetleri Müzesi',
-    image: 'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&w=1200&q=85',
+    image: DEFAULT_DESTINATION_IMAGE,
     popularHighlights: ['Anıtkabir Atatürk Mausoleum', 'Museum of Anatolian Civilizations', 'Ankara Citadel', 'Hacı Bayram Veli Mosque'],
     popularHighlightsTr: ['Anıtkabir Atatürk Mozolesi', 'Anadolu Medeniyetleri Müzesi', 'Ankara Kalesi', 'Hacı Bayram Veli Camii'],
     aliases: ['ankara', 'anitkabir', 'anıtkabir'],
@@ -571,6 +589,7 @@ export function syncDestinationsWithAllTours(
             id: region.id,
             name: region.name,
             nameTr: region.nameTr,
+            image: normalizeImageUrl(existing.image),
             showOnHome: existing.showOnHome !== false,
           });
         } else {
@@ -580,7 +599,7 @@ export function syncDestinationsWithAllTours(
             nameTr: region.nameTr,
             tagline: region.tagline,
             taglineTr: region.taglineTr,
-            image: region.image,
+            image: normalizeImageUrl(region.image),
             toursCount: 1,
             popularHighlights: region.popularHighlights,
             popularHighlightsTr: region.popularHighlightsTr,

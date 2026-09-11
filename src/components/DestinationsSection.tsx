@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { ArrowRight, MapPin, Sparkles, ChevronLeft, ChevronRight } from 'lucide-react';
 import { Language, DestinationInfo } from '../types';
 import { DESTINATIONS_DATA } from '../data/toursData';
+import { DEFAULT_DESTINATION_IMAGE, normalizeImageUrl } from '../utils/destinationDetector';
 
 interface DestinationsSectionProps {
   language: Language;
@@ -123,9 +124,12 @@ export const DestinationsSection: React.FC<DestinationsSectionProps> = ({
               >
                 {/* Background Image - Story Portrait Format */}
                 <img
-                  src={dest.image}
+                  src={normalizeImageUrl(dest.image)}
                   alt={name}
                   loading="lazy"
+                  onError={(e) => {
+                    (e.currentTarget as HTMLImageElement).src = DEFAULT_DESTINATION_IMAGE;
+                  }}
                   className="w-full h-full object-cover transform group-hover:scale-105 transition-transform duration-700 ease-out"
                 />
 

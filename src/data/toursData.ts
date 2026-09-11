@@ -1,5 +1,5 @@
 import { TourPackage, DestinationInfo } from '../types';
-import { sanitizeTourDestinations, syncDestinationsWithAllTours } from '../utils/destinationDetector';
+import { sanitizeTourDestinations, syncDestinationsWithAllTours, normalizeImageUrl, DEFAULT_DESTINATION_IMAGE } from '../utils/destinationDetector';
 
 const STORAGE_KEY = 'voyra_admin_tours_v1';
 
@@ -171,10 +171,7 @@ export let DESTINATIONS_DATA: DestinationInfo[] = (() => {
           .map((d: DestinationInfo) => ({
             ...d,
             showOnHome: d.showOnHome !== false,
-            image:
-              !d.image?.trim() || d.image.includes('1570939274717-7eda259b50ed')
-                ? 'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg'
-                : d.image,
+            image: normalizeImageUrl(d.image),
           }))
       : [];
 

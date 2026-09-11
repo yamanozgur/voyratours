@@ -17,6 +17,8 @@ import {
   syncDestinationsWithAllTours,
   detectRegionsFromTour,
   sanitizeTourDestinations,
+  DEFAULT_DESTINATION_IMAGE,
+  normalizeImageUrl,
 } from '../utils/destinationDetector';
 import {
   Plus,
@@ -455,7 +457,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
       nameTr: '',
       tagline: '',
       taglineTr: '',
-      image: 'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg',
+      image: DEFAULT_DESTINATION_IMAGE,
       toursCount: 1,
       popularHighlights: ['Top Attraction 1', 'Top Attraction 2'],
       popularHighlightsTr: ['Gezilecek Yer 1', 'Gezilecek Yer 2'],
@@ -525,10 +527,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
       tagline: editingDestination.tagline.trim(),
       taglineTr: editingDestination.taglineTr.trim(),
       showOnHome: editingDestination.showOnHome !== false,
-      image:
-        !editingDestination.image?.trim() || editingDestination.image.includes('1570939274717-7eda259b50ed')
-          ? 'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg'
-          : editingDestination.image.trim(),
+      image: normalizeImageUrl(editingDestination.image),
       popularHighlights: highlightsEn.length > 0 ? highlightsEn : ['Tour Highlight'],
       popularHighlightsTr: highlightsTr.length > 0 ? highlightsTr : ['Tur Noktası'],
     };
@@ -906,9 +905,12 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
                 {/* Photo Preview */}
                 <div className="relative h-48 w-full bg-slate-100 overflow-hidden">
                   <img
-                    src={dest.image}
+                    src={normalizeImageUrl(dest.image)}
                     alt={dest.name}
                     className="w-full h-full object-cover group-hover:scale-105 transition duration-500"
+                    onError={(e) => {
+                      (e.currentTarget as HTMLImageElement).src = DEFAULT_DESTINATION_IMAGE;
+                    }}
                   />
                   <div className="absolute inset-0 bg-gradient-to-t from-slate-950/80 via-transparent to-transparent" />
                   
@@ -1923,15 +1925,27 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
 
               {/* Image upload & preview */}
               <div className="space-y-2 bg-slate-50 p-4 rounded-2xl border border-slate-200">
-                <label className="block font-bold text-slate-700 uppercase tracking-wider text-[11px]">
-                  Destinasyon Görseli
-                </label>
+                <div className="flex items-center justify-between mb-1.5">
+                  <label className="block font-bold text-slate-700 uppercase tracking-wider text-[11px]">
+                    Destinasyon Görseli
+                  </label>
+                  <button
+                    type="button"
+                    onClick={() => setEditingDestination({ ...editingDestination, image: DEFAULT_DESTINATION_IMAGE })}
+                    className="text-[11px] font-semibold text-[#009999] hover:underline cursor-pointer"
+                  >
+                    Varsayılan Görseli Yükle (main3.jpg)
+                  </button>
+                </div>
                 {editingDestination.image && (
                   <div className="relative h-44 w-full rounded-xl overflow-hidden border border-slate-200 bg-slate-200">
                     <img
-                      src={editingDestination.image}
+                      src={normalizeImageUrl(editingDestination.image)}
                       alt="Önizleme"
                       className="w-full h-full object-cover"
+                      onError={(e) => {
+                        (e.currentTarget as HTMLImageElement).src = DEFAULT_DESTINATION_IMAGE;
+                      }}
                     />
                   </div>
                 )}
@@ -1953,6 +1967,9 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
                     />
                   </label>
                 </div>
+                <p className="text-[10px] text-slate-400 mt-1">
+                  Varsayılan görsel: Voyra Tours ana görseli (<code className="text-slate-600">main3.jpg</code>).
+                </p>
               </div>
 
               {/* Highlights EN & TR */}
