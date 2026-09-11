@@ -75,8 +75,8 @@ export function parseVoyraTourDocument(rawText: string, fileName?: string): Tour
     const dayLines = lines.slice(current.lineIndex + 1, endIdx).filter(l => !isAgentLine(l));
     
     // Filter out flight/hotel markers into separate highlights or overnight
-    let overnight = 'Selected Cave Hotel';
-    let overnightTr = 'Seçkin Mağara Oteli';
+    let overnight = 'Selected Boutique Hotel';
+    let overnightTr = 'Seçkin Butik Otel';
     const cleanDescLines: string[] = [];
     const dayHighlights: string[] = [];
 
@@ -176,13 +176,73 @@ export function parseVoyraTourDocument(rawText: string, fileName?: string): Tour
     }
   }
 
+  // Destination & Multi-Region detection from title, itinerary, and raw text
+  const detectedRegions = detectRegionsFromTour({
+    title: tourTitle,
+    destination: tourTitle,
+    overview: rawText.slice(0, 3000),
+    itinerary,
+  });
+
+  let destination = 'Turkey';
+  let destinationTr = 'Türkiye';
+  let region: TourPackage['region'] = 'multi-region';
+
+  if (detectedRegions.length > 0) {
+    destination = detectedRegions.map((r) => r.name).join(', ');
+    destinationTr = detectedRegions.map((r) => r.nameTr).join(', ');
+    region = (detectedRegions.length > 1 ? 'multi-region' : detectedRegions[0].id) as any;
+  } else {
+    const lowerAll = (tourTitle + ' ' + rawText).toLowerCase();
+    if (lowerAll.includes('pamukkale') || lowerAll.includes('ephesus') || lowerAll.includes('efes')) {
+      destination = 'Ephesus & Pamukkale';
+      destinationTr = 'Efes & Pamukkale';
+      region = 'aegean-ephesus';
+    } else if (lowerAll.includes('cappadocia') || lowerAll.includes('kapadokya')) {
+      destination = 'Cappadocia';
+      destinationTr = 'Kapadokya';
+      region = 'cappadocia';
+    } else if (lowerAll.includes('istanbul')) {
+      destination = 'Istanbul';
+      destinationTr = 'İstanbul';
+      region = 'istanbul';
+    } else if (lowerAll.includes('antalya') || lowerAll.includes('kaleiçi') || lowerAll.includes('kas') || lowerAll.includes('kaş')) {
+      destination = 'Antalya & Mediterranean';
+      destinationTr = 'Antalya & Akdeniz';
+      region = 'mediterranean';
+    } else if (lowerAll.includes('trabzon') || lowerAll.includes('karadeniz') || lowerAll.includes('rize') || lowerAll.includes('uzungöl')) {
+      destination = 'Black Sea & Trabzon';
+      destinationTr = 'Karadeniz & Trabzon';
+      region = 'black-sea';
+    }
+  }
+
   // Find Selected Accommodation
-  let hotelType = 'Boutique Cave Hotel (Hera Cave Suites or similar)';
-  let hotelTypeTr = 'Butik Mağara Oteli (Hera Cave Suites veya benzeri)';
-  const hotelIdx = lines.findIndex(l => l.toLowerCase().includes('hotel options:') || l.toLowerCase().includes('selected accommodation'));
+  let hotelType = '';
+  let hotelTypeTr = '';
+  const hotelIdx = lines.findIndex(l => l.toLowerCase().includes('hotel options:') || l.toLowerCase().includes('selected accommodation') || l.toLowerCase().includes('otel seçenekleri'));
   if (hotelIdx !== -1 && lines[hotelIdx + 1]) {
     hotelType = lines[hotelIdx].includes(':') ? lines[hotelIdx].split(':')[1].trim() : lines[hotelIdx + 1];
     hotelTypeTr = hotelType;
+  }
+
+  if (!hotelType) {
+    if (region === 'cappadocia') {
+      hotelType = 'Boutique Cave Hotel (Hera Cave Suites or similar)';
+      hotelTypeTr = 'Butik Mağara Oteli (Hera Cave Suites veya benzeri)';
+    } else if (region === 'aegean-ephesus') {
+      hotelType = 'Selected Thermal & Boutique Aegean Hotel (4★/5★)';
+      hotelTypeTr = 'Seçkin Termal & Butik Ege Oteli (4★/5★)';
+    } else if (region === 'istanbul') {
+      hotelType = 'Historic Peninsula Boutique Hotel (4★/5★)';
+      hotelTypeTr = 'Tarihi Yarımada Butik Oteli (4★/5★)';
+    } else if (region === 'mediterranean') {
+      hotelType = 'Seaside Boutique Hotel or Resort (4★/5★)';
+      hotelTypeTr = 'Sahil Butik Oteli veya Resort (4★/5★)';
+    } else {
+      hotelType = 'Handpicked Premium Boutique Hotel';
+      hotelTypeTr = 'Özenle Seçilmiş Butik & Konfor Oteli';
+    }
   }
 
   // 5. EXTRACT INCLUDED & EXCLUDED SERVICES
@@ -193,17 +253,17 @@ export function parseVoyraTourDocument(rawText: string, fileName?: string): Tour
 
   lines.forEach(l => {
     const lower = l.toLowerCase();
-    if (lower.includes('included services') || lower.includes('this package includes')) {
+    if (lower.includes('included services') || lower.includes('this package includes') || lower.includes('fiyata dahil')) {
       inIncluded = true;
       inExcluded = false;
       return;
     }
-    if (lower.includes('excluded services') || lower.includes('not included in the tour price')) {
+    if (lower.includes('excluded services') || lower.includes('not included in the tour price') || lower.includes('dahil olmayan')) {
       inExcluded = true;
       inIncluded = false;
       return;
     }
-    if (lower.includes('travel recommendations') || lower.includes('optional experiences')) {
+    if (lower.includes('travel recommendations') || lower.includes('optional experiences') || lower.includes('seyahat tavsiye') || lower.includes('opsiyonel')) {
       inIncluded = false;
       inExcluded = false;
       return;
@@ -225,19 +285,18 @@ export function parseVoyraTourDocument(rawText: string, fileName?: string): Tour
   // Default included / excluded if document formatting was unconventional
   if (included.length === 0) {
     included.push(
-      'Round-trip domestic flights as specified in the itinerary',
+      'Round-trip domestic flights / transfers as specified in itinerary',
       'Accommodation with daily buffet breakfast',
       'All airport and intercity transfers mentioned in the program',
-      'Guided Northern and Southern Cappadocia Tours in modern AC vehicle',
+      `Guided sightseeing tours in modern air-conditioned vehicle`,
       'Entrance fees to all scheduled attractions & museums',
-      'Professional English-speaking licensed local tour guide'
+      'Professional licensed local tour guide'
     );
   }
   if (excluded.length === 0) {
     excluded.push(
-      'Drinks during lunches',
+      'Drinks during lunches and dinners',
       'Optional activities and personal excursions',
-      'Hot Air Balloon Flight (optional add-on)',
       'Travel and medical insurance',
       'Personal expenses and tips for guides/drivers'
     );
@@ -248,11 +307,20 @@ export function parseVoyraTourDocument(rawText: string, fileName?: string): Tour
   let inRecommendations = false;
   lines.forEach(l => {
     const lower = l.toLowerCase();
-    if (lower.includes('travel recommendations') || lower.includes('for your comfort during sightseeing')) {
+    if (
+      lower.includes('travel recommendations') ||
+      lower.includes('for your comfort during sightseeing') ||
+      lower.includes('seyahat tavsiyeleri') ||
+      lower.includes('önemli tavsiyeler')
+    ) {
       inRecommendations = true;
       return;
     }
     if (inRecommendations) {
+      if (lower.includes('included services') || lower.includes('excluded services') || lower.includes('optional')) {
+        inRecommendations = false;
+        return;
+      }
       const clean = l.replace(/^[●\*\-•►\d\.\)]\s*/, '').trim();
       if (clean.length > 4) {
         travelTips.push(clean);
@@ -260,17 +328,31 @@ export function parseVoyraTourDocument(rawText: string, fileName?: string): Tour
     }
   });
 
-  // Optional Experiences (Hot Air Balloon, ATV Safari, etc.)
+  // Optional Experiences (Hot Air Balloon, ATV, Boat tour, etc.)
   const optionalExp: string[] = [];
   let inOptional = false;
   lines.forEach(l => {
     const lower = l.toLowerCase();
-    if (lower.includes('optional experiences in cappadocia') || lower.includes('enhance your cappadocia holiday')) {
+    if (
+      lower.includes('optional experiences') ||
+      lower.includes('optional activities') ||
+      lower.includes('enhance your') ||
+      lower.includes('opsiyonel deneyimler') ||
+      lower.includes('opsiyonel aktiviteler') ||
+      lower.includes('isteğe bağlı')
+    ) {
       inOptional = true;
       return;
     }
     if (inOptional) {
-      if (lower.includes('included services')) {
+      if (
+        lower.includes('included services') ||
+        lower.includes('dahil olan') ||
+        lower.includes('excluded services') ||
+        lower.includes('dahil olmayan') ||
+        lower.includes('travel recommendations') ||
+        lower.includes('seyahat tavsiye')
+      ) {
         inOptional = false;
         return;
       }
@@ -281,66 +363,198 @@ export function parseVoyraTourDocument(rawText: string, fileName?: string): Tour
     }
   });
 
-  // 7. GENERATE COMPREHENSIVE OVERVIEW
-  const overview = `Experience the mystical landscapes of Cappadocia on this comprehensive journey from Istanbul. Discover towering fairy chimneys, explore multi-level underground cities, and walk through vibrant valleys steeped in Byzantine history. Highlights include the UNESCO-listed Göreme Open-Air Museum, Uçhisar Castle panoramic viewpoints, ancient pottery craftsmanship in Avanos, and boutique cave hotel accommodations.${
-    optionalExp.length > 0 ? `\n\nOptional Experiences: ${optionalExp.join(', ')}.` : ''
-  }${
-    travelTips.length > 0 ? `\n\nTravel Tips: ${travelTips.slice(0, 4).join(' • ')}.` : ''
-  }`;
+  // 7. SCAN DOCUMENT FOR EXPLICIT OVERVIEW OR INTRODUCTORY NARRATIVE
+  const explicitOverviewLines: string[] = [];
+  let inOverviewSection = false;
 
-  const overviewTr = `İstanbul çıkışlı bu kapsamlı program ile Kapadokya'nın masalsı vadilerini, peri bacalarını ve binlerce yıllık yeraltı şehirlerini keşfedin. UNESCO Dünya Mirası Göreme Açık Hava Müzesi, Uçhisar Kalesi manzaraları, Avanos çömlek atölyeleri ve seçkin mağara oteli konaklaması dahil dolu dolu bir seyahat.${
-    optionalExp.length > 0 ? `\n\nOpsiyonel Deneyimler: ${optionalExp.join(', ')}.` : ''
-  }`;
+  const isOverviewHeader = (l: string) => {
+    const clean = l.replace(/^[#*\-•►\d\.\)\:\s]+/, '').trim().toLowerCase();
+    return (
+      clean === 'tour overview' ||
+      clean === 'overview' ||
+      clean === 'general overview' ||
+      clean === 'tour summary' ||
+      clean === 'about the tour' ||
+      clean === 'about this tour' ||
+      clean === 'program overview' ||
+      clean === 'genel bakış' ||
+      clean === 'tur genel bakışı' ||
+      clean === 'tur özeti' ||
+      clean === 'program özeti' ||
+      clean === 'tur hakkında' ||
+      clean === 'tur açıklaması' ||
+      clean === 'tur tanıtımı' ||
+      clean === 'özet'
+    );
+  };
 
-  // 8. 5-6 TOUR HIGHLIGHTS
-  const highlights = [
-    'UNESCO World Heritage Göreme Open-Air Museum & rock-cut churches',
-    'Kaymaklı Underground City exploration with licensed historian guide',
-    'Panoramic sunrise views & optional Hot Air Balloon flight',
-    'Scenic hikes through Red Valley, Love Valley & Paşabağ Fairy Chimneys',
-    'Traditional pottery demonstration in riverside Avanos town',
-    'Authentic Cave Suite accommodation with daily breakfast'
-  ];
+  const isStopOverviewHeader = (l: string) => {
+    const lower = l.toLowerCase();
+    return (
+      dayRegex.test(l) ||
+      lower.includes('included services') ||
+      lower.includes('excluded services') ||
+      lower.includes('dahil olan') ||
+      lower.includes('dahil olmayan') ||
+      lower.includes('travel recommendations') ||
+      lower.includes('seyahat tavsiye') ||
+      lower.includes('important information') ||
+      lower.includes('önemli bilgi') ||
+      lower.includes('optional experiences') ||
+      lower.includes('opsiyonel deneyim') ||
+      lower.includes('per person') ||
+      lower.includes('kişi başı') ||
+      lower.includes('hotel options') ||
+      lower.includes('fiyat') ||
+      lower.includes('price')
+    );
+  };
 
-  const highlightsTr = [
-    'UNESCO Göreme Açık Hava Müzesi ve tarihi kaya kiliseleri',
-    'Kaymaklı Yeraltı Şehri uzman rehberli keşfi',
-    'Panoramik vadi manzaraları ve opsiyonel Sıcak Hava Balon Turu',
-    'Kızılçukur Vadisi, Aşk Vadisi ve Paşabağ Peri Bacaları yürüyüşü',
-    'Avanos tarihi çömlek atölyesi deneyimi',
-    'Otantik Mağara Otel konaklaması ve açık büfe kahvaltı'
-  ];
-
-  // Destination & Multi-Region detection
-  const detectedRegions = detectRegionsFromTour({
-    title: tourTitle,
-    destination: tourTitle,
-    overview,
-    itinerary,
+  lines.forEach((l) => {
+    if (isOverviewHeader(l)) {
+      inOverviewSection = true;
+      return;
+    }
+    if (inOverviewSection) {
+      if (isStopOverviewHeader(l) || isAgentLine(l)) {
+        inOverviewSection = false;
+        return;
+      }
+      const clean = l.replace(/^[#*\-•►\s]+/, '').trim();
+      if (clean.length > 15) {
+        explicitOverviewLines.push(clean);
+      }
+    }
   });
 
-  let destination = 'Cappadocia';
-  let destinationTr = 'Kapadokya';
-  let region: TourPackage['region'] = 'cappadocia';
-
-  if (detectedRegions.length > 0) {
-    destination = detectedRegions.map((r) => r.name).join(', ');
-    destinationTr = detectedRegions.map((r) => r.nameTr).join(', ');
-    region = (detectedRegions.length > 1 ? 'multi-region' : detectedRegions[0].id) as any;
-  } else {
-    const lowerTitle = tourTitle.toLowerCase();
-    if (lowerTitle.includes('pamukkale') || lowerTitle.includes('ephesus') || lowerTitle.includes('efes')) {
-      destination = 'Ephesus & Pamukkale';
-      destinationTr = 'Efes & Pamukkale';
-      region = 'aegean-ephesus';
-    } else if (lowerTitle.includes('istanbul')) {
-      destination = 'Istanbul & Cappadocia';
-      destinationTr = 'İstanbul & Kapadokya';
+  // If no explicit heading, check for narrative intro paragraphs before Day 1
+  if (explicitOverviewLines.length === 0 && dayIndices.length > 0) {
+    const firstDayLine = dayIndices[0].lineIndex;
+    for (let i = 0; i < firstDayLine; i++) {
+      const l = lines[i];
+      if (
+        !isAgentLine(l) &&
+        l !== tourTitle &&
+        !l.match(/€|\$|per person|kişi başı|hotel|otel/i) &&
+        !l.match(/^(?:tour|itinerary|program|travel|voyra)\b/i) &&
+        l.length > 35 &&
+        !l.includes('...')
+      ) {
+        explicitOverviewLines.push(l);
+      }
     }
   }
 
+  const documentExtractedOverview = explicitOverviewLines.join('\n\n').trim();
+
+  // Language check of document
+  const isTurkishDocument = (() => {
+    const trSample = rawText.toLowerCase();
+    const trLetters = (trSample.match(/[çğıöşü]/g) || []).length;
+    const trWords = (trSample.match(/\b(ve|ile|gün|tur|fiyat|otel|dahil|gezisi|turu|saat|havalimanı|programı)\b/g) || []).length;
+    return trLetters > 8 || trWords > 4;
+  })();
+
   const durationDays = itinerary.length > 0 ? itinerary.length : 2;
   const durationNights = Math.max(1, durationDays - 1);
+
+  // Day-by-day summaries from actual itinerary
+  const daySummaryEn = itinerary.map((d) => `Day ${d.day}: ${d.title}`).join('; ');
+  const daySummaryTr = itinerary
+    .map((d) => `${d.day}. Gün: ${d.titleTr.replace(/^\d+\.\s*Gün(?:\s*Programı)?[:\s]*/i, '') || d.title}`)
+    .join('; ');
+
+  const optionalExpTextEn = optionalExp.length > 0 ? `\n\nOptional Experiences: ${optionalExp.join(', ')}.` : '';
+  const optionalExpTextTr = optionalExp.length > 0 ? `\n\nOpsiyonel Deneyimler: ${optionalExp.join(', ')}.` : '';
+  const travelTipsTextEn = travelTips.length > 0 ? `\n\nTravel Tips: ${travelTips.slice(0, 4).join(' • ')}.` : '';
+  const travelTipsTextTr = travelTips.length > 0 ? `\n\nSeyahat Tavsiyeleri: ${travelTips.slice(0, 4).join(' • ')}.` : '';
+
+  let overview = '';
+  let overviewTr = '';
+
+  if (documentExtractedOverview.length > 30) {
+    if (isTurkishDocument) {
+      // Turkish doc: use extracted narrative as primary overviewTr
+      overviewTr = `${documentExtractedOverview}${
+        itinerary.length > 0 ? `\n\nGünlük Program Akışı: ${daySummaryTr}.` : ''
+      }${optionalExpTextTr}${travelTipsTextTr}`;
+
+      overview = `Discover the enchanting highlights of ${destination} on this carefully planned ${durationDays}-day journey.${
+        documentExtractedOverview.length < 250 ? ` ${documentExtractedOverview}` : ''
+      }\n\nDaily Itinerary Overview: ${daySummaryEn}.\n\nFeatures ${hotelType}, licensed guiding, scheduled admissions, and private airport transfers.${optionalExpTextEn}${travelTipsTextEn}`;
+    } else {
+      // English doc: use extracted narrative as primary overview
+      overview = `${documentExtractedOverview}${
+        itinerary.length > 0 ? `\n\nDaily Itinerary: ${daySummaryEn}.` : ''
+      }${optionalExpTextEn}${travelTipsTextEn}`;
+
+      overviewTr = `${destinationTr} bölgesinin eşsiz güzelliklerini ve zengin tarihi dokusunu ${durationDays} günlük bu kapsamlı programla keşfedin.\n\nGünlük Program Akışı: ${daySummaryTr}.\n\nPaket dahilinde ${hotelTypeTr}, profesyonel lisanslı rehberlik, müze girişleri ve tüm transferler bulunmaktadır.${optionalExpTextTr}${travelTipsTextTr}`;
+    }
+  } else {
+    // Synthesize directly from scanned itinerary and destinations
+    overview = `Experience the rich history, culture, and stunning landscapes of ${destination} on this ${durationDays}-day boutique tour program.\n\nDaily Highlights:\n${itinerary
+      .map((d) => `• Day ${d.day}: ${d.title}`)
+      .join('\n')}\n\nIncludes ${hotelType}, licensed professional guide services, museum admissions, and round-trip transfers.${optionalExpTextEn}${travelTipsTextEn}`;
+
+    overviewTr = `${destinationTr} bölgesinin büyüleyici tarihini, zengin kültürünü ve eşsiz manzaralarını ${durationDays} günlük bu özel tur programı ile keşfedin.\n\nGünlük Tur Akışı:\n${itinerary
+      .map((d) => `• ${d.day}. Gün: ${d.titleTr.replace(/^\d+\.\s*Gün(?:\s*Programı)?[:\s]*/i, '') || d.title}`)
+      .join('\n')}\n\nProgram dahilinde ${hotelTypeTr}, profesyonel lisanslı rehberlik hizmeti, müze/örenyeri girişleri ve konforlu transferler yer almaktadır.${optionalExpTextTr}${travelTipsTextTr}`;
+  }
+
+  // 8. 5-6 TOUR HIGHLIGHTS (DYNAMIC FROM DOCUMENT)
+  const highlights: string[] = [];
+  const highlightsTr: string[] = [];
+
+  // Extract from daily itinerary
+  itinerary.forEach((d) => {
+    if (d.title && !highlights.some((h) => h.toLowerCase() === d.title.toLowerCase())) {
+      highlights.push(d.title);
+      highlightsTr.push(d.titleTr.replace(/^\d+\.\s*Gün(?:\s*Programı)?[:\s]*/i, '') || d.title);
+    }
+    if (d.highlights && Array.isArray(d.highlights)) {
+      d.highlights.forEach((dh, idx) => {
+        if (dh && dh.length > 5 && !highlights.includes(dh)) {
+          highlights.push(dh);
+          highlightsTr.push(d.highlightsTr?.[idx] || dh);
+        }
+      });
+    }
+  });
+
+  // Complement with detected region popular highlights
+  if (detectedRegions.length > 0) {
+    detectedRegions.forEach((reg) => {
+      reg.popularHighlights.forEach((ph, idx) => {
+        if (highlights.length < 6 && !highlights.includes(ph)) {
+          highlights.push(ph);
+          highlightsTr.push(reg.popularHighlightsTr[idx] || ph);
+        }
+      });
+    });
+  }
+
+  // Add hotel highlight if room
+  if (highlights.length < 5 && hotelType) {
+    highlights.push(`${hotelType} with daily breakfast`);
+    highlightsTr.push(`${hotelTypeTr} ve açık büfe kahvaltı`);
+  }
+
+  if (highlights.length === 0) {
+    highlights.push(
+      `Guided exploration of ${destination}`,
+      'Licensed professional tour guide throughout the program',
+      'All scheduled museum and archaeological site entrances',
+      'Comfortable private airport and intercity transfers',
+      `${hotelType} accommodation with daily breakfast`
+    );
+    highlightsTr.push(
+      `${destinationTr} kapsamlı rehberli gezi programı`,
+      'Program boyunca lisanslı profesyonel turist rehberi',
+      'Tüm planlı müze ve örenyeri giriş ücretleri',
+      'Konforlu havalimanı ve şehirlerarası transferler',
+      `${hotelTypeTr} konaklama ve kahvaltı`
+    );
+  }
 
   const cleanSlug = tourTitle
     .toLowerCase()
@@ -348,6 +562,13 @@ export function parseVoyraTourDocument(rawText: string, fileName?: string): Tour
     .replace(/^-+|-+$/g, '') || `tour-${Date.now()}`;
 
   const tourId = `${cleanSlug}-${Date.now().toString().slice(-4)}`;
+
+  let departure = 'Istanbul (Round-trip Flights & Transfers Included)';
+  let departureTr = 'İstanbul (Gidiş-Dönüş Uçuşlar ve Transferler Dahil)';
+  if (destination.toLowerCase().includes('istanbul') && !destination.toLowerCase().includes('cappadocia') && !destination.toLowerCase().includes('pamukkale')) {
+    departure = 'Istanbul Airport / Central Hotels';
+    departureTr = 'İstanbul Havalimanı / Merkezi Oteller';
+  }
 
   return {
     id: tourId,
@@ -387,8 +608,8 @@ export function parseVoyraTourDocument(rawText: string, fileName?: string): Tour
     itinerary,
     hotelType,
     hotelTypeTr,
-    departure: 'Istanbul (Round-trip Flights & Transfers Included)',
-    departureTr: 'İstanbul (Gidiş-Dönüş Uçuşlar ve Transferler Dahil)',
+    departure,
+    departureTr,
     importantInfo: optionalExp.length > 0 ? `Optional Experiences:\n${optionalExp.map(e => `• ${e}`).join('\n')}` : undefined,
     importantInfoTr: optionalExp.length > 0 ? `Opsiyonel Deneyimler:\n${optionalExp.map(e => `• ${e}`).join('\n')}` : undefined,
     travelRecommendations: travelTips.length > 0 ? travelTips : undefined,

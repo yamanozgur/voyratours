@@ -211,8 +211,10 @@ Follow these strict rules:
 4. Extract pricing, Important Info (such as Optional Experiences like Hot Air Balloon, ATV Safari), and hotel options.
 5. Extract Included and Excluded services accurately.
 6. Extract Travel Recommendations and include them in the tour details or overview.
-7. Generate a comprehensive "overview" summarizing the tour.
-8. Generate 5-6 bullet points for "highlights" and "highlightsTr".
+7. TOUR OVERVIEW (CRITICAL - DO NOT USE DEFAULTS):
+Scan the entire document for any Tour Overview, Summary, or Introduction section. If present, extract and use it. If not present as a separate section, synthesize an engaging, detailed 2-3 paragraph tour overview strictly reflecting the ACTUAL places, monuments, daily itinerary, hotel accommodations, and destinations visited in THIS specific tour (for instance, if the tour is about Ephesus and Pamukkale, describe Ephesus, Library of Celsus, and Pamukkale terraces; NEVER mention Cappadocia or other unrelated places unless actually in the document!). Provide both "overview" (English) and "overviewTr" (Turkish).
+8. HIGHLIGHTS (CRITICAL - STRICTLY FROM THIS TOUR):
+Generate 5-6 bullet points for "highlights" (English) and "highlightsTr" (Turkish) based STRICTLY on the actual landmarks, ruins, activities, and experiences mentioned in THIS tour document (never use default or unrelated destinations).
 9. DESTINATION & REGIONS DETECTION (CRITICAL):
 Identify ALL cities, regions, and cultural destinations visited or mentioned throughout the tour (for example, if the tour visits Cappadocia, Konya, and Antalya, you MUST list all of them: "destination": "Cappadocia, Konya, Antalya", "destinationTr": "Kapadokya, Konya, Antalya"). If more than one region is visited, set "region" to "multi-region". Each mentioned location will be automatically added to the agency's destination registry.
 
