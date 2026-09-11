@@ -106,7 +106,7 @@ export const PREDEFINED_TURKEY_REGIONS: PredefinedRegionMeta[] = [
   },
   {
     id: 'canakkale',
-    name: 'Gallipoli & Çanakkale',
+    name: 'Gallipoli',
     nameTr: 'Çanakkale & Gelibolu',
     tagline: 'Historic 1915 Battlefields, Anzac Cove & Dardanelles Strait',
     taglineTr: '1915 Çanakkale Siperleri, Anzak Koyu ve Boğaz Geçişi',

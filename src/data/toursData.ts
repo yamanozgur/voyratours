@@ -1,5 +1,6 @@
 import { TourPackage, DestinationInfo } from '../types';
 import { sanitizeTourDestinations, syncDestinationsWithAllTours, normalizeImageUrl, DEFAULT_DESTINATION_IMAGE } from '../utils/destinationDetector';
+import { condenseTourOverview } from '../utils/docxTourParser';
 
 const STORAGE_KEY = 'voyra_admin_tours_v1';
 
@@ -100,12 +101,14 @@ export let TOURS_DATA: TourPackage[] = (() => {
     if (saved) {
       const parsed = JSON.parse(saved);
       if (Array.isArray(parsed)) {
-        // Strip out dummy tours, remove corrupted drafts, sanitize destinations based on itinerary, and replace legacy images
+        // Strip out dummy tours, remove corrupted drafts, sanitize destinations based on itinerary, replace legacy images, and condense overviews to 1 clean paragraph
         const cleanTours = parsed
           .filter((t: TourPackage) => !DUMMY_TOUR_IDS.has(t.id))
           .map((t: TourPackage) =>
             sanitizeTourDestinations({
               ...t,
+              overview: condenseTourOverview(t.overview),
+              overviewTr: condenseTourOverview(t.overviewTr),
               heroImage:
                 !t.heroImage?.trim() || t.heroImage.includes('1570939274717-7eda259b50ed')
                   ? 'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg'
@@ -132,9 +135,14 @@ export let TOURS_DATA: TourPackage[] = (() => {
 })();
 
 export function updateToursData(newList: TourPackage[]) {
-  TOURS_DATA = newList;
+  const sanitized = newList.map((t) => ({
+    ...t,
+    overview: condenseTourOverview(t.overview),
+    overviewTr: condenseTourOverview(t.overviewTr),
+  }));
+  TOURS_DATA = sanitized;
   try {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(newList));
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(sanitized));
     if (typeof window !== 'undefined') {
       window.dispatchEvent(new Event('voyra_tours_updated'));
     }

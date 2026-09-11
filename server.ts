@@ -211,8 +211,12 @@ Follow these strict rules:
 4. Extract pricing, Important Info (such as Optional Experiences like Hot Air Balloon, ATV Safari), and hotel options.
 5. Extract Included and Excluded services accurately.
 6. Extract Travel Recommendations and include them in the tour details or overview.
-7. TOUR OVERVIEW (CRITICAL - DO NOT USE DEFAULTS):
-Scan the entire document for any Tour Overview, Summary, or Introduction section. If present, extract and use it. If not present as a separate section, synthesize an engaging, detailed 2-3 paragraph tour overview strictly reflecting the ACTUAL places, monuments, daily itinerary, hotel accommodations, and destinations visited in THIS specific tour (for instance, if the tour is about Ephesus and Pamukkale, describe Ephesus, Library of Celsus, and Pamukkale terraces; NEVER mention Cappadocia or other unrelated places unless actually in the document!). Provide both "overview" (English) and "overviewTr" (Turkish).
+7. TOUR OVERVIEW (CRITICAL - STRICTLY EXACTLY 1 CONCISE PARAGRAPH):
+Tour overview MUST be strictly ONE (1) short, elegant, concise paragraph (around 3-4 sentences maximum).
+NEVER write multiple paragraphs! NEVER write lengthy essays, daily itinerary breakdowns, or repetitive lists in the overview!
+Only highlight the defining landmarks, key sights, and overall travel experience of this specific tour.
+- "overview": Exactly 1 concise paragraph in English summarizing the tour's essential sights and experience.
+- "overviewTr": Tam olarak 1 kısa ve akıcı paragraf (Türkçe); turun en önemli duraklarını ve sunduğu deneyimi özetleyen tek bir paragraf metin.
 8. HIGHLIGHTS (CRITICAL - STRICTLY FROM THIS TOUR):
 Generate 5-6 bullet points for "highlights" (English) and "highlightsTr" (Turkish) based STRICTLY on the actual landmarks, ruins, activities, and experiences mentioned in THIS tour document (never use default or unrelated destinations).
 9. DESTINATION DETECTION (STRICTLY ATOMIC SEPARATE LOCATIONS - BASE ON TOUR TITLE & ACTUAL SIGHTSEEING):
@@ -305,6 +309,40 @@ ${text}
     }
 
     if (parsedTour) {
+      const cleanToOneParagraph = (text?: string): string => {
+        if (!text || typeof text !== 'string') return '';
+        const cutMarkers = [
+          'daily highlights:',
+          'günlük tur akışı:',
+          'günlük program akışı:',
+          'daily itinerary:',
+          'daily itinerary overview:',
+          'optional experiences:',
+          'opsiyonel deneyimler:',
+          'travel tips:',
+          'seyahat tavsiyeleri:',
+        ];
+        let clean = text;
+        for (const marker of cutMarkers) {
+          const idx = clean.toLowerCase().indexOf(marker);
+          if (idx !== -1) {
+            clean = clean.slice(0, idx);
+          }
+        }
+        const paras = clean.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+        if (paras.length > 0) {
+          clean = paras[0];
+        }
+        return clean.replace(/^[#*•\-\d\.]+\s*/, '').replace(/\n+/g, ' ').replace(/\s{2,}/g, ' ').trim();
+      };
+
+      if (parsedTour.overview) {
+        parsedTour.overview = cleanToOneParagraph(parsedTour.overview);
+      }
+      if (parsedTour.overviewTr) {
+        parsedTour.overviewTr = cleanToOneParagraph(parsedTour.overviewTr);
+      }
+
       if (!parsedTour.heroImage || parsedTour.heroImage.includes('1570939274717-7eda259b50ed')) {
         parsedTour.heroImage = 'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg';
       }

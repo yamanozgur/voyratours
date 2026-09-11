@@ -1543,22 +1543,32 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
 
                 <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
-                    <label className="block font-bold text-slate-700 mb-1">Tur Açıklaması (EN)</label>
+                    <label className="block font-bold text-slate-700 mb-1">
+                      Tur Açıklaması / Overview (EN)
+                      <span className="text-xs font-normal text-slate-500 ml-1.5">(1 Paragraf Özet)</span>
+                    </label>
                     <textarea
                       rows={3}
                       value={editingTour.overview}
                       onChange={(e) => setEditingTour({ ...editingTour, overview: e.target.value })}
+                      placeholder="1 concise paragraph highlighting key sights and experiences..."
                       className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-900"
                     />
+                    <p className="text-[11px] text-slate-500 mt-1">Turun can alıcı duraklarını anlatan 1 paragraflık özet metin.</p>
                   </div>
                   <div>
-                    <label className="block font-bold text-slate-700 mb-1">Tur Açıklaması (TR)</label>
+                    <label className="block font-bold text-slate-700 mb-1">
+                      Tur Açıklaması / Genel Bakış (TR)
+                      <span className="text-xs font-normal text-slate-500 ml-1.5">(1 Paragraf Özet)</span>
+                    </label>
                     <textarea
                       rows={3}
                       value={editingTour.overviewTr}
                       onChange={(e) => setEditingTour({ ...editingTour, overviewTr: e.target.value })}
+                      placeholder="Önemli noktalardan bahseden 1 paragraflık öz bir tanıtım metni..."
                       className="w-full px-3.5 py-2.5 bg-white border border-slate-200 rounded-xl text-slate-900"
                     />
+                    <p className="text-[11px] text-slate-500 mt-1">Önemli noktalardan bahseden 1 paragraflık öz bir tanıtım metni.</p>
                   </div>
                 </div>
 

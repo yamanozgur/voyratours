@@ -468,47 +468,42 @@ export function parseVoyraTourDocument(rawText: string, fileName?: string): Tour
   const durationDays = itinerary.length > 0 ? itinerary.length : 2;
   const durationNights = Math.max(1, durationDays - 1);
 
-  // Day-by-day summaries from actual itinerary
-  const daySummaryEn = itinerary.map((d) => `Day ${d.day}: ${d.title}`).join('; ');
-  const daySummaryTr = itinerary
-    .map((d) => `${d.day}. Gün: ${d.titleTr.replace(/^\d+\.\s*Gün(?:\s*Programı)?[:\s]*/i, '') || d.title}`)
-    .join('; ');
+  // 7. TOUR OVERVIEW - STRICTLY EXACTLY 1 CONCISE PARAGRAPH
+  // Extract up to 3 core landmark names for the 1-paragraph overview
+  const topKeyPointsEn = itinerary
+    .map((d) => d.title.replace(/^Day\s*\d+[:\s-]*/i, '').trim())
+    .filter(Boolean)
+    .slice(0, 3);
+  const topKeyPointsTr = itinerary
+    .map((d) => d.titleTr.replace(/^\d+\.\s*Gün(?:\s*Programı)?[:\s-]*/i, '').trim())
+    .filter(Boolean)
+    .slice(0, 3);
 
-  const optionalExpTextEn = optionalExp.length > 0 ? `\n\nOptional Experiences: ${optionalExp.join(', ')}.` : '';
-  const optionalExpTextTr = optionalExp.length > 0 ? `\n\nOpsiyonel Deneyimler: ${optionalExp.join(', ')}.` : '';
-  const travelTipsTextEn = travelTips.length > 0 ? `\n\nTravel Tips: ${travelTips.slice(0, 4).join(' • ')}.` : '';
-  const travelTipsTextTr = travelTips.length > 0 ? `\n\nSeyahat Tavsiyeleri: ${travelTips.slice(0, 4).join(' • ')}.` : '';
+  const landmarksSummaryEn = topKeyPointsEn.length > 0 ? ` (${topKeyPointsEn.join(', ')})` : '';
+  const landmarksSummaryTr = topKeyPointsTr.length > 0 ? ` (${topKeyPointsTr.join(', ')})` : '';
 
   let overview = '';
   let overviewTr = '';
 
-  if (documentExtractedOverview.length > 30) {
+  if (documentExtractedOverview.length > 25) {
+    // Extract only the very first concise paragraph from document
+    const cleanFirstPara = documentExtractedOverview
+      .split(/\n\s*\n/)[0]
+      .replace(/\n+/g, ' ')
+      .replace(/^[#*•\-\d\.]+\s*/, '')
+      .trim();
+
     if (isTurkishDocument) {
-      // Turkish doc: use extracted narrative as primary overviewTr
-      overviewTr = `${documentExtractedOverview}${
-        itinerary.length > 0 ? `\n\nGünlük Program Akışı: ${daySummaryTr}.` : ''
-      }${optionalExpTextTr}${travelTipsTextTr}`;
-
-      overview = `Discover the enchanting highlights of ${destination} on this carefully planned ${durationDays}-day journey.${
-        documentExtractedOverview.length < 250 ? ` ${documentExtractedOverview}` : ''
-      }\n\nDaily Itinerary Overview: ${daySummaryEn}.\n\nFeatures ${hotelType}, licensed guiding, scheduled admissions, and private airport transfers.${optionalExpTextEn}${travelTipsTextEn}`;
+      overviewTr = cleanFirstPara;
+      overview = `Experience the defining highlights of ${destination} on this ${durationDays}-day boutique journey${landmarksSummaryEn}. Designed for comfort and depth, this private program features ${hotelType}, licensed guiding, and seamless door-to-door transfers.`;
     } else {
-      // English doc: use extracted narrative as primary overview
-      overview = `${documentExtractedOverview}${
-        itinerary.length > 0 ? `\n\nDaily Itinerary: ${daySummaryEn}.` : ''
-      }${optionalExpTextEn}${travelTipsTextEn}`;
-
-      overviewTr = `${destinationTr} bölgesinin eşsiz güzelliklerini ve zengin tarihi dokusunu ${durationDays} günlük bu kapsamlı programla keşfedin.\n\nGünlük Program Akışı: ${daySummaryTr}.\n\nPaket dahilinde ${hotelTypeTr}, profesyonel lisanslı rehberlik, müze girişleri ve tüm transferler bulunmaktadır.${optionalExpTextTr}${travelTipsTextTr}`;
+      overview = cleanFirstPara;
+      overviewTr = `${destinationTr} bölgesinin öne çıkan tarihi ve doğal duraklarını${landmarksSummaryTr} ${durationDays} günlük bu butik programla keşfedin. Konforlu transferler, ${hotelTypeTr} ve profesyonel lisanslı rehberlik ile unutulmaz bir seyahat sunar.`;
     }
   } else {
-    // Synthesize directly from scanned itinerary and destinations
-    overview = `Experience the rich history, culture, and stunning landscapes of ${destination} on this ${durationDays}-day boutique tour program.\n\nDaily Highlights:\n${itinerary
-      .map((d) => `• Day ${d.day}: ${d.title}`)
-      .join('\n')}\n\nIncludes ${hotelType}, licensed professional guide services, museum admissions, and round-trip transfers.${optionalExpTextEn}${travelTipsTextEn}`;
+    overview = `Discover the defining highlights of ${destination} on this carefully planned ${durationDays}-day boutique tour${landmarksSummaryEn}. Designed for an effortless and memorable discovery, this private journey combines ${hotelType}, licensed guiding, and private transfers to showcase the region's essential sights.`;
 
-    overviewTr = `${destinationTr} bölgesinin büyüleyici tarihini, zengin kültürünü ve eşsiz manzaralarını ${durationDays} günlük bu özel tur programı ile keşfedin.\n\nGünlük Tur Akışı:\n${itinerary
-      .map((d) => `• ${d.day}. Gün: ${d.titleTr.replace(/^\d+\.\s*Gün(?:\s*Programı)?[:\s]*/i, '') || d.title}`)
-      .join('\n')}\n\nProgram dahilinde ${hotelTypeTr}, profesyonel lisanslı rehberlik hizmeti, müze/örenyeri girişleri ve konforlu transferler yer almaktadır.${optionalExpTextTr}${travelTipsTextTr}`;
+    overviewTr = `${destinationTr} bölgesinin en önemli tarihi ve doğal duraklarını${landmarksSummaryTr} ${durationDays} günlük bu butik tur ile keşfedin. Özenle planlanan bu rota; ${hotelTypeTr}, konforlu transferler ve profesyonel rehberlik eşliğinde bölgenin ruhunu yansıtan keyifli bir seyahat sunar.`;
   }
 
   // 8. 5-6 TOUR HIGHLIGHTS (DYNAMIC FROM DOCUMENT)
@@ -625,4 +620,39 @@ export function parseVoyraTourDocument(rawText: string, fileName?: string): Tour
     travelRecommendations: travelTips.length > 0 ? travelTips : undefined,
     travelRecommendationsTr: travelTips.length > 0 ? travelTips : undefined
   };
+}
+
+/**
+ * Ensures a tour overview is strictly a single, cohesive paragraph focusing on important points.
+ * Strips out daily breakdowns, bullet points, and multi-paragraph lists.
+ */
+export function condenseTourOverview(text?: string): string {
+  if (!text || typeof text !== 'string' || !text.trim()) return '';
+  const cutMarkers = [
+    'daily highlights:',
+    'günlük tur akışı:',
+    'günlük program akışı:',
+    'daily itinerary:',
+    'daily itinerary overview:',
+    'optional experiences:',
+    'opsiyonel deneyimler:',
+    'travel tips:',
+    'seyahat tavsiyeleri:',
+  ];
+  let clean = text;
+  for (const marker of cutMarkers) {
+    const idx = clean.toLowerCase().indexOf(marker);
+    if (idx !== -1) {
+      clean = clean.slice(0, idx);
+    }
+  }
+  const paras = clean.split(/\n\s*\n/).map((p) => p.trim()).filter(Boolean);
+  if (paras.length > 0) {
+    clean = paras[0];
+  }
+  return clean
+    .replace(/^[#*•\-\d\.]+\s*/, '')
+    .replace(/\n+/g, ' ')
+    .replace(/\s{2,}/g, ' ')
+    .trim();
 }

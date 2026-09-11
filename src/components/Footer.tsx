@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import {
   Compass,
@@ -12,6 +12,7 @@ import {
   Clock,
 } from 'lucide-react';
 import { Language } from '../types';
+import { DESTINATIONS_DATA } from '../data/toursData';
 import vtFooterLogo from '../assets/VT_footer.png';
 
 interface FooterProps {
@@ -28,6 +29,32 @@ export const Footer: React.FC<FooterProps> = ({
   const isTr = language === 'tr';
   const [emailSubscribed, setEmailSubscribed] = useState(false);
   const [newsletterEmail, setNewsletterEmail] = useState('');
+  const [destList, setDestList] = useState(DESTINATIONS_DATA);
+
+  useEffect(() => {
+    const handleUpdate = () => {
+      setDestList([...DESTINATIONS_DATA]);
+    };
+    window.addEventListener('voyra_destinations_updated', handleUpdate);
+    return () => window.removeEventListener('voyra_destinations_updated', handleUpdate);
+  }, []);
+
+  const defaultEnglishDestinations = [
+    { id: 'cappadocia', name: 'Cappadocia' },
+    { id: 'pamukkale', name: 'Pamukkale' },
+    { id: 'ephesus', name: 'Ephesus' },
+    { id: 'antalya', name: 'Antalya' },
+    { id: 'istanbul', name: 'Istanbul' },
+    { id: 'gallipoli', name: 'Gallipoli' },
+  ];
+
+  const displayedDestinations =
+    destList && destList.length > 0
+      ? destList.slice(0, 6).map((d) => ({
+          id: d.id,
+          name: (d.name || '').split('/')[0].trim(),
+        }))
+      : defaultEnglishDestinations;
 
   const t = {
     en: {
@@ -116,62 +143,17 @@ export const Footer: React.FC<FooterProps> = ({
               {t.destinationsTitle}
             </h4>
             <ul className="space-y-2 text-xs text-teal-100">
-              <li>
-                <Link
-                  to="/tours?dest=cappadocia"
-                  className="hover:text-white transition"
-                >
-                  Cappadocia / Kapadokya
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/tours?dest=pamukkale"
-                  className="hover:text-white transition"
-                >
-                  Pamukkale
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/tours?dest=ephesus"
-                  className="hover:text-white transition"
-                >
-                  Ephesus / Efes
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/tours?dest=antalya"
-                  className="hover:text-white transition"
-                >
-                  Antalya
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/tours?dest=istanbul"
-                  className="hover:text-white transition"
-                >
-                  Istanbul / İstanbul
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/tours?dest=canakkale"
-                  className="hover:text-white transition"
-                >
-                  Gallipoli & Çanakkale
-                </Link>
-              </li>
-              <li>
-                <Link
-                  to="/tours?dest=multi-region"
-                  className="hover:text-white transition"
-                >
-                  Grand Turkey 6-Day Loop
-                </Link>
-              </li>
+              {displayedDestinations.map((dest) => (
+                <li key={dest.id}>
+                  <Link
+                    to={`/tours?dest=${dest.id}`}
+                    onClick={() => onSelectDestination(dest.id)}
+                    className="hover:text-white transition block"
+                  >
+                    {dest.name}
+                  </Link>
+                </li>
+              ))}
             </ul>
           </div>
 
