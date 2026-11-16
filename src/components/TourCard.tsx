@@ -150,7 +150,7 @@ export const TourCard: React.FC<TourCardProps> = ({
 
           <div className="flex items-center gap-1.5">
             <a
-              href={`https://wa.me/905320000000?text=${encodeURIComponent(
+              href={`https://wa.me/905321234567?text=${encodeURIComponent(
                 `Hello Voyra Tours, I am interested in booking: ${tour.title} (${formatPrice(tour.priceEUR, currency)}/person). Could you provide availability?`
               )}`}
               target="_blank"

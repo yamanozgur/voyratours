@@ -434,7 +434,7 @@ Could you please confirm availability and provide details?`
                     <h4 className="font-bold text-emerald-950 text-base">{t.inquirySuccessTitle}</h4>
                     <p className="text-xs text-emerald-800 leading-relaxed">{t.inquirySuccessDesc}</p>
                     <a
-                      href={`https://wa.me/905320000000?text=${whatsappMessage}`}
+                      href={`https://wa.me/905321234567?text=${whatsappMessage}`}
                       target="_blank"
                       rel="noopener noreferrer"
                       className="inline-flex items-center justify-center gap-2 w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition"
@@ -619,7 +619,7 @@ Could you please confirm availability and provide details?`
                       </button>
 
                       <a
-                        href={`https://wa.me/905320000000?text=${whatsappMessage}`}
+                        href={`https://wa.me/905321234567?text=${whatsappMessage}`}
                         target="_blank"
                         rel="noopener noreferrer"
                         className="w-full py-2.5 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-xs transition flex items-center justify-center gap-2 shadow-xs"

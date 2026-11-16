@@ -197,7 +197,7 @@ Please reach out with a personalized proposal.`
 
               <div className="pt-4 max-w-sm mx-auto space-y-3">
                 <a
-                  href={`https://wa.me/905320000000?text=${customSummaryMessage}`}
+                  href={`https://wa.me/905321234567?text=${customSummaryMessage}`}
                   target="_blank"
                   rel="noopener noreferrer"
                   className="w-full py-3.5 px-4 rounded-xl bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-sm transition flex items-center justify-center gap-2 shadow-md shadow-emerald-600/20"

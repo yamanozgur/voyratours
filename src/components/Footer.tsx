@@ -213,18 +213,18 @@ export const Footer: React.FC<FooterProps> = ({
               <li className="flex items-center gap-2">
                 <MessageSquare className="w-4 h-4 text-[#e0fbfc] shrink-0" />
                 <a
-                  href="https://wa.me/905320000000"
+                  href="https://wa.me/905321234567"
                   target="_blank"
                   rel="noopener noreferrer"
                   className="hover:text-white transition font-medium"
                 >
-                  WhatsApp: +90 532 000 0000
+                  WhatsApp: +90 532 123 45 67
                 </a>
               </li>
               <li className="flex items-center gap-2">
                 <Mail className="w-4 h-4 text-[#e0fbfc] shrink-0" />
-                <a href="mailto:info@voyratours.com" className="hover:text-white transition">
-                  info@voyratours.com
+                <a href="mailto:info@voyra.tours" className="hover:text-white transition">
+                  info@voyra.tours
                 </a>
               </li>
             </ul>
@@ -272,10 +272,7 @@ export const Footer: React.FC<FooterProps> = ({
         <div className="pt-8 flex flex-col sm:flex-row items-center justify-between text-xs text-teal-100/80 gap-4">
           <p>© {new Date().getFullYear()} Voyra Tours. {t.rights}</p>
           <div className="flex items-center gap-6">
-            <Link to="/admin" className="hover:text-white transition font-bold text-[#e0fbfc]">⚙️ Admin Panel</Link>
-            <a href="#" className="hover:text-white transition">{t.privacy}</a>
-            <a href="#" className="hover:text-white transition">{t.terms}</a>
-            <a href="#" className="hover:text-white transition">{t.cancellationPolicy}</a>
+            <Link to="/faq" className="hover:text-white transition">{t.cancellationPolicy}</Link>
           </div>
         </div>
       </div>

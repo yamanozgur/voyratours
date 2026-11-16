@@ -78,7 +78,7 @@ Zamanı kısıtlı olan misafirlerimiz için en popüler ve verimli Kapadokya pr
 - **Butik Standart Mağara:** €555 / kişi
 - **Balayı / Lüks Jakuzili Mağara Süiti:** Özel fiyat farkı ile rezerve edilebilir.
 
-👉 Tarihlerinize göre müsaitlik ve rezervasyon için doğrudan **WhatsApp (+90 532 000 0000)** hattımızdan bize yazabilirsiniz!`;
+👉 Tarihlerinize göre müsaitlik ve rezervasyon için doğrudan **WhatsApp (+90 532 123 45 67)** hattımızdan bize yazabilirsiniz!`;
       } else {
         return `🌟 **2-Day Magical Cappadocia & Cave Suite Escape (€555 / Person)**
 
@@ -98,7 +98,7 @@ Our top-rated express journey designed for travelers with limited time:
 - **Curated Cave Room:** €555 / person
 - **Honeymoon / Luxury Jacuzzi Cave Suite:** Available upon request.
 
-👉 Ready to check dates or reserve? Chat directly on **WhatsApp (+90 532 000 0000)**!`;
+👉 Ready to check dates or reserve? Chat directly on **WhatsApp (+90 532 123 45 67)**!`;
       }
     }
 
@@ -116,7 +116,7 @@ Kapadokya'yı acele etmeden, vadileri yürüyerek ve 2 gün doğumu balon izleme
 ✅ **Fiyata Dahil:** Tüm iç hat uçuşları, 2 gece butik mağara otel, Mercedes VIP transferler, rehberlik, müze biletleri ve öğle yemekleri.
 💰 **Fiyat:** €690 / kişi başı.
 
-👉 Rezervasyon ve müsaitlik için **WhatsApp (+90 532 000 0000)** hattımızdan anında bilgi alabilirsiniz!`;
+👉 Rezervasyon ve müsaitlik için **WhatsApp (+90 532 123 45 67)** hattımızdan anında bilgi alabilirsiniz!`;
       } else {
         return `🌟 **3-Day In-Depth Cappadocia & Underground Cities (€690 / Person)**
 
@@ -129,7 +129,7 @@ The ideal pacing with 2 sunrise flight windows and deep valley exploration:
 ✅ **Included:** Roundtrip domestic flights, 2 nights boutique cave hotel, private Mercedes VIP transfers, expert guide, museum tickets & lunches.
 💰 **Price:** €690 / person.
 
-👉 Message us on **WhatsApp (+90 532 000 0000)** to confirm dates or customize!`;
+👉 Message us on **WhatsApp (+90 532 123 45 67)** to confirm dates or customize!`;
       }
     }
 
@@ -167,7 +167,7 @@ Size en uygun turu belirleyebilmemiz için şu **4 temel özellik** üzerinden i
 ### 4. 👥 Seyahat Grubu:
 Kaç kişi seyahat edeceksiniz? (Çift, balayı, çocuklu aile veya arkadaş grubu?)
 
-👉 **Aklınızdaki gün sayısı ve bütçe tercihini paylaşabilir misiniz?** Size özel güncel programı ve fiyat teklifini anında paylaşabilirim. Dilerseniz **WhatsApp (+90 532 000 0000)** üzerinden uzmanlarımızla da anında görüşebilirsiniz!`;
+👉 **Aklınızdaki gün sayısı ve bütçe tercihini paylaşabilir misiniz?** Size özel güncel programı ve fiyat teklifini anında paylaşabilirim. Dilerseniz **WhatsApp (+90 532 123 45 67)** üzerinden uzmanlarımızla da anında görüşebilirsiniz!`;
     } else {
       return `✨ **Welcome to Voyra Tours Cappadocia Concierge!**
 
@@ -201,7 +201,7 @@ To help you choose or customize the ideal journey, here are the key features to 
 ### 4. 👥 Travelers:
 How many guests will be traveling? (Couples/honeymoon, family with children, or private group?)
 
-👉 **How many days do you have in mind, and what is your preferred style?** Reply with your preferences and I will give you a tailored plan, or chat with our specialists on **WhatsApp (+90 532 000 0000)**!`;
+👉 **How many days do you have in mind, and what is your preferred style?** Reply with your preferences and I will give you a tailored plan, or chat with our specialists on **WhatsApp (+90 532 123 45 67)**!`;
     }
   }
 
@@ -404,7 +404,7 @@ Voyra Tours olarak seyahatinizi tamamen sizin zevkinize göre tasarlıyoruz:
 • Aileler ve çocuklu misafirler için sakin ve konforlu tempo
 • Özel lüks araçlar ve sadece size özel kokartlı rehber
 
-Sitemizdeki **"Kişiye Özel Tur"** formunu doldurabilir veya hemen **WhatsApp (+90 532 000 0000)** üzerinden bize yazabilirsiniz! 24 saat içinde size özel teklif sunuyoruz.`;
+Sitemizdeki **"Kişiye Özel Tur"** formunu doldurabilir veya hemen **WhatsApp (+90 532 123 45 67)** üzerinden bize yazabilirsiniz! 24 saat içinde size özel teklif sunuyoruz.`;
     } else {
       return `✨ **100% Tailor-Made & Bespoke Travel:**
 
@@ -414,7 +414,7 @@ We specialize in crafting completely customized journeys:
 • Family-friendly itineraries with gentle pacing
 • Dedicated private Mercedes vans and personal historian guides
 
-You can submit your dream travel ideas via our **"Tailor-Made"** planner or chat directly on **WhatsApp (+90 532 000 0000)**!`;
+You can submit your dream travel ideas via our **"Tailor-Made"** planner or chat directly on **WhatsApp (+90 532 123 45 67)**!`;
     }
   }
 
@@ -540,11 +540,11 @@ Which destinations or dates are you planning for?`;
     if (isTr) {
       return `Şu anda incelediğiniz **"${tourTitle}"** turumuz (${activeTour.durationDays} Gün / ${activeTour.durationDays - 1} Gece) en sevilen programlarımızdan biridir. 
 
-Bu tur hakkında daha fazla bilgi, fiyata dahil olan iç hat uçuşları veya otel detayları hakkında ne öğrenmek istersiniz? Ayrıca doğrudan **WhatsApp (+90 532 000 0000)** üzerinden uzmanlarımızla da görüşebilirsiniz.`;
+Bu tur hakkında daha fazla bilgi, fiyata dahil olan iç hat uçuşları veya otel detayları hakkında ne öğrenmek istersiniz? Ayrıca doğrudan **WhatsApp (+90 532 123 45 67)** üzerinden uzmanlarımızla da görüşebilirsiniz.`;
     } else {
       return `You are currently viewing **"${tourTitle}"** (${activeTour.durationDays} Days / ${activeTour.durationDays - 1} Nights), one of our signature curated journeys.
 
-Would you like to know more about the domestic flights, cave hotels, or daily itinerary? You can also message our travel experts directly on **WhatsApp (+90 532 000 0000)**.`;
+Would you like to know more about the domestic flights, cave hotels, or daily itinerary? You can also message our travel experts directly on **WhatsApp (+90 532 123 45 67)**.`;
     }
   }
 
@@ -556,7 +556,7 @@ Would you like to know more about the domestic flights, cave hotels, or daily it
 • **Kişiye özel** VIP rotalar ve balayı programları
 • **%100 garantili** Kapadokya sıcak hava balonu rezervasyonları
 
-Aklınıza takılan detayları sorabilir veya doğrudan **+90 532 000 0000** numaralı WhatsApp hattımızdan seyahat danışmanımıza ulaşabilirsiniz.`;
+Aklınıza takılan detayları sorabilir veya doğrudan **+90 532 123 45 67** numaralı WhatsApp hattımızdan seyahat danışmanımıza ulaşabilirsiniz.`;
   } else {
     return `Certainly! At Voyra Tours, we specialize in luxury boutique travel across Turkey, including Cappadocia, Ephesus, Pamukkale, Istanbul, and the Turquoise Coast.
 
@@ -564,6 +564,6 @@ Aklınıza takılan detayları sorabilir veya doğrudan **+90 532 000 0000** num
 • **100% Tailor-made** bespoke itineraries & honeymoon journeys
 • **Guaranteed sunrise** Cappadocia hot air balloon bookings
 
-Feel free to ask me about any itinerary, or chat with our team on **WhatsApp (+90 532 000 0000)** anytime!`;
+Feel free to ask me about any itinerary, or chat with our team on **WhatsApp (+90 532 123 45 67)** anytime!`;
   }
 }

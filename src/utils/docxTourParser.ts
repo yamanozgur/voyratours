@@ -593,9 +593,9 @@ export function parseVoyraTourDocument(rawText: string, fileName?: string): Tour
     reviewsCount: 18,
     groupType: 'Small Group',
     groupTypeTr: 'Küçük Grup',
-    heroImage: 'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg',
+    heroImage: './asset/default.jpg',
     galleryImages: [
-      'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg',
+      './asset/default.jpg',
       'https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?auto=format&fit=crop&w=800&q=85',
       'https://images.unsplash.com/photo-1524231757912-21f4fe3a7200?auto=format&fit=crop&w=800&q=85'
     ],

@@ -1,6 +1,7 @@
 import { TourPackage, DestinationInfo } from '../types';
 import { sanitizeTourDestinations, syncDestinationsWithAllTours, normalizeImageUrl, DEFAULT_DESTINATION_IMAGE } from '../utils/destinationDetector';
 import { condenseTourOverview } from '../utils/docxTourParser';
+import seedTours from './seedTours.json';
 
 const STORAGE_KEY = 'voyra_admin_tours_v1';
 
@@ -22,7 +23,7 @@ export const DUMMY_TOUR_IDS = new Set([
 export const DUMMY_DESTINATION_IDS = new Set<string>();
 
 // No hardcoded dummy tours - only tours uploaded or created by the user
-export const INITIAL_TOURS_DATA: TourPackage[] = [];
+export const INITIAL_TOURS_DATA: TourPackage[] = seedTours as unknown as TourPackage[];
 
 export const REVIEWS_DATA = [
   {
@@ -100,7 +101,7 @@ export let TOURS_DATA: TourPackage[] = (() => {
     const saved = localStorage.getItem(STORAGE_KEY);
     if (saved) {
       const parsed = JSON.parse(saved);
-      if (Array.isArray(parsed)) {
+      if (Array.isArray(parsed) && parsed.length > 0) {
         // Strip out dummy tours, remove corrupted drafts, sanitize destinations based on itinerary, replace legacy images, and condense overviews to 1 clean paragraph
         const cleanTours = parsed
           .filter((t: TourPackage) => !DUMMY_TOUR_IDS.has(t.id))
@@ -111,11 +112,11 @@ export let TOURS_DATA: TourPackage[] = (() => {
               overviewTr: condenseTourOverview(t.overviewTr),
               heroImage:
                 !t.heroImage?.trim() || t.heroImage.includes('1570939274717-7eda259b50ed')
-                  ? 'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg'
+                  ? './asset/default.jpg'
                   : t.heroImage,
               galleryImages: t.galleryImages?.map((img) =>
                 img.includes('1570939274717-7eda259b50ed')
-                  ? 'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg'
+                  ? './asset/default.jpg'
                   : img
               ),
             })
@@ -220,11 +221,11 @@ export function resetDestinationsToDefault(): DestinationInfo[] {
 
 export const HERO_STORAGE_KEY = 'voyra_hero_slides_v1';
 export const INITIAL_HERO_SLIDES = [
-  'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/hero.webp',
-  'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/main1.jpg',
-  'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/main2.jpg',
-  'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/main3.jpg',
-  'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/main4.jpg',
+  './asset/hero.webp',
+  './asset/main1.jpg',
+  './asset/main2.jpg',
+  './asset/main3.jpg',
+  './asset/main4.jpg',
 ];
 
 export let HERO_SLIDES: string[] = (() => {

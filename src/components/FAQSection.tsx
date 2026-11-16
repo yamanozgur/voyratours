@@ -125,7 +125,7 @@ export const FAQSection: React.FC<FAQSectionProps> = ({ language }) => {
             {t.stillQuestions}
           </p>
           <a
-            href="https://wa.me/905320000000?text=Hello%20Voyra%20Tours,%20I%20have%20a%20question%20about%20your%20Turkey%20tours"
+            href="https://wa.me/905321234567?text=Hello%20Voyra%20Tours,%20I%20have%20a%20question%20about%20your%20Turkey%20tours"
             target="_blank"
             rel="noopener noreferrer"
             className="inline-flex items-center gap-2 px-6 py-3 rounded-xl bg-[#12bbba] hover:bg-[#0fa8a7] text-white font-semibold text-xs transition shadow-sm shadow-[#12bbba]/25 cursor-pointer"

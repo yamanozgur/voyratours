@@ -155,7 +155,7 @@ export const Navbar: React.FC<NavbarProps> = ({
             className="hidden sm:flex items-center gap-1 text-[#009999] hover:text-[#008080] transition font-medium"
           >
             <MessageSquare className="w-3.5 h-3.5 text-[#009999]" />
-            <span className="font-semibold">+90 (532) Voyra-TR</span>
+            <span className="font-semibold">+90 532 123 45 67</span>
           </a>
         </div>
       </div>

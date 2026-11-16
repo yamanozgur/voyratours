@@ -1,6 +1,6 @@
 import { TourPackage, DestinationInfo } from '../types';
 
-export const DEFAULT_DESTINATION_IMAGE = 'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/main3.jpg';
+export const DEFAULT_DESTINATION_IMAGE = './asset/main3.jpg';
 
 export function normalizeImageUrl(url?: string): string {
   if (!url || !url.trim()) {

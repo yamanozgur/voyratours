@@ -319,14 +319,14 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
       if (newTour) {
         // Enforce Voyra default.jpg if heroImage is missing or using legacy Paris photo
         if (!newTour.heroImage || newTour.heroImage.includes('1570939274717-7eda259b50ed')) {
-          newTour.heroImage = 'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg';
+          newTour.heroImage = './asset/default.jpg';
         }
         if (!newTour.galleryImages || !Array.isArray(newTour.galleryImages) || newTour.galleryImages.length === 0) {
-          newTour.galleryImages = ['https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg'];
+          newTour.galleryImages = ['./asset/default.jpg'];
         } else {
           newTour.galleryImages = newTour.galleryImages.map((img: string) =>
             img.includes('1570939274717-7eda259b50ed')
-              ? 'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg'
+              ? './asset/default.jpg'
               : img
           );
         }
@@ -390,9 +390,9 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
       reviewsCount: 1,
       groupType: 'Small Group',
       groupTypeTr: 'Küçük Grup',
-      heroImage: 'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg',
+      heroImage: './asset/default.jpg',
       galleryImages: [
-        'https://raw.githubusercontent.com/yamanozgur/voyratours/main/asset/default.jpg',
+        './asset/default.jpg',
         'https://images.unsplash.com/photo-1541432901042-2d8bd64b4a9b?auto=format&fit=crop&w=800&q=85',
       ],
       badge: 'Bestseller',

@@ -459,7 +459,7 @@ Feel free to ask me anything about routes, pricing, or travel tips. How may I as
               <span>{isTr ? 'Canlı temsilci mi istiyorsunuz?' : 'Prefer a human specialist?'}</span>
             </span>
             <a
-              href={`https://wa.me/905320000000?text=${whatsappMessage}`}
+              href={`https://wa.me/905321234567?text=${whatsappMessage}`}
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1 px-2.5 py-1 rounded-full bg-emerald-600 hover:bg-emerald-500 text-white font-semibold text-[10.5px] transition shadow-xs"
