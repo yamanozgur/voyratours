@@ -93,9 +93,14 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
     setTimeout(() => setToastMessage(null), 4000);
   };
 
-  const handleLogin = (e: React.FormEvent) => {
+  const handleLogin = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (passwordInput === 'voyra2026' || passwordInput === 'admin' || passwordInput === '') {
+    // Only the SHA-256 hash is stored (not the plain password). To change the password:
+    //   node -e "console.log(require('crypto').createHash('sha256').update('NEW_PASSWORD').digest('hex'))"
+    const ADMIN_HASH = 'efa5c37abd6499457a77cdf431864d8063b22cc40b3afe49ceb373ca11bbd601';
+    const buf = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(passwordInput));
+    const hex = Array.from(new Uint8Array(buf)).map((b) => b.toString(16).padStart(2, '0')).join('');
+    if (hex === ADMIN_HASH) {
       setIsAuthenticated(true);
       setAuthError(false);
     } else {
@@ -625,7 +630,7 @@ export const AdminPage: React.FC<AdminPageProps> = ({ language, currency, onSele
               />
               {authError && (
                 <p className="text-xs text-rose-400 mt-1.5 flex items-center gap-1">
-                  <AlertCircle className="w-3.5 h-3.5" /> Şifre yanlış. (Hızlı giriş için boş bırakıp girebilirsiniz)
+                  <AlertCircle className="w-3.5 h-3.5" /> Şifre yanlış.
                 </p>
               )}
             </div>
